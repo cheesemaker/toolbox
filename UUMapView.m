@@ -10,46 +10,48 @@
 
 @implementation MKMapView (UUFramework)
 
-+ (BOOL) findBoundingBox:(NSArray*)annotations bounds:(MKCoordinateRegion*)boundingBox
++ (bool) findBoundingBox:(NSArray*)annotations bounds:(MKCoordinateRegion*)boundingBox
 {
     CLLocationDegrees minLat = INT_MAX;
     CLLocationDegrees maxLat = INT_MIN;
     CLLocationDegrees minLng = INT_MAX;
     CLLocationDegrees maxLng = INT_MIN;
     
-    BOOL foundMinLat = NO;
-    BOOL foundMinLng = NO;
-    BOOL foundMaxLat = NO;
-    BOOL foundMaxLng = NO;
+    bool foundMinLat = false;
+    bool foundMinLng = false;
+    bool foundMaxLat = false;
+    bool foundMaxLng = false;
     
     for (NSObject<MKAnnotation>* annotation in annotations)
     {
         CLLocationDegrees lat = annotation.coordinate.latitude;
         CLLocationDegrees lng = annotation.coordinate.longitude;
+        if (lat != 0.0 || lng!= 0.0)
+		{
+			if (lat < minLat)
+			{
+				minLat = lat;
+				foundMinLat = true;
+			}
         
-        if (lat < minLat)
-        {
-            minLat = lat;
-            foundMinLat = YES;
-        }
+			if (lat > maxLat)
+			{
+				maxLat = lat;
+				foundMaxLat = true;
+			}
         
-        if (lat > maxLat)
-        {
-            maxLat = lat;
-            foundMaxLat = YES;
-        }
+			if (lng < minLng)
+			{
+				minLng = lng;
+				foundMinLng = true;
+			}
         
-        if (lng < minLng)
-        {
-            minLng = lng;
-            foundMinLng = YES;
-        }
-        
-        if (lng > maxLng)
-        {
-            maxLng = lng;
-            foundMaxLng = YES;
-        }
+			if (lng > maxLng)
+			{
+				maxLng = lng;
+				foundMaxLng = true;
+			}
+		}
     }
     
     if (foundMinLat && foundMinLng && foundMaxLat && foundMaxLng)
@@ -58,11 +60,11 @@
         (*boundingBox).center.longitude = minLng + ((maxLng - minLng) / 2.0f);
         (*boundingBox).span.latitudeDelta = fabs(maxLat - minLat);
         (*boundingBox).span.longitudeDelta = fabs(maxLng - minLng);
-        return YES;
+        return true;
     }
     else
     {
-        return NO;
+        return false;
     }
 }
 
