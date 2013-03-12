@@ -1,10 +1,13 @@
 //
 //  UUMapView.h
-//  ZDaySurvivor
+//  Useful Utilities - MKMapView extensions
 //
 //  Created by Jonathan on 3/4/13.
-//  Copyright (c) 2013 3Jacks Software. All rights reserved.
 //
+//	License:
+//  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
+//
+//  Contact: @cheesemaker or jon@threejacks.com
 
 #import <MapKit/MapKit.h>
 

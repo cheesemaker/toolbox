@@ -3,8 +3,11 @@
 //  Useful Utilities - UIImage extensions
 //
 //  Created by Jonathan on 3/11/13.
-//  Copyright (c) 2013 Three Jacks Software. All rights reserved.
 //
+//	License:
+//  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
+//
+//  Contact: @cheesemaker or jon@threejacks.com
 
 #import <Foundation/Foundation.h>
 
