@@ -8,5 +8,7 @@ almost every day and literally on every project I work on. Feel free to shoot me
 I love hearing from people.
 
 -Jonathan Hays
+
 @cheesemaker on ADN and Twitter
+
 jon@threejacks.com
