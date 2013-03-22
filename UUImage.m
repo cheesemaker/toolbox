@@ -17,7 +17,7 @@
 
 @implementation UIImage (UUFramework)
 
-- (UIImage*) cropToSize:(CGSize)targetSize
+- (UIImage*) uuCropToSize:(CGSize)targetSize
 {
     UIGraphicsBeginImageContext(targetSize); // this will crop
 
@@ -36,7 +36,7 @@
     return newImage;
 }
 
-- (UIImage*) scaleToSize:(CGSize)targetSize
+- (UIImage*) uuScaleToSize:(CGSize)targetSize
 {
     UIImage *newImage = nil;
     
@@ -138,7 +138,7 @@
     return newImage;
 }
 
--(UIImage*) scaleAndCropToSize:(CGSize)targetSize
+-(UIImage*) uuScaleAndCropToSize:(CGSize)targetSize
 {
     CGFloat deviceScale = [[UIScreen mainScreen] scale];
     UIImage *sourceImage = self;

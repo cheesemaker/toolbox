@@ -13,9 +13,9 @@
 
 @interface UIImage (UUFramework)
 
-- (UIImage*) scaleToSize:(CGSize)targetSize;
-- (UIImage*) scaleAndCropToSize:(CGSize)targetSize;
-- (UIImage*) cropToSize:(CGSize)targetSize;
+- (UIImage*) uuScaleToSize:(CGSize)targetSize;
+- (UIImage*) uuScaleAndCropToSize:(CGSize)targetSize;
+- (UIImage*) uuCropToSize:(CGSize)targetSize;
 
 - (UIImage*) uuScaleToWidth:(CGFloat)width;
 
