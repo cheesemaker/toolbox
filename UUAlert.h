@@ -2,8 +2,6 @@
 //  UUAlert.h
 //  Useful Utilities - UIAlertView extensions
 //
-//  Copyright (c) 2011 Three Jacks Software, Inc.
-//
 //	License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
