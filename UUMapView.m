@@ -13,7 +13,7 @@
 
 @implementation MKMapView (UUFramework)
 
-+ (bool) findBoundingBox:(NSArray*)annotations bounds:(MKCoordinateRegion*)boundingBox
++ (bool) uuFindBoundingBox:(NSArray*)annotations bounds:(MKCoordinateRegion*)boundingBox
 {
     CLLocationDegrees minLat = INT_MAX;
     CLLocationDegrees maxLat = INT_MIN;
@@ -71,10 +71,10 @@
     }
 }
 
-- (void) zoomToAnnotations:(bool)animated
+- (void) uuZoomToAnnotations:(bool)animated
 {
 	MKCoordinateRegion region;
-	if ([MKMapView findBoundingBox:self.annotations bounds:&region])
+	if ([MKMapView uuFindBoundingBox:self.annotations bounds:&region])
 	{
 		region = [self regionThatFits:region];
 		[self setRegion:region animated:animated];

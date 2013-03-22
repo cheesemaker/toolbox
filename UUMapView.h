@@ -12,5 +12,5 @@
 #import <MapKit/MapKit.h>
 
 @interface MKMapView (UUFramework)
-	- (void) zoomToAnnotations:(bool)animated;
+	- (void) uuZoomToAnnotations:(bool)animated;
 @end
