@@ -9,70 +9,116 @@
 
 #import "UUTextField.h"
 
-@implementation UITextField(UUFramework)
+//Implementaiont Comment:
+//Unfortunately, while both UITextField and UITextView implement the UITextInput protocol the nearest shared base class they have
+//is UIView so we create a private category extension for UIView that is only for use with UITextField and UITextView.
+@interface UIView (UUFramework_TextNavigation_Private)
+@end
 
-- (NSRange) uuSelectedRange
+@implementation UIView (UUFramework_TextNavigation_Private)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Range manipulation on a UITextInput
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
++ (NSRange) uuSelectedRange:(UIView<UITextInput>*)object
 {
-    UITextPosition* beginning = self.beginningOfDocument;
+    UITextPosition* beginning = object.beginningOfDocument;
 
-    UITextRange* selectedRange = self.selectedTextRange;
+    UITextRange* selectedRange = object.selectedTextRange;
     UITextPosition* selectionStart = selectedRange.start;
     UITextPosition* selectionEnd = selectedRange.end;
 
-    const NSInteger location = [self offsetFromPosition:beginning toPosition:selectionStart];
-    const NSInteger length = [self offsetFromPosition:selectionStart toPosition:selectionEnd];
+    const NSInteger location = [object offsetFromPosition:beginning toPosition:selectionStart];
+    const NSInteger length = [object offsetFromPosition:selectionStart toPosition:selectionEnd];
 
     return NSMakeRange(location, length);
 }
 
-- (void) uuSetSelectedRange:(NSRange)range
++ (void) uuSetSelectedRange:(NSRange)range onTextInput:(UIView<UITextInput>*)object
 {
-    UITextPosition* beginning = self.beginningOfDocument;
+    UITextPosition* beginning = object.beginningOfDocument;
 
-    UITextPosition* startPosition = [self positionFromPosition:beginning offset:range.location];
-    UITextPosition* endPosition = [self positionFromPosition:beginning offset:range.location + range.length];
-    UITextRange* selectionRange = [self textRangeFromPosition:startPosition toPosition:endPosition];
+    UITextPosition* startPosition = [object positionFromPosition:beginning offset:range.location];
+    UITextPosition* endPosition = [object positionFromPosition:beginning offset:range.location + range.length];
+    UITextRange* selectionRange = [object textRangeFromPosition:startPosition toPosition:endPosition];
 
-    [self setSelectedTextRange:selectionRange];
+    [object setSelectedTextRange:selectionRange];
 }
 
-- (void) uuAdvanceOneLetter
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UITextInput manipulation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
++ (void) uuTextInputAdvanceOneLetter:(UIView<UITextInput>*)object
 {
-	NSRange selection = [self uuSelectedRange];
+	NSRange selection = [UIView uuSelectedRange:object];
 	NSUInteger end = selection.location + selection.length;
-	if (end < self.text.length)
+
+	//If there is a selection, just go to the right side of the selection
+	if (selection.length)
+	{
+		selection.location = end;
+		selection.length = 0;
+		[UIView uuSetSelectedRange:selection onTextInput:object];
+		return;
+	}	
+	
+	NSString* text = nil;
+	if ([object respondsToSelector:@selector(text)])
+		text = [object performSelector:@selector(text)];
+		
+	if (end < text.length)
 	{
 		end++;
 		selection.location = end;
 		selection.length = 0;
-		[self uuSetSelectedRange:selection];
+		[UIView uuSetSelectedRange:selection onTextInput:object];
 	}
 }
 
-- (void) uuBackOneLetter
++ (void) uuTextInputBackOneLetter:(UIView<UITextInput>*)object
 {
-	NSRange selection = [self uuSelectedRange];
+	NSRange selection = [UIView uuSelectedRange:object];
 	NSUInteger end = selection.location + selection.length;
-	if (end > 0)
+	if (selection.length > 0)
+	{
+		selection.length = 0;
+		[UIView uuSetSelectedRange:selection onTextInput:object];
+	}
+	else if (end > 0)
 	{
 		end--;
 		selection.location = end;
 		selection.length = 0;
-		[self uuSetSelectedRange:selection];
+		[UIView uuSetSelectedRange:selection onTextInput:object];
 	}
 }
 
-- (void) uuAdvanceOneWord
++ (void) uuTextInputAdvanceOneWord:(UIView<UITextInput>*)object
 {
 	NSCharacterSet* characterSet = [NSCharacterSet whitespaceCharacterSet];
-	NSRange selection = [self uuSelectedRange];
+	NSRange selection = [UIView uuSelectedRange:object];
 	NSUInteger end = selection.location + selection.length;
+	
+	//If there is a selection, just go to the right side of the selection
+	if (selection.length)
+	{
+		selection.location = end;
+		selection.length = 0;
+		[UIView uuSetSelectedRange:selection onTextInput:object];
+		return;
+	}
 
-	NSScanner* scanner = [NSScanner scannerWithString:self.text];
+	NSString* text = nil;
+	if ([object respondsToSelector:@selector(text)])
+		text = [object performSelector:@selector(text)];
+
+	NSScanner* scanner = [NSScanner scannerWithString:text];
 	[scanner setScanLocation:0];
 	
-	NSUInteger location = self.text.length;
-	NSArray* words = [self.text componentsSeparatedByCharactersInSet:characterSet];
+	NSUInteger location = text.length;
+	NSArray* words = [text componentsSeparatedByCharactersInSet:characterSet];
 	for (NSString* word in words)
 	{
 		if ([scanner scanUpToString:word intoString:nil])
@@ -88,19 +134,32 @@
 	
 	selection.location = location;
 	selection.length = 0;
-	[self uuSetSelectedRange:selection];
+	[UIView uuSetSelectedRange:selection onTextInput:object];
 }
 
-- (void) uuBackOneWord
++ (void) uuTextInputBackOneWord:(UIView<UITextInput>*)object
 {
 	NSCharacterSet* characterSet = [NSCharacterSet whitespaceCharacterSet];
-	NSRange selection = [self uuSelectedRange];
+	NSRange selection = [UIView uuSelectedRange:object];
+	
+	//If there is a selection, just go to the left side of the selection
+	if (selection.length)
+	{
+		selection.length = 0;
+		[UIView uuSetSelectedRange:selection onTextInput:object];
+		return;
+	}
+	
 	NSUInteger end = selection.location + selection.length;
 
-	NSScanner* scanner = [NSScanner scannerWithString:self.text];
+	NSString* text = nil;
+	if ([object respondsToSelector:@selector(text)])
+		text = [object performSelector:@selector(text)];
+
+	NSScanner* scanner = [NSScanner scannerWithString:text];
 	[scanner setScanLocation:0];
 	NSUInteger begin = 0;
-	NSArray* words = [self.text componentsSeparatedByCharactersInSet:characterSet];
+	NSArray* words = [text componentsSeparatedByCharactersInSet:characterSet];
 	for (NSString* word in words)
 	{
 		if ([scanner scanUpToString:word intoString:nil])
@@ -113,33 +172,102 @@
 	
 	selection.location = begin;
 	selection.length = 0;
-	[self uuSetSelectedRange:selection];
+	[UIView uuSetSelectedRange:selection onTextInput:object];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UITextInput gesture creation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
++ (void) uuAddGestureNavigationToTextInput:(UIView<UITextInput>*)object
+{
+	UISwipeGestureRecognizer* swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuBackOneLetter)];
+	swipeHandler.direction = UISwipeGestureRecognizerDirectionLeft;
+	[object.superview addGestureRecognizer:swipeHandler];
+	[swipeHandler release];
+	
+	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuAdvanceOneLetter)];
+	swipeHandler.direction = UISwipeGestureRecognizerDirectionRight;
+	[object.superview addGestureRecognizer:swipeHandler];
+	[swipeHandler release];
+
+	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuBackOneWord)];
+	swipeHandler.numberOfTouchesRequired = 2;
+	swipeHandler.direction = UISwipeGestureRecognizerDirectionLeft;
+	[object.superview addGestureRecognizer:swipeHandler];
+	[swipeHandler release];
+	
+	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuAdvanceOneWord)];
+	swipeHandler.numberOfTouchesRequired = 2;
+	swipeHandler.direction = UISwipeGestureRecognizerDirectionRight;
+	[object.superview addGestureRecognizer:swipeHandler];
+	[swipeHandler release];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UITextField implementation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@implementation UITextField (UUFramework)
+
+- (void) uuBackOneLetter
+{
+	[UIView uuTextInputBackOneLetter:self];
+}
+
+- (void) uuAdvanceOneLetter
+{
+	[UIView uuTextInputAdvanceOneLetter:self];
+}
+
+- (void) uuBackOneWord
+{
+	[UIView uuTextInputBackOneWord:self];
+}
+
+- (void) uuAdvanceOneWord
+{
+	[UIView uuTextInputAdvanceOneWord:self];
 }
 
 - (void) uuAddGestureNavigation
 {
-	UISwipeGestureRecognizer* swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(uuBackOneLetter)];
-	swipeHandler.direction = UISwipeGestureRecognizerDirectionLeft;
-	[self.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
-	
-	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(uuAdvanceOneLetter)];
-	swipeHandler.direction = UISwipeGestureRecognizerDirectionRight;
-	[self.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
-
-	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(uuBackOneWord)];
-	swipeHandler.numberOfTouchesRequired = 2;
-	swipeHandler.direction = UISwipeGestureRecognizerDirectionLeft;
-	[self.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
-	
-	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(uuAdvanceOneWord)];
-	swipeHandler.numberOfTouchesRequired = 2;
-	swipeHandler.direction = UISwipeGestureRecognizerDirectionRight;
-	[self.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
+	[UIView uuAddGestureNavigationToTextInput:self];
 }
 
+@end
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UITextView implementation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@implementation UITextView (UUFramework)
+
+- (void) uuBackOneLetter
+{
+	[UIView uuTextInputBackOneLetter:self];
+}
+
+- (void) uuAdvanceOneLetter
+{
+	[UIView uuTextInputAdvanceOneLetter:self];
+}
+
+- (void) uuBackOneWord
+{
+	[UIView uuTextInputBackOneWord:self];
+}
+
+- (void) uuAdvanceOneWord
+{
+	[UIView uuTextInputAdvanceOneWord:self];
+}
+
+- (void) uuAddGestureNavigation
+{
+	[UIView uuAddGestureNavigationToTextInput:self];
+}
 
 @end
