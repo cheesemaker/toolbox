@@ -128,12 +128,12 @@
 
 - (void) show:(BOOL)animated
 {
-    [self showWithBounceAnimation];
+    [self showProgressViewWithBounceAnimation];
 }
 
 - (void) hide:(BOOL)animated
 {
-	[self hideWithBounceAnimation];
+	[self hideProgressViewWithBounceAnimation];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
