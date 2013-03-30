@@ -128,7 +128,7 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 @implementation UIAlertView (UUFramework)
 
-+ (void) uuShowAlertWithTitle:(NSString *)alertTitle
++ (void) _uuShowAlertWithTitle:(NSString *)alertTitle
                     message:(NSString *)alertMessage 
                    delegate:(id <UIAlertViewDelegate>)delegate
 {
@@ -150,7 +150,7 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
           completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
     UIAlertViewBlockDelegate* delegate = [[[UIAlertViewBlockDelegate alloc] initWithBlock:completionHandler] autorelease];
-    [UIAlertView uuShowAlertWithTitle:alertTitle message:alertMessage delegate:delegate];
+    [UIAlertView _uuShowAlertWithTitle:alertTitle message:alertMessage delegate:delegate];
 }
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler buttonTitles:(NSString *)defaultButtonTitle, ...
