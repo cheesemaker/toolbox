@@ -190,11 +190,6 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 	return self;
 }
 
-+ (id)uuOkCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
-{
-	return [[[self alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"Ok", nil] autorelease];
-}
-
 + (id)uuOneButtonAlert:(NSString *)title message:(NSString *)message button:(NSString*)button completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
 	return [[[self alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:button, nil] autorelease];
