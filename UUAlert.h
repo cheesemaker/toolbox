@@ -11,17 +11,20 @@
 
 @interface UIAlertView (UUFramework)
 
-+ (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage 
-					delegate:(id <UIAlertViewDelegate>)delegate;
-
-+ (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage
+//Show a simple one button alert
++ (void) uuShowAlertWithTitle:(NSString*)alertTitle
+                    message:(NSString*)alertMessage
+					buttonTitle:(NSString*)buttonTitle
 					completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
 
-- (id)initWithTitle:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler buttonTitles:(NSString *)defaultButtonTitle, ...;
+//Variadic constructor for N number of buttons
+- (id)initWithTitle:(NSString *)title
+					message:(NSString *)message
+					completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+					buttonTitles:(NSString *)defaultButtonTitle, ...;
 
-+ (id)uuOkCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
+//Convenience functions
++ (id)uuOKCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
 + (id)uuOneButtonAlert:(NSString *)title message:(NSString *)message button:(NSString*)button completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
 + (id)uuTwoButtonAlert:(NSString *)title message:(NSString *)message buttonOne:(NSString*)buttonOne buttonTwo:(NSString*)buttonTwo completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
 

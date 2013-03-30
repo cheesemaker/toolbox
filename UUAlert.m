@@ -9,21 +9,16 @@
 
 #import "UUAlert.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UIAlertViewDelegateQueue
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @interface UIAlertViewDelegateQueue : NSObject
-
+	@property (nonatomic, retain) NSMutableArray* queue;
 @end
 
 static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
-@interface UIAlertViewDelegateQueue ()
-
-@property (nonatomic, retain) NSMutableArray* queue;
-
-@end
-
 @implementation UIAlertViewDelegateQueue
-
-@synthesize queue = _queue;
 
 - (id) init
 {
@@ -71,21 +66,18 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 @end
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UIAlertViewBlockDelegate
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @interface UIAlertViewBlockDelegate : NSObject<UIAlertViewDelegate>
-
-- (id) initWithBlock:(void (^)(NSInteger buttonIndex))completionHandler;
-
+	- (id) initWithBlock:(void (^)(NSInteger buttonIndex))completionHandler;
+	@property (nonatomic, copy) void (^blocksCompletionHandler)(NSInteger buttonIndex);
 @end
 
-@interface UIAlertViewBlockDelegate ()
-
-@property (nonatomic, copy) void (^blocksCompletionHandler)(NSInteger buttonIndex);
-
-@end
 
 @implementation UIAlertViewBlockDelegate
-
-@synthesize blocksCompletionHandler;
 
 - (id) initWithBlock:(void (^)(NSInteger buttonIndex))completionHandler
 {
@@ -125,32 +117,19 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 @end
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - UIAlertView (UUFramework)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation UIAlertView (UUFramework)
 
 + (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage 
-                   delegate:(id <UIAlertViewDelegate>)delegate
+                    message:(NSString *)alertMessage
+					buttonTitle:(NSString*)buttonTitle
+					completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-
-    UIAlertView* alert = [[[UIAlertView alloc] initWithTitle:alertTitle
-                                                    message:alertMessage
-                                                   delegate:delegate 
-                                          cancelButtonTitle:nil
-                                          otherButtonTitles:@"OK", nil] autorelease];
-    //    alert.title = alertTitle;
-    //    alert.message = alertMessage;
-    //    alert.delegate = delegate;
-    
-    [alert show];  
-}
-
-+ (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage 
-          completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
-{
-    UIAlertViewBlockDelegate* delegate = [[[UIAlertViewBlockDelegate alloc] initWithBlock:completionHandler] autorelease];
-    [UIAlertView uuShowAlertWithTitle:alertTitle message:alertMessage delegate:delegate];
+	UIAlertView* alert = [UIAlertView uuOneButtonAlert:alertTitle message:alertMessage button:buttonTitle completionHandler:completionHandler];
+	[alert show];
 }
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler buttonTitles:(NSString *)defaultButtonTitle, ...
@@ -181,9 +160,9 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 	return self;
 }
 
-+ (id)uuOkCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
++ (id)uuOKCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"Ok", nil] autorelease];
+	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"OK", nil] autorelease];
 }
 
 + (id)uuOneButtonAlert:(NSString *)title message:(NSString *)message button:(NSString*)button completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
