@@ -159,7 +159,7 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 			completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
     UIAlertViewBlockDelegate* delegate = [[[UIAlertViewBlockDelegate alloc] initWithBlock:completionHandler] autorelease];
-    [UIAlertView _uuShowAlertWithTitle:alertTitle message:alertMessage buttonTitle:buttonTitle delegate:delegate];
+    [self _uuShowAlertWithTitle:alertTitle message:alertMessage buttonTitle:buttonTitle delegate:delegate];
 }
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler buttonTitles:(NSString *)defaultButtonTitle, ...
@@ -192,17 +192,17 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 + (id)uuOkCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"Ok", nil] autorelease];
+	return [[[self alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"Ok", nil] autorelease];
 }
 
 + (id)uuOneButtonAlert:(NSString *)title message:(NSString *)message button:(NSString*)button completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:button, nil] autorelease];
+	return [[[self alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:button, nil] autorelease];
 }
 
 + (id)uuTwoButtonAlert:(NSString *)title message:(NSString *)message cancelButton:(NSString*)cancelButton otherButton:(NSString*)otherButton completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:cancelButton, otherButton, nil] autorelease];
+	return [[[self alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:cancelButton, otherButton, nil] autorelease];
 }
 
 @end
