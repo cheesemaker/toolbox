@@ -191,9 +191,9 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:button, nil] autorelease];
 }
 
-+ (id)uuTwoButtonAlert:(NSString *)title message:(NSString *)message buttonOne:(NSString*)buttonOne buttonTwo:(NSString*)buttonTwo completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
++ (id)uuTwoButtonAlert:(NSString *)title message:(NSString *)message cancelButton:(NSString*)cancelButton otherButton:(NSString*)otherButton completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:buttonOne, buttonTwo, nil] autorelease];
+	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:cancelButton, otherButton, nil] autorelease];
 }
 
 @end
