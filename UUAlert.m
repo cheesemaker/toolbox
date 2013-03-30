@@ -149,6 +149,13 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 + (void) uuShowAlertWithTitle:(NSString *)alertTitle
                       message:(NSString *)alertMessage
 				  buttonTitle:(NSString *)buttonTitle
+{
+    [self _uuShowAlertWithTitle:alertTitle message:alertMessage buttonTitle:buttonTitle delegate:nil];
+}
+
++ (void) uuShowAlertWithTitle:(NSString *)alertTitle
+                      message:(NSString *)alertMessage
+				  buttonTitle:(NSString *)buttonTitle
 			completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
     UIAlertViewBlockDelegate* delegate = [[[UIAlertViewBlockDelegate alloc] initWithBlock:completionHandler] autorelease];

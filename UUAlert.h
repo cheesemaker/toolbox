@@ -13,6 +13,10 @@
 
 + (void) uuShowAlertWithTitle:(NSString *)alertTitle
                       message:(NSString *)alertMessage
+				  buttonTitle:(NSString *)buttonTitle;
+
++ (void) uuShowAlertWithTitle:(NSString *)alertTitle
+                      message:(NSString *)alertMessage
 				  buttonTitle:(NSString *)buttonTitle
             completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
 
