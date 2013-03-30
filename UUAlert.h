@@ -12,8 +12,9 @@
 @interface UIAlertView (UUFramework)
 
 + (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage
-					completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
+                      message:(NSString *)alertMessage
+				  buttonTitle:(NSString *)buttonTitle
+            completionHandler:(void (^)(NSInteger buttonIndex))completionHandler;
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler buttonTitles:(NSString *)defaultButtonTitle, ...;
 

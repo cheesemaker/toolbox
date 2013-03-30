@@ -129,15 +129,16 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 @implementation UIAlertView (UUFramework)
 
 + (void) _uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage 
-                   delegate:(id <UIAlertViewDelegate>)delegate
+                       message:(NSString *)alertMessage
+				   buttonTitle:(NSString *)buttonTitle
+                      delegate:(id <UIAlertViewDelegate>)delegate
 {
 
     UIAlertView* alert = [[[UIAlertView alloc] initWithTitle:alertTitle
                                                     message:alertMessage
                                                    delegate:delegate 
                                           cancelButtonTitle:nil
-                                          otherButtonTitles:@"OK", nil] autorelease];
+                                          otherButtonTitles:buttonTitle, nil] autorelease];
     //    alert.title = alertTitle;
     //    alert.message = alertMessage;
     //    alert.delegate = delegate;
@@ -146,11 +147,12 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 }
 
 + (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage 
-          completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+                      message:(NSString *)alertMessage
+				  buttonTitle:(NSString *)buttonTitle
+			completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
     UIAlertViewBlockDelegate* delegate = [[[UIAlertViewBlockDelegate alloc] initWithBlock:completionHandler] autorelease];
-    [UIAlertView _uuShowAlertWithTitle:alertTitle message:alertMessage delegate:delegate];
+    [UIAlertView _uuShowAlertWithTitle:alertTitle message:alertMessage buttonTitle:buttonTitle delegate:delegate];
 }
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler buttonTitles:(NSString *)defaultButtonTitle, ...
