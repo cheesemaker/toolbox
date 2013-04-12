@@ -1,12 +1,15 @@
 //
 //  UUDevice.m
-//  Useful Utilities - UIDevice extensions
-//
-//  Created by Jonathan on 1/27/13.
+//		Apple has announced it will stop accepting Apps that use the old UIDevice uniqueIdentifier aka UDID. This is a drop in replacement.
+//		On iOS 6.0.1 and greater, it will use the new identifierForVendor but for previous OS versions it will create a unique identifier
+//		and persist it using user defaults and the Pasteboard which will allow it to survive App deletions, reboots and OS upgrades.
 //
 //	License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
+//	Questions/comments/complaints:
+//		contact: @cheesemaker or jon@threejacks.com
+
 
 #import "UUDevice.h"
 
@@ -84,6 +87,20 @@
 - (NSString*) uuUniqueIdentifier
 {
 	UIDevice* device = [UIDevice currentDevice];
+
+	// Work-around for: http://www.openradar.me/13555259
+	static bool isBuggyVersion = false;
+	static bool isBuggyVersionInitialized = false;
+	if (!isBuggyVersionInitialized)
+	{
+		static NSString* buggyVersion = @"6.0";
+		isBuggyVersionInitialized = true;
+		isBuggyVersion = [[device systemVersion] compare:buggyVersion options:NSNumericSearch] == NSOrderedSame;
+	}
+	if (isBuggyVersion)
+		return [device uuUniqueIdentifierOS5];
+	// End of work-around
+
 	if ([device respondsToSelector:@selector(identifierForVendor)])
 	{
 		NSUUID* uuid = [device identifierForVendor];
