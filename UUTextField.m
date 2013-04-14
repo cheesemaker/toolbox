@@ -248,26 +248,31 @@
 - (void) uuBackOneLetter
 {
 	[UIView uuTextInputBackOneLetter:self];
+	[self scrollRangeToVisible:self.selectedRange];
 }
 
 - (void) uuAdvanceOneLetter
 {
 	[UIView uuTextInputAdvanceOneLetter:self];
+	[self scrollRangeToVisible:self.selectedRange];
 }
 
 - (void) uuBackOneWord
 {
 	[UIView uuTextInputBackOneWord:self];
+	[self scrollRangeToVisible:self.selectedRange];
 }
 
 - (void) uuAdvanceOneWord
 {
 	[UIView uuTextInputAdvanceOneWord:self];
+	[self scrollRangeToVisible:self.selectedRange];
 }
 
 - (void) uuAddGestureNavigation
 {
 	[UIView uuAddGestureNavigationToTextInput:self];
+	[self scrollRangeToVisible:self.selectedRange];
 }
 
 @end
