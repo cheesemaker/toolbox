@@ -54,22 +54,17 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 
 + (NSData*) uuBundleDataForUrl:(NSURL*)url
 {
-    if (url != nil && url.scheme == nil && url.scheme.length <= 0)
+    if (url != nil)
 	{
-		NSString* extension = [url pathExtension];
-		if (extension)
+		NSString* fileName = [url absoluteString];
+		NSArray* parts = [fileName componentsSeparatedByString:@"/"];
+		if (parts.count)
+			fileName = [parts objectAtIndex:[parts count] - 1];
+			
+		fileName = [[NSBundle mainBundle] pathForResource:fileName ofType:nil];
+		if (fileName)
 		{
-			extension = [extension lowercaseString];
-	
-			//Check to see if the image is in the bundle already if it's a PNG/JPG/JPEG
-			if ([extension isEqualToString:@"png"] || [extension isEqualToString:@"jpg"] || [extension isEqualToString:@"jpeg"])
-			{
-				UIImage* image = [UIImage imageNamed:url.absoluteString];
-				if (image)
-				{
-					return UIImagePNGRepresentation(image);
-				}
-			}
+			return [NSData dataWithContentsOfFile:fileName];
 		}
     }
     
