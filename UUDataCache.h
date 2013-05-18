@@ -17,4 +17,8 @@
 	+ (void)	uuSetCacheExpirationLength:(NSTimeInterval)seconds;
 	+ (void)	uuClearCacheContents;
 
+	//Helpful wrappers for images specifically
+	+ (UIImage*) imageForURL:(NSURL*)url;
+	+ (void) cacheImage:(UIImage*)image forURL:(NSURL*)url;
+
 @end

@@ -9,6 +9,15 @@
 
 #import "UUDataCache.h"
 
+//If you want to provide your own logging mechanism, define UUDebugLog in your .pch
+#ifndef UUDebugLog
+	#ifdef DEBUG
+		#define UUDebugLog NSLog
+	#else
+		#define UUDebugLog(x) (void)(0)
+	#endif
+#endif
+
 @implementation UUDataCache
 
 NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
@@ -80,7 +89,7 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
         NSError* err = nil;
         if (![fm removeItemAtPath:path error:&err])
         {
-            NSLog(@"Failed to delete data at cache path: %@", path);
+            UUDebugLog(@"Failed to delete data at cache path: %@", path);
         }
     }
 	
@@ -136,6 +145,24 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 	path = [[path componentsSeparatedByCharactersInSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]] componentsJoinedByString:@"-"];
 	path = [cacheLocation stringByAppendingPathComponent:path];
 	return path;
+}
+
++ (UIImage*) imageForURL:(NSURL*)url
+{
+    if (url != nil)
+    {
+		NSData* data = [UUDataCache uuDataForURL:url];
+		if (data)
+			return [UIImage imageWithData:data];
+    }
+	
+	return nil;
+}
+	
++ (void) cacheImage:(UIImage*)image forURL:(NSURL*)url
+{
+	NSData* data = UIImagePNGRepresentation(image);
+	[UUDataCache uuCacheData:data forURL:url];
 }
 
 @end
