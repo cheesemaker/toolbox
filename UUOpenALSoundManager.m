@@ -12,6 +12,15 @@
 #import <OpenAL/alc.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+//If you want to provide your own logging mechanism, define UUDebugLog in your .pch
+#ifndef UUDebugLog
+	#ifdef DEBUG
+		#define UUDebugLog NSLog
+	#else
+		#define UUDebugLog(x) (void)(0)
+	#endif
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UUOpenALTools
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,20 +57,20 @@ void* UUGetOpenALAudioData(CFURLRef inFileURL, ALsizei *outDataSize, ALenum *out
 	err = ExtAudioFileOpenURL(inFileURL, &extRef);
 	if (err) 
     { 
-        NSLog(@"ExtAudioFileOpenURL FAILED, Error = %ld", err);
+        UUDebugLog(@"ExtAudioFileOpenURL FAILED, Error = %ld", err);
         goto Exit; 
     }
 	
 	err = ExtAudioFileGetProperty(extRef, kExtAudioFileProperty_FileDataFormat, &propertySize, &format);
 	if (err) 
     { 
-        NSLog(@"ExtAudioFileGetProperty(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %ld", err);
+        UUDebugLog(@"ExtAudioFileGetProperty(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %ld", err);
         goto Exit; 
     }
     
 	if (format.mChannelsPerFrame > 2)  
     { 
-        NSLog(@"Unsupported Format, channel count is greater than stereo");
+        UUDebugLog(@"Unsupported Format, channel count is greater than stereo");
         goto Exit;
     }
     
@@ -79,7 +88,7 @@ void* UUGetOpenALAudioData(CFURLRef inFileURL, ALsizei *outDataSize, ALenum *out
 	err = ExtAudioFileSetProperty(extRef, kExtAudioFileProperty_ClientDataFormat, sizeof(outputFormat), &outputFormat);
 	if(err) 
     { 
-        NSLog(@"ExtAudioFileSetProperty(kExtAudioFileProperty_ClientDataFormat) FAILED, Error = %ld", err);
+        UUDebugLog(@"ExtAudioFileSetProperty(kExtAudioFileProperty_ClientDataFormat) FAILED, Error = %ld", err);
         goto Exit; 
     }
 	
@@ -87,7 +96,7 @@ void* UUGetOpenALAudioData(CFURLRef inFileURL, ALsizei *outDataSize, ALenum *out
 	err = ExtAudioFileGetProperty(extRef, kExtAudioFileProperty_FileLengthFrames, &propertySize, &fileLengthInFrames);
 	if(err) 
     { 
-        NSLog(@"ExtAudioFileGetProperty(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %ld", err);
+        UUDebugLog(@"ExtAudioFileGetProperty(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %ld", err);
         goto Exit; 
     }
 	
@@ -112,7 +121,7 @@ void* UUGetOpenALAudioData(CFURLRef inFileURL, ALsizei *outDataSize, ALenum *out
 		{ 
 			free (data);
 			data = NULL; // make sure to return NULL
-			NSLog(@"ExtAudioFileRead FAILED, Error = %ld", err);
+			UUDebugLog(@"ExtAudioFileRead FAILED, Error = %ld", err);
             goto Exit;
 		}	
 	}
@@ -126,7 +135,7 @@ Exit:
 
 void UUHandleOpenALInterruption(void*	inClientData, UInt32 inInterruptionState)
 {
-    //NSLog(@"State=%ld", inInterruptionState);
+    UUDebugLog(@"State=%ld", inInterruptionState);
 }
 
 void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID, UInt32 inDataSize, const void* inData)
@@ -140,7 +149,7 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
     CFStringRef newRoute;
     OSStatus result = AudioSessionGetProperty(kAudioSessionProperty_AudioRoute, &size, &newRoute);
      
-    NSLog(@"result: %ld Route changed from %@ to %@", result, oldRoute, newRoute);
+    UUDebugLog(@"result: %ld Route changed from %@ to %@", result, oldRoute, newRoute);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,14 +190,14 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
         alGenBuffers(1, &_buffer);
         if((error = alGetError()) != AL_NO_ERROR) 
         {
-            NSLog(@"Error Generating Buffers: %x", error);
+            UUDebugLog(@"Error Generating Buffers: %x", error);
         }
         
         // Create some OpenAL Source Objects
         alGenSources(1, &_source);
         if(alGetError() != AL_NO_ERROR) 
         {
-            NSLog(@"Error generating sources! %x\n", error);
+            UUDebugLog(@"Error generating sources! %x\n", error);
         }
         
         alGetError(); // Clear the error
@@ -200,7 +209,7 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
 
         if((error = alGetError()) != AL_NO_ERROR) 
         {
-            NSLog(@"error loading sound: %x", error);
+            UUDebugLog(@"error loading sound: %x", error);
         }
         
         // use the static buffer data API
@@ -208,7 +217,7 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
         
         if((error = alGetError()) != AL_NO_ERROR) 
         {
-            NSLog(@"error attaching audio to buffer: %x", error);
+            UUDebugLog(@"error attaching audio to buffer: %x", error);
         }		
         
         
@@ -232,7 +241,7 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
         
         if((error = alGetError()) != AL_NO_ERROR) 
         {
-            NSLog(@"Error attaching buffer to source: %x\n", error);
+            UUDebugLog(@"Error attaching buffer to source: %x\n", error);
         }	
         
         alSourcef(_source, AL_GAIN, 1.0f);
@@ -305,19 +314,19 @@ static UUOpenALSoundManager* theSoundManager = nil;
 			result = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(category), &category);
 			if (result) 
             {
-                NSLog(@"Error setting audio session category! %ld\n", result);
+                UUDebugLog(@"Error setting audio session category! %ld\n", result);
             }
             
 			result = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, UUHandleOpenALRouteChanged, self);
 			if (result) 
             {
-                NSLog(@"Couldn't add listener: %ld", result);
+                UUDebugLog(@"Couldn't add listener: %ld", result);
             }
             
 			result = AudioSessionSetActive(true);
 			if (result) 
             {
-                NSLog(@"Error setting audio session active! %ld\n", result);
+                UUDebugLog(@"Error setting audio session active! %ld\n", result);
             }
             
             
@@ -340,7 +349,7 @@ static UUOpenALSoundManager* theSoundManager = nil;
 		}
         else
         {
-            NSLog(@"Error initializing audio session! %ld\n", result);
+            UUDebugLog(@"Error initializing audio session! %ld\n", result);
         }
     }
     
@@ -371,7 +380,7 @@ static UUOpenALSoundManager* theSoundManager = nil;
     OSStatus result = AudioSessionGetProperty(kAudioSessionProperty_OtherAudioIsPlaying, &size, &isPlaying);
     if (result != kAudioSessionNoError) 
     {
-        NSLog(@"Error getting other audio playing property! %ld", result);
+        UUDebugLog(@"Error getting other audio playing property! %ld", result);
     }
     
     return (isPlaying);
