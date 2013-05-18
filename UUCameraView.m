@@ -18,7 +18,7 @@
 //If you want to provide your own logging mechanism, define UUDebugLog in your .pch
 #ifndef UUDebugLog
 	#ifdef DEBUG
-		#define UUDebugLog(x) NSLog(x)
+		#define UUDebugLog NSLog
 	#else
 		#define UUDebugLog(x) (void)(0)
 	#endif
