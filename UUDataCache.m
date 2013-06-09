@@ -12,9 +12,9 @@
 //If you want to provide your own logging mechanism, define UUDebugLog in your .pch
 #ifndef UUDebugLog
 	#ifdef DEBUG
-		#define UUDebugLog NSLog
+		#define UUDebugLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
 	#else
-		#define UUDebugLog(x) (void)(0)
+		#define UUDebugLog(fmt, ...)
 	#endif
 #endif
 
