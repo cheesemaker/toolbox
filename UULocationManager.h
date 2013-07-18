@@ -13,7 +13,7 @@
 
 extern NSString * const UULocationChangedNotification;
 extern NSString * const UULocationNameChangedNotification;
-extern NSString * const UULocationAuthDisabledNotification;
+extern NSString * const UULocationAuthChangedNotification;
 extern NSString * const UULocationErrorNotification;
 
 @interface UULocationManager : NSObject<CLLocationManagerDelegate>
