@@ -11,7 +11,7 @@
 
 NSString * const UULocationChangedNotification = @"UULocationChangedNotification";
 NSString * const UULocationNameChangedNotification = @"UULocationNameChangedNotification";
-NSString * const UULocationAuthDisabledNotification = @"UULocationAuthDisabledNotification";
+NSString * const UULocationAuthChangedNotification = @"UULocationAuthChangedNotification";
 NSString * const UULocationErrorNotification = @"UULocationErrorNotification";
 
 @interface UULocationManager()
@@ -131,10 +131,7 @@ static UULocationManager* theLocationManager = nil;
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if (status == kCLAuthorizationStatusDenied)
-    {
-        [[NSNotificationCenter defaultCenter] postNotificationName:UULocationAuthDisabledNotification object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:UULocationAuthChangedNotification object:@(status)];
 }
 
 - (void) queryLocationName:(CLLocation*)location
