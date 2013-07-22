@@ -143,21 +143,21 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	theDefaultHttpTimeout = timeout;
 }
 
-+ (instancetype) get:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
++ (instancetype) get:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
-    UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryStringArgs];
+    UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments];
     return [self executeRequest:request completionHandler:completionHandler];
 }
 
-+ (instancetype) put:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
++ (instancetype) put:(NSString*)url queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
-    UUHttpClientRequest* request = [UUHttpClientRequest putRequest:url queryArguments:queryStringArgs body:putBody contentType:contentType];
+    UUHttpClientRequest* request = [UUHttpClientRequest putRequest:url queryArguments:queryArguments body:putBody contentType:contentType];
     return [self executeRequest:request completionHandler:completionHandler];
 }
 
-+ (instancetype) post:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
++ (instancetype) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
-    UUHttpClientRequest* request = [UUHttpClientRequest postRequest:url queryArguments:queryStringArgs body:postBody contentType:contentType];
+    UUHttpClientRequest* request = [UUHttpClientRequest postRequest:url queryArguments:queryArguments body:postBody contentType:contentType];
     return [self executeRequest:request completionHandler:completionHandler];
 }
                             
@@ -168,11 +168,11 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     return client;
 }
 
-+ (UUHttpClientResponse*) synchronousGet:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs
++ (UUHttpClientResponse*) synchronousGet:(NSString*)url queryArguments:(NSDictionary*)queryArguments
 {
 	__block UUHttpClientResponse* returnObject = nil;
 	
-	UUHttpClient* client = [UUHttpClient get:url queryStringArgs:queryStringArgs completionHandler:^(UUHttpClientResponse* response)
+	UUHttpClient* client = [UUHttpClient get:url queryArguments:queryArguments completionHandler:^(UUHttpClientResponse* response)
 	{
 		returnObject = response;
 	}];
@@ -185,11 +185,11 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	return returnObject;
 }
 
-+ (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType
++ (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType
 {
 	__block UUHttpClientResponse* returnObject = nil;
 	
-	UUHttpClient* client = [UUHttpClient put:url queryStringArgs:queryStringArgs putBody:putBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
+	UUHttpClient* client = [UUHttpClient put:url queryArguments:queryArguments putBody:putBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
 	{
 		returnObject = response;
 	}];
@@ -202,11 +202,11 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	return returnObject;
 }
 
-+ (UUHttpClientResponse*) synchronousPost:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType
++ (UUHttpClientResponse*) synchronousPost:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType
 {
 	__block UUHttpClientResponse* returnObject = nil;
 	
-	UUHttpClient* client = [UUHttpClient post:url queryStringArgs:queryStringArgs postBody:postBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
+	UUHttpClient* client = [UUHttpClient post:url queryArguments:queryArguments postBody:postBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
 	{
 		returnObject = response;
 	}];

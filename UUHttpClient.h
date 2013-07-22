@@ -6,6 +6,41 @@
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  Contact: @cheesemaker or jon@threejacks.com
+//
+//
+// UUHttpClient is a transactional http wrapper ideal for interfacing with JSON based web services. The system is designed around the concept
+// that for the majority of web transactions you want an actual object back from your URL request.  Whether that is a JSON Dictionary, a UIImage
+// or just a text blob, UUHttpClient minimizes the amount of code you have to write.
+//
+// Usage Example 1:
+//
+//    [UUHttpClient get:@"http://www.myserver.com/somejpeg.jpg" queryStringArgs:nil completionHandler:^(UUHttpClientResponse* response) {
+//         if (!response.httpError) {
+//			    UIImage* image = response.parsedResponse;
+//		        //Do something with the image now!
+//         }
+//    }];
+//
+//
+// Usage Example 2:
+//
+//	UUHttpClientRequest* request = [UUHttpClientRequest getRequest:@"http://www.myserver.com/somepng.png" queryArguments:nil];
+//	request.timeout = 1.0;
+//
+//	UUHttpClient* httpClient = [[UUHttpClient alloc] initWithRequest:request progressDelegate:self];
+//
+//	[httpClient execute:^(UUHttpClientResponse* response) {
+//	    if (!response.httpError) {
+//			UIImage* image = response.parsedResponse;
+//		}
+//	}];
+//
+//
+// Usage Example 3:
+//
+//	UUHttpClientResponse* response = [UUHttpClient synchronouseGet:@"http://www.myserver.com/somejpeg.jpg" queryStringArgs:nil];
+//	UIImage* image = response.parsedResponse;
+//
 
 #import <Foundation/Foundation.h>
 
@@ -77,16 +112,16 @@ typedef enum
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Static verb interface
-+ (instancetype) get:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
-+ (instancetype) put:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
-+ (instancetype) post:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) get:(NSString*)url  queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) put:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 + (instancetype) executeRequest:(UUHttpClientRequest*)request completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Synchronous interface. The returned response contains all relevant information about the transaction
-+ (UUHttpClientResponse*) synchronousGet:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs;
-+ (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType;
-+ (UUHttpClientResponse*) synchronousPost:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType;
++ (UUHttpClientResponse*) synchronousGet:(NSString*)url  queryArguments:(NSDictionary*)queryArguments;
++ (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType;
++ (UUHttpClientResponse*) synchronousPost:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
