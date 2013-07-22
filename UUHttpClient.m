@@ -164,8 +164,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 + (instancetype) executeRequest:(UUHttpClientRequest*)request completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
     UUHttpClient* client = UU_AUTORELEASE([[[self class] alloc] initWithRequest:request progressDelegate:nil]);
-    client.blocksCompletionHandler = completionHandler;
-    [client begin];
+	[client execute:completionHandler];
     return client;
 }
 
@@ -173,7 +172,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 {
 	__block UUHttpClientResponse* returnObject = nil;
 	
-	UUHttpClient* client = [self get:url queryStringArgs:queryStringArgs completionHandler:^(UUHttpClientResponse* response)
+	UUHttpClient* client = [UUHttpClient get:url queryStringArgs:queryStringArgs completionHandler:^(UUHttpClientResponse* response)
 	{
 		returnObject = response;
 	}];
@@ -190,7 +189,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 {
 	__block UUHttpClientResponse* returnObject = nil;
 	
-	UUHttpClient* client = [self put:url queryStringArgs:queryStringArgs putBody:putBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
+	UUHttpClient* client = [UUHttpClient put:url queryStringArgs:queryStringArgs putBody:putBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
 	{
 		returnObject = response;
 	}];
@@ -207,7 +206,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 {
 	__block UUHttpClientResponse* returnObject = nil;
 	
-	UUHttpClient* client = [self post:url queryStringArgs:queryStringArgs postBody:postBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
+	UUHttpClient* client = [UUHttpClient post:url queryStringArgs:queryStringArgs postBody:postBody contentType:contentType completionHandler:^(UUHttpClientResponse* response)
 	{
 		returnObject = response;
 	}];
@@ -239,26 +238,12 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	return self;
 }
 
-- (void) get:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
+- (void) execute:(void (^)(UUHttpClientResponse* response))completionHandler
 {
-    self.clientRequest = [UUHttpClientRequest getRequest:url queryArguments:queryStringArgs];
-    self.blocksCompletionHandler = completionHandler;
-	[self begin];
-}
-
-- (void) put:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
-{
-    self.clientRequest = [UUHttpClientRequest putRequest:url queryArguments:queryStringArgs body:putBody contentType:(NSString*)contentType];
 	self.blocksCompletionHandler = completionHandler;
 	[self begin];
 }
 
-- (void) post:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
-{
-    self.clientRequest = [UUHttpClientRequest postRequest:url queryArguments:queryStringArgs body:postBody contentType:contentType];
-	self.blocksCompletionHandler = completionHandler;
-	[self begin];
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Internals

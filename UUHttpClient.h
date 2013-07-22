@@ -12,6 +12,8 @@
 @protocol UUHttpResponseHandler;
 @protocol UUHttpProgressDelegate;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Currently supported HTTP verbs
 typedef enum
 {
     UUHttpMethodGet,
@@ -19,26 +21,33 @@ typedef enum
     UUHttpMethodPost,
     UUHttpMethodDelete,
     UUHttpMethodHead,
-    
 } UUHttpMethod;
 
-@interface UUHttpClientRequest : NSObject
 
-@property (atomic, strong) NSString* url;
-@property (assign) UUHttpMethod httpMethod;
-@property (atomic, strong) NSDictionary* queryArguments;
-@property (atomic, strong) NSDictionary* headerFields;
-@property (atomic, strong) NSData* body;
-@property (assign) NSTimeInterval timeout;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Construct a UUHttpClientRequest to pass to UUHttpClient
+@interface UUHttpClientRequest : NSObject
 
 - (id) initWithUrl:(NSString*)url;
 
+@property (atomic, strong) NSString*		url;
+@property (atomic, assign) UUHttpMethod		httpMethod;
+@property (atomic, strong) NSDictionary*	queryArguments;
+@property (atomic, strong) NSDictionary*	headerFields;
+@property (atomic, strong) NSData*			body;
+@property (atomic, assign) NSTimeInterval	timeout;
+
+// Static helper functions for the most common cases
 + (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments;
 + (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 + (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 
 @end
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UUHttpClientResponse encapsulates the relevant info for an app to query after a UUHttpClientRequest has completed
 @interface UUHttpClientResponse : NSObject
 
 @property (atomic, strong) NSError*				httpError;
@@ -50,18 +59,19 @@ typedef enum
 
 @end
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UUHttpClient is responsible for taking UUHttpClientRequests and turning them into UUHttpClientResponses
 @interface UUHttpClient : NSObject
 
-- (id) initWithRequest:(UUHttpClientRequest*)request progressDelegate:(NSObject<UUHttpProgressDelegate>*)progressDelegate;
+- (id) initWithRequest:(UUHttpClientRequest*)request progressDelegate:(NSObject<UUHttpProgressDelegate>*)progressDelegate; //progressDelegate can be nil
 
-// Verbs
-- (void) get:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
-- (void) put:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
-- (void) post:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
+// Verb interface
+- (void) execute:(void (^)(UUHttpClientResponse* response))completionHandler;
 - (void) cancel;
 
 @property (atomic, assign) NSObject<UUHttpProgressDelegate>* progressDelegate;
-@property (atomic, assign) NSTimeInterval timeout;
 
 
 
@@ -73,10 +83,11 @@ typedef enum
 + (instancetype) executeRequest:(UUHttpClientRequest*)request completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Synchronous interface. Returns either a constructed object or an NSError.
+// Synchronous interface. The returned response contains all relevant information about the transaction
 + (UUHttpClientResponse*) synchronousGet:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs;
 + (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryStringArgs:(NSDictionary*)queryStringArgs putBody:(NSData*)putBody contentType:(NSString*)contentType;
 + (UUHttpClientResponse*) synchronousPost:(NSString*)url queryStringArgs:(NSDictionary*)queryStringArgs postBody:(NSData*)postBody contentType:(NSString*)contentType;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Static configuration interface
@@ -88,10 +99,7 @@ typedef enum
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Delegates
-
-
-//Register response handlers to construct objects from mime types
+// Register response handlers to construct objects from mime types
 @protocol UUHttpResponseHandler <NSObject>
 @required
     - (NSArray*) supportedMimeTypes;
@@ -100,7 +108,8 @@ typedef enum
 
 
 
-//Delegate to update progress of downloads for things like progress bars, etc.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Delegate to update progress of downloads for things like progress bars, etc.
 @protocol UUHttpProgressDelegate <NSObject>
 @optional
 	- (void) downloadResponseReceived:(UUHttpClient*)client expectedResponseSize:(NSInteger)expectedResponseSize;
