@@ -15,6 +15,8 @@ extern NSString * const kUUContentTypeApplicationJson;
 extern NSString * const kUUContentTypeTextJson;
 extern NSString * const kUUContentTypeTextHtml;
 extern NSString * const kUUContentTypeBinary;
+extern NSString * const kUUContentTypeImagePng;
+extern NSString * const kUUContentTypeImageJpeg;
 
 @interface UUTextResponseHandler : NSObject<UUHttpResponseHandler>
 
@@ -25,5 +27,9 @@ extern NSString * const kUUContentTypeBinary;
 @end
 
 @interface UUJsonResponseHandler : NSObject<UUHttpResponseHandler>
+
+@end
+
+@interface UUImageResponseHandler : NSObject<UUHttpResponseHandler>
 
 @end

@@ -31,6 +31,8 @@ NSString * const kUUContentTypeApplicationJson  = @"application/json";
 NSString * const kUUContentTypeTextJson         = @"text/json";
 NSString * const kUUContentTypeTextHtml         = @"text/html";
 NSString * const kUUContentTypeBinary           = @"application/octet-stream";
+NSString * const kUUContentTypeImagePng         = @"image/png";
+NSString * const kUUContentTypeImageJpeg        = @"image/jpeg";
 
 #import "UUHttpClientResponseHandlers.h"
 
@@ -96,3 +98,20 @@ NSString * const kUUContentTypeBinary           = @"application/octet-stream";
 }
 
 @end
+
+#pragma mark - Image Response Handler
+
+@implementation UUImageResponseHandler
+
+- (NSArray*) supportedMimeTypes
+{
+    return @[kUUContentTypeImagePng, kUUContentTypeImageJpeg];
+}
+
+- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
+{
+    return [UIImage imageWithData:rxBuffer];
+}
+
+@end
+
