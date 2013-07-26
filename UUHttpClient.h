@@ -171,3 +171,10 @@ extern NSString * const kUUHttpClientErrorDomain;
 extern NSString * const kUUHttpClientHttpErrorCodeKey;
 extern NSString * const kUUHttpClientHttpErrorMessageKey;
 extern NSString * const kUUHttpClientAppResponseKey;
+
+extern NSString * const kUUContentTypeApplicationJson;
+extern NSString * const kUUContentTypeTextJson;
+extern NSString * const kUUContentTypeTextHtml;
+extern NSString * const kUUContentTypeBinary;
+extern NSString * const kUUContentTypeImagePng;
+extern NSString * const kUUContentTypeImageJpeg;

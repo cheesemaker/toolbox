@@ -29,6 +29,13 @@
 
 #import "UUHttpClient.h"
 
+NSString * const kUUContentTypeApplicationJson  = @"application/json";
+NSString * const kUUContentTypeTextJson         = @"text/json";
+NSString * const kUUContentTypeTextHtml         = @"text/html";
+NSString * const kUUContentTypeBinary           = @"application/octet-stream";
+NSString * const kUUContentTypeImagePng         = @"image/png";
+NSString * const kUUContentTypeImageJpeg        = @"image/jpeg";
+
 NSString * const kUUHttpClientErrorDomain           = @"kUUHttpClientErrorDomain";
 NSString * const kUUHttpClientHttpErrorCodeKey      = @"kUUHttpClientHttpErrorCodeKey";
 NSString * const kUUHttpClientHttpErrorMessageKey   = @"kUUHttpClientHttpErrorMessageKey";
@@ -48,6 +55,23 @@ const NSTimeInterval kUUDefaultHttpTimeout  = 60.0f;
 static NSMutableArray* theSharedRequestQueue;
 static NSMutableDictionary* theResponseHandlers;
 static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Declare the built-in response handlers
+@interface UUTextResponseHandler : NSObject<UUHttpResponseHandler>
+@end
+
+@interface UUBinaryResponseHandler : NSObject<UUHttpResponseHandler>
+@end
+
+@interface UUJsonResponseHandler : NSObject<UUHttpResponseHandler>
+@end
+
+@interface UUImageResponseHandler : NSObject<UUHttpResponseHandler>
+@end
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation UUHttpClientRequest
 
@@ -124,11 +148,21 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 @end
 
+
+
 @implementation UUHttpClient
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Public class Methods
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
++ (void) installDefaultResponseHandlers
+{
+    [UUHttpClient registerResponseHandler:[UUJsonResponseHandler new]];
+    [UUHttpClient registerResponseHandler:[UUTextResponseHandler new]];
+    [UUHttpClient registerResponseHandler:[UUBinaryResponseHandler new]];
+    [UUHttpClient registerResponseHandler:[UUImageResponseHandler new]];
+}
 
 + (void) registerResponseHandler:(NSObject<UUHttpResponseHandler>*)handler
 {
@@ -227,6 +261,11 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 - (id) initWithRequest:(UUHttpClientRequest*)request progressDelegate:(NSObject<UUHttpProgressDelegate>*)progressDelegate
 {
+    //Do a one time install of the default response handlers
+    static bool defaultHandlersInstalled = false;
+    if (!defaultHandlersInstalled)
+        [UUHttpClient installDefaultResponseHandlers];
+    
 	self = [super init];
 	if (self)
 	{
@@ -593,3 +632,88 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 }
 
 @end
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark- Response Handlers
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#pragma mark - Text Response Handler
+@implementation UUTextResponseHandler
+
+- (NSArray*) supportedMimeTypes
+{
+    return @[kUUContentTypeTextHtml];
+}
+
+- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
+{
+    CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) [response textEncodingName]);
+    NSStringEncoding responseEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+    
+    return UU_AUTORELEASE([[NSString alloc] initWithData:rxBuffer encoding:responseEncoding]);
+}
+
+@end
+
+#pragma mark - Binary Response Handler
+@implementation UUBinaryResponseHandler
+
+- (NSArray*) supportedMimeTypes
+{
+    return @[kUUContentTypeBinary];
+}
+
+
+- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
+{
+    return rxBuffer;
+}
+
+@end
+
+#pragma mark - JSON Response Handler
+
+@implementation UUJsonResponseHandler
+
+- (NSArray*) supportedMimeTypes
+{
+    return @[kUUContentTypeApplicationJson, kUUContentTypeTextJson];
+}
+
+- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
+{
+    NSError* err = nil;
+    id obj = [NSJSONSerialization JSONObjectWithData:rxBuffer options:0 error:&err];
+    if (err != nil)
+    {
+        UUDebugLog(@"Error derializing JSON: %@", err);
+        return nil;
+    }
+    
+    if (obj == nil)
+    {
+        UUDebugLog(@"JSON deserialization returned success but a nil object!");
+    }
+    
+    return obj;
+}
+
+@end
+
+#pragma mark - Image Response Handler
+
+@implementation UUImageResponseHandler
+
+- (NSArray*) supportedMimeTypes
+{
+    return @[kUUContentTypeImagePng, kUUContentTypeImageJpeg];
+}
+
+- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
+{
+    return [UIImage imageWithData:rxBuffer];
+}
+
+@end
+
