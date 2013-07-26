@@ -13,7 +13,7 @@
 #pragma mark - UIAlertViewDelegateQueue
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @interface UIAlertViewDelegateQueue : NSObject
-	@property (nonatomic, retain) NSMutableArray* queue;
+@property (nonatomic, retain) NSMutableArray* queue;
 @end
 
 static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
@@ -50,7 +50,7 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 - (void) add:(NSObject<UIAlertViewDelegate>*)client
 {
-    @synchronized(self) 
+    @synchronized(self)
     {
         [self.queue addObject:client];
     }
@@ -58,7 +58,7 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 - (void) remove:(NSObject<UIAlertViewDelegate>*)client
 {
-    @synchronized(self) 
+    @synchronized(self)
     {
         [self.queue removeObject:client];
     }
@@ -72,8 +72,8 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface UIAlertViewBlockDelegate : NSObject<UIAlertViewDelegate>
-	- (id) initWithBlock:(void (^)(NSInteger buttonIndex))completionHandler;
-	@property (nonatomic, copy) void (^blocksCompletionHandler)(NSInteger buttonIndex);
+- (id) initWithBlock:(void (^)(NSInteger buttonIndex))completionHandler;
+@property (nonatomic, copy) void (^blocksCompletionHandler)(NSInteger buttonIndex);
 @end
 
 
@@ -124,9 +124,9 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 @implementation UIAlertView (UUFramework)
 
 + (void) uuShowAlertWithTitle:(NSString *)alertTitle
-                    message:(NSString *)alertMessage
-					buttonTitle:(NSString*)buttonTitle
-					completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+                      message:(NSString *)alertMessage
+                  buttonTitle:(NSString*)buttonTitle
+            completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
 	UIAlertView* alert = [UIAlertView uuOneButtonAlert:alertTitle message:alertMessage button:buttonTitle completionHandler:completionHandler];
 	[alert show];
@@ -162,7 +162,7 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 
 + (id)uuOKCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"OK", nil] autorelease];
+	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:NSLocalizedString(@"Cancel", @""), NSLocalizedString(@"OK", @""), nil] autorelease];
 }
 
 + (id)uuOneButtonAlert:(NSString *)title message:(NSString *)message button:(NSString*)button completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
@@ -174,5 +174,21 @@ static UIAlertViewDelegateQueue* theUIAlertViewDelegateQueue = nil;
 {
 	return [[[UIAlertView alloc] initWithTitle:title message:message completionHandler:completionHandler buttonTitles:buttonOne, buttonTwo, nil] autorelease];
 }
+
++ (void)uuShowOKCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+{
+    [[UIAlertView uuOKCancelAlert:title message:message completionHandler:completionHandler] show];
+}
+
++ (void)uuShowOneButtonAlert:(NSString *)title message:(NSString *)message button:(NSString*)button completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+{
+    [[UIAlertView uuOneButtonAlert:title message:message button:button completionHandler:completionHandler] show];
+}
+
++ (void)uuShowTwoButtonAlert:(NSString *)title message:(NSString *)message buttonOne:(NSString*)buttonOne buttonTwo:(NSString*)buttonTwo completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+{
+    [[UIAlertView uuTwoButtonAlert:title message:message buttonOne:buttonOne buttonTwo:buttonTwo completionHandler:completionHandler] show];
+}
+
 
 @end
