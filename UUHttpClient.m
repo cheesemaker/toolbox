@@ -261,11 +261,6 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 - (id) initWithRequest:(UUHttpClientRequest*)request progressDelegate:(NSObject<UUHttpProgressDelegate>*)progressDelegate
 {
-    //Do a one time install of the default response handlers
-    static bool defaultHandlersInstalled = false;
-    if (!defaultHandlersInstalled)
-        [UUHttpClient installDefaultResponseHandlers];
-    
 	self = [super init];
 	if (self)
 	{
@@ -626,6 +621,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     if (theResponseHandlers == nil)
     {
         theResponseHandlers = [[NSMutableDictionary alloc] init];
+		[UUHttpClient installDefaultResponseHandlers];
     }
     
     return theResponseHandlers;
