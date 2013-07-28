@@ -10,6 +10,7 @@
 //  Contact: @cheesemaker or jon@threejacks.com
 
 #import "UUImage.h"
+#import <ImageIO/ImageIO.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UIImage+UUFramework
@@ -206,6 +207,60 @@
 + (UIImage*) uuMakeStretchableImage:(NSString*)imageName insets:(UIEdgeInsets)insets
 {
     return [[UIImage imageNamed:imageName] resizableImageWithCapInsets:insets];
+}
+
+@end
+
+@implementation UIImage (UUAnimatedGIF)
+
+#if __has_feature(objc_arc)
+    #define UU_BRIDGE(x) (__bridge x)
+#else
+    #define UU_BRIDGE(x) (x)
+#endif
+
++ (NSArray*) uuGIFCreateFrames:(CGImageSourceRef)source count:(int)count
+{
+    NSMutableArray* array = [NSMutableArray array];
+    for (int i = 0; i < count; i++)
+    {
+        CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, nil);
+        UIImage* image = [UIImage imageWithCGImage:imageRef];
+        [array addObject:image];
+        CGImageRelease(imageRef);
+    }
+    
+    return array;
+}
+
++ (NSTimeInterval) uuGIFDuration:(CGImageSourceRef)source frameCount:(int)frameCount
+{
+    NSTimeInterval duration = 0.0;
+    
+    for (int i = 0; i < frameCount; i++)
+    {
+        CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(source, i, NULL);
+        NSDictionary* dictionary = UU_BRIDGE(NSDictionary*)properties;
+        NSDictionary* gifProperties = [dictionary objectForKey:UU_BRIDGE(NSString*)kCGImagePropertyGIFDictionary];
+        NSNumber* number = [gifProperties objectForKey:UU_BRIDGE(NSString*)kCGImagePropertyGIFDelayTime];
+        CFRelease(properties);
+                
+        duration += number.doubleValue;
+    }
+    
+    return duration;
+}
+
++ (UIImage*) uuImageWithGIFData:(NSData*)data
+{
+    CGImageSourceRef imageRef = CGImageSourceCreateWithData(UU_BRIDGE(CFDataRef)data, NULL);
+    int frameCount = CGImageSourceGetCount(imageRef);
+    NSTimeInterval duration = [UIImage uuGIFDuration:imageRef frameCount:frameCount];
+    NSArray* frames = [UIImage uuGIFCreateFrames:imageRef count:frameCount];
+    UIImage* image = [UIImage animatedImageWithImages:frames duration:duration];
+    CFRelease(imageRef);
+    
+    return image;
 }
 
 @end

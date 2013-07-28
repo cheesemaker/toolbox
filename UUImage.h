@@ -22,3 +22,10 @@
 + (UIImage*) uuMakeStretchableImage:(NSString*)imageName insets:(UIEdgeInsets)insets;
 
 @end
+
+
+@interface UIImage (UUAnimatedGIF)
+
++ (UIImage*) uuImageWithGIFData:(NSData*)data;
+
+@end
