@@ -9,10 +9,16 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol UUImageCache
+@required
+	- (id)objectForKey:(id)key;
+	- (void) setObject:(id)object forKey:(id)key;
+@end
+
 @interface UIImageView (UURemoteLoading)
 
-- (void) uuLoadImageFromURL:(NSURL*)url
-               defaultImage:(UIImage*)defaultImage
-        loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler;
+- (void) uuLoadImageFromURL:(NSURL*)url defaultImage:(UIImage*)defaultImage loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler;
+
++ (void) uuSetImageCache:(NSObject*)cache;
 
 @end

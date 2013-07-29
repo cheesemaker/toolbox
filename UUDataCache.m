@@ -147,22 +147,26 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 	return path;
 }
 
-+ (UIImage*) imageForURL:(NSURL*)url
++ (UUDataCache*) sharedCache
 {
-    if (url != nil)
-    {
-		NSData* data = [UUDataCache uuDataForURL:url];
-		if (data)
-			return [UIImage imageWithData:data];
-    }
+	static UUDataCache* theSharedCache = nil;
+	if (!theSharedCache)
+	{
+		theSharedCache = [[UUDataCache alloc] init];
+	}
 	
-	return nil;
+	return theSharedCache;
 }
-	
-+ (void) cacheImage:(UIImage*)image forURL:(NSURL*)url
+
+- (id) objectForKey:(id)key
 {
-	NSData* data = UIImagePNGRepresentation(image);
-	[UUDataCache uuCacheData:data forURL:url];
+	return [UUDataCache uuDataForURL:[NSURL URLWithString:key]];
 }
+
+- (void) setObject:(id)object forKey:(id)key
+{
+	[UUDataCache uuCacheData:object forURL:[NSURL URLWithString:key]];
+}
+
 
 @end

@@ -11,13 +11,86 @@
 #import "UUHttpClient.h"
 #import "UUDataCache.h"
 
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x) (void)(0)
+	#define UU_RETAIN(x)  (void)(0)
+#else
+	#define UU_RELEASE(x) [x release]
+	#define UU_RETAIN(x) [x retain]
+#endif
+
 @implementation UIImageView (UURemoteLoading)
 
-- (void) uuLoadImageFromURL:(NSURL*)url
-               defaultImage:(UIImage*)defaultImage
-        loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
+NSObject<UUImageCache>* theImageCache = nil;
+
++ (NSObject<UUImageCache>*) uuImageCache
 {
-    UIImage* image = [UUDataCache imageForURL:url];
+	if (!theImageCache)
+	{
+		theImageCache = (NSObject<UUImageCache>*)[UUDataCache sharedCache];
+		UU_RETAIN(theImageCache);
+	}
+	
+	return theImageCache;
+}
+
++ (void) uuSetImageCache:(NSObject*)cache
+{
+	if (theImageCache)
+		UU_RELEASE(theImageCache);
+	theImageCache = (NSObject<UUImageCache>*)cache;
+	UU_RETAIN(theImageCache);
+}
+
+- (UIImage*) uuImageFromBundle:(NSURL*)url
+{
+	if (url)
+	{
+		NSString* fileName = [url absoluteString];
+		NSArray* parts = [fileName componentsSeparatedByString:@"/"];
+		if (parts.count)
+			fileName = [parts objectAtIndex:[parts count] - 1];
+        
+        return [UIImage imageNamed:fileName];
+	}
+	
+	return nil;
+}
+
+- (UIImage*) uuImageFromCache:(NSURL*)url
+{
+	NSObject<UUImageCache>* imageCache = [UIImageView uuImageCache];
+	
+	//First look the image up in the bundle
+	UIImage* image = [self uuImageFromBundle:url];
+
+	//If it's not in the bundle, look in the cache
+	if (!image && [imageCache respondsToSelector:@selector(objectForKey:)])
+	{
+		NSData* data = [imageCache objectForKey:[url absoluteString]];
+		return [UIImage imageWithData:data];
+	}
+	
+	return image;
+}
+
+- (void) uuCacheImage:(UIImage*)image forURL:(NSURL*)url
+{
+	NSObject<UUImageCache>* imageCache = [UIImageView uuImageCache];
+	if ([imageCache respondsToSelector:@selector(setObject:forKey:)])
+	{
+		NSData* data = UIImagePNGRepresentation(image);
+		[imageCache setObject:data forKey:[url absoluteString]];
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void) uuLoadImageFromURL:(NSURL*)url defaultImage:(UIImage*)defaultImage loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
+{
+    UIImage* image = [self uuImageFromCache:url];
 	if (image)
 	{
         [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
@@ -33,7 +106,7 @@
              if (response.parsedResponse && [response.parsedResponse isKindOfClass:[UIImage class]])
              {
                  image = (UIImage*)response.parsedResponse;
-                 [UUDataCache cacheImage:image forURL:url];
+				 [self uuCacheImage:image forURL:url];
              }
              
              [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
