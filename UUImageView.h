@@ -1,5 +1,5 @@
 //
-//  UIImageView.h
+//  UUImageView.h
 //  Useful Utilities - UIImageView extensions
 //
 //	License:
