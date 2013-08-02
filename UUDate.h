@@ -61,8 +61,26 @@
 // Date Parsing
 @interface NSDate (UUDateParsing)
 
+// Uses kUURFC3339DateTimeFormatter
+//
+// Example:
+//
+// NSDate* d = [NSDate uuDateFromRfc3339String:@"1776-07-04T12:30:00Z"];
+//
+// or
+//
+// NSDate* d = [NSDate uuDateFromRfc3339String:@"1776-07-04T12:30:00-700"];
+//
 + (NSDate*) uuDateFromRfc3339String:(NSString*)string;
+
+// Uses kUUISO8601DateTimeFormatter
+//
+// Example:
+//
+// NSDate* d = [NSDate uuDateFromIso8601String:@"1776-07-04 12:30:00"];
 + (NSDate*) uuDateFromIso8601String:(NSString*)string;
+
+
 + (NSDate*) uuDateFromString:(NSString*)string withFormat:(NSString*)format;
 
 @end
@@ -73,6 +91,7 @@
 @interface NSDateFormatter (UUDateFormatterCache)
 
 + (NSDateFormatter*) uuCachedDateFormatter:(NSString*)dateFormat;
++ (void) uuSetDefaultTimeZone:(NSTimeZone*)timeZone;
 
 @end
 
