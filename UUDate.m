@@ -140,7 +140,12 @@ NSString * const kUUDayOfWeekDateFormatter          = @"EEEE";
 - (NSString*) uuStringFromDate:(NSString*)formatter timeZone:(NSTimeZone*)timeZone
 {
     NSDateFormatter* df = [NSDateFormatter uuCachedDateFormatter:formatter];
-    df.timeZone = timeZone;
+    
+    if (timeZone)
+    {
+        df.timeZone = timeZone;
+    }
+    
     return [df stringFromDate:self];
 }
 
@@ -290,6 +295,7 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Date Format Caching
 static NSMutableDictionary* theSharedDateFormatterCache = nil;
+static NSTimeZone* theDefaultTimeZone = nil;
 
 @implementation NSDateFormatter (UUDateFormatterCache)
 
@@ -314,8 +320,13 @@ static NSMutableDictionary* theSharedDateFormatterCache = nil;
         [cache setValue:df forKey:dateFormat];
     }
     
+    [df setTimeZone:theDefaultTimeZone];
     return df;
-    
+}
+
++ (void) uuSetDefaultTimeZone:(NSTimeZone*)timeZone
+{
+    theDefaultTimeZone = timeZone;
 }
 
 @end
