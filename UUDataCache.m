@@ -97,6 +97,56 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 	[[NSUserDefaults standardUserDefaults] setObject:nil forKey:path];
 }
 
++ (void) uuPurgeContentAboveSize:(unsigned long long)purgeFileSize
+{
+    NSString* cacheLocation = [self uuCacheLocation];
+	NSFileManager* fm = [NSFileManager defaultManager];
+    
+    NSError* err = nil;
+    NSArray* contents = [fm contentsOfDirectoryAtPath:cacheLocation error:&err];
+    if (!err && contents)
+    {
+        for (NSString* item in contents)
+        {
+            NSString* path = [cacheLocation stringByAppendingPathComponent:item];
+            
+            err = nil;
+            NSDictionary* attrs = [fm attributesOfItemAtPath:path error:&err];
+            if (!err && attrs)
+            {
+                NSNumber* fileSize = [attrs valueForKey:NSFileSize];
+                if (fileSize)
+                {
+                    if (fileSize.unsignedLongLongValue > purgeFileSize)
+                    {
+                        [self uuClearCacheForURL:[NSURL URLWithString:item]];
+                    }
+                }
+            }
+        }
+    }
+}
+
++ (void) uuPurgeExpiredContent
+{
+    NSString* cacheLocation = [self uuCacheLocation];
+	NSFileManager* fm = [NSFileManager defaultManager];
+    
+    NSError* err = nil;
+    NSArray* contents = [fm contentsOfDirectoryAtPath:cacheLocation error:&err];
+    if (!err && contents)
+    {
+        for (NSString* item in contents)
+        {
+            NSURL* url = [NSURL URLWithString:item];
+            if ([self uuIsCacheExpiredForUrl:[self uuCachePathForURL:url]])
+            {
+                [self uuClearCacheForURL:url];
+            }
+        }
+    }
+}
+
 + (NSData*) uuDataForURL:(NSURL*)url
 {
 	NSData* data = nil;
