@@ -16,6 +16,8 @@
     + (void)	uuClearCacheForURL:(NSURL*)url;
 	+ (void)	uuSetCacheExpirationLength:(NSTimeInterval)seconds;
 	+ (void)	uuClearCacheContents;
+    + (void)    uuPurgeExpiredContent;
+    + (void)    uuPurgeContentAboveSize:(unsigned long long)purgeFileSize;
 
 	+ (UUDataCache*) sharedCache;
 
