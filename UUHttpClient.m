@@ -644,8 +644,13 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 - (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
 {
-    CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) [response textEncodingName]);
-    NSStringEncoding responseEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+    NSStringEncoding responseEncoding = NSUTF8StringEncoding;
+    
+    if ([response textEncodingName])
+    {
+        CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) [response textEncodingName]);
+        responseEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+    }
     
     return UU_AUTORELEASE([[NSString alloc] initWithData:rxBuffer encoding:responseEncoding]);
 }
