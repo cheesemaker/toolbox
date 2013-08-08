@@ -268,11 +268,26 @@
 
 - (NSString*) uuFindQueryStringArg:(NSString*)argName
 {
-    NSString* wholeArgName = [NSString stringWithFormat:@"%@=", argName];
-    if ([self rangeOfString:wholeArgName].location != NSNotFound)
+    NSRange queryMarkerRange = [self rangeOfString:@"?"];
+    if (queryMarkerRange.location != NSNotFound)
     {
-        NSString* authError = [[self componentsSeparatedByString:@"="] lastObject];
-        return authError;
+        NSUInteger startIndex = queryMarkerRange.location + 1;
+        if (self.length - startIndex > 0)
+        {
+            NSString* wholeQueryString = [self substringFromIndex:(queryMarkerRange.location + 1)];
+            NSArray* parts = [wholeQueryString componentsSeparatedByString:@"&"];
+            for (NSString* part in parts)
+            {
+                NSArray* subParts = [part componentsSeparatedByString:@"="];
+                if (subParts && subParts.count == 2)
+                {
+                    if ([argName isEqualToString:subParts[0]])
+                    {
+                        return subParts[1];
+                    }
+                }
+            }
+        }
     }
     
     return nil;
