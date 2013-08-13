@@ -95,6 +95,10 @@ NSObject<UUImageCache>* theImageCache = nil;
 	{
         [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
 	}
+    else if (!url)
+    {
+        [self finishLoadFromUrl:defaultImage loadCompleteHandler:loadCompleteHandler];
+    }
     else
     {
         self.image = defaultImage;
