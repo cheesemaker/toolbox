@@ -90,27 +90,34 @@ NSObject<UUImageCache>* theImageCache = nil;
 
 - (void) uuLoadImageFromURL:(NSURL*)url defaultImage:(UIImage*)defaultImage loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
 {
-    UIImage* image = [self uuImageFromCache:url];
-	if (image)
-	{
-        [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
-	}
+    if (!url)
+    {
+        [self finishLoadFromUrl:defaultImage loadCompleteHandler:loadCompleteHandler];
+    }
     else
     {
-        self.image = defaultImage;
-        
-        [UUHttpClient get:url.absoluteString queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
-         {
-             UIImage* image = defaultImage;
-             
-             if (response.parsedResponse && [response.parsedResponse isKindOfClass:[UIImage class]])
+        UIImage* image = [self uuImageFromCache:url];
+        if (image)
+        {
+            [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
+        }
+        else
+        {
+            self.image = defaultImage;
+            
+            [UUHttpClient get:url.absoluteString queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
              {
-                 image = (UIImage*)response.parsedResponse;
-				 [self uuCacheImage:image forURL:url];
-             }
-             
-             [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
-         }];
+                 UIImage* image = defaultImage;
+                 
+                 if (response.parsedResponse && [response.parsedResponse isKindOfClass:[UIImage class]])
+                 {
+                     image = (UIImage*)response.parsedResponse;
+                     [self uuCacheImage:image forURL:url];
+                 }
+                 
+                 [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
+             }];
+        }
     }
 }
 
