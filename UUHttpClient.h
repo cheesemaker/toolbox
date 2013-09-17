@@ -71,6 +71,7 @@ typedef enum
 @property (atomic, strong) NSDictionary*	headerFields;
 @property (atomic, strong) NSData*			body;
 @property (atomic, assign) NSTimeInterval	timeout;
+@property (atomic, assign) BOOL				processMimeTypes;
 
 // Static helper functions for the most common cases
 + (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments;
@@ -106,6 +107,8 @@ typedef enum
 - (void) execute:(void (^)(UUHttpClientResponse* response))completionHandler;
 - (void) cancel;
 
+- (UUHttpClientResponse*) synchronousExecute;
+
 @property (atomic, assign) NSObject<UUHttpProgressDelegate>* progressDelegate;
 
 
@@ -117,12 +120,15 @@ typedef enum
 + (instancetype) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 + (instancetype) executeRequest:(UUHttpClientRequest*)request completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 
++ (instancetype) getImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale completionHandler:(void (^)(NSError* error, UIImage* image))completionHandler;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Synchronous interface. The returned response contains all relevant information about the transaction
 + (UUHttpClientResponse*) synchronousGet:(NSString*)url  queryArguments:(NSDictionary*)queryArguments;
 + (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType;
 + (UUHttpClientResponse*) synchronousPost:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType;
 
++ (UUHttpClientResponse*) synchronousGetImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Static configuration interface

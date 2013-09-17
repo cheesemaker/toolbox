@@ -84,6 +84,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
         self.url = url;
         self.httpMethod = UUHttpMethodGet;
         self.timeout = theDefaultHttpTimeout;
+		self.processMimeTypes = YES;
     }
     
     return self;
@@ -177,6 +178,22 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	theDefaultHttpTimeout = timeout;
 }
 
++ (instancetype) getImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale completionHandler:(void (^)(NSError* error, UIImage* image))completionHandler
+{
+	UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments];
+	request.processMimeTypes = NO;
+	return [self executeRequest:request completionHandler:^(UUHttpClientResponse *response)
+	{
+		UIImage* image = nil;
+		if (response.rawResponse)
+		{
+			image = [UIImage imageWithData:response.rawResponse scale:imageScale];
+		}
+		
+		completionHandler(response.httpError, image);
+	}];
+}
+
 + (instancetype) get:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
     UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments];
@@ -200,6 +217,23 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     UUHttpClient* client = UU_AUTORELEASE([[[self class] alloc] initWithRequest:request progressDelegate:nil]);
 	[client execute:completionHandler];
     return client;
+}
+
++ (UUHttpClientResponse*) synchronousGetImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale
+{
+	UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments];
+	request.processMimeTypes = NO;
+	UUHttpClient* client = UU_AUTORELEASE([[UUHttpClient alloc] initWithRequest:request progressDelegate:nil]);
+	
+	UUHttpClientResponse* response = [client synchronousExecute];
+	if (response.rawResponse)
+	{
+		UIImage* image = [UIImage imageWithData:response.rawResponse scale:imageScale];
+		response.parsedResponse = image;
+		response.rawResponse = nil;
+	}
+	
+	return response;
 }
 
 + (UUHttpClientResponse*) synchronousGet:(NSString*)url queryArguments:(NSDictionary*)queryArguments
@@ -278,6 +312,23 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	[self begin];
 }
 
+- (UUHttpClientResponse*) synchronousExecute
+{
+	__block UUHttpClientResponse* returnObject = nil;
+	
+	[self execute:^(UUHttpClientResponse *response)
+	{
+		returnObject = response;
+	}];
+	
+	while (self.isActive)
+	{
+		[[NSRunLoop currentRunLoop] run];
+	}
+	
+	return returnObject;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Internals
@@ -305,7 +356,6 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 - (void) notifyFailure:(NSError*)error
 {
     UUDebugLog(@"\n\n **** UUHttpClient Received an Error Reply for url **** \n%@\n\n%@\n", self.request.URL, error);
-    self.isActive = NO;
     if (self.blocksCompletionHandler)
     {
 		UUHttpClientResponse* httpResponse = UU_AUTORELEASE([[UUHttpClientResponse alloc] init]);
@@ -314,6 +364,8 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 		httpResponse.httpError = error;
         self.blocksCompletionHandler(httpResponse);
     }
+
+    self.isActive = NO;
 	
 	if (self.progressDelegate && [self.progressDelegate respondsToSelector:@selector(downloadTerminated)])
 		[self.progressDelegate downloadTerminated];
@@ -321,7 +373,6 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 - (void) notifySuccess:(id)response
 {
-	self.isActive = NO;
     if (self.blocksCompletionHandler)
     {
 		UUHttpClientResponse* httpResponse = UU_AUTORELEASE([[UUHttpClientResponse alloc] init]);
@@ -329,8 +380,14 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 		httpResponse.httpResponse = self.response;
 		httpResponse.httpRequest= self.request;		
 		httpResponse.parsedResponse = response;
+		
+		if (!response)
+			httpResponse.rawResponse = self.rxBuffer;
+		
         self.blocksCompletionHandler(httpResponse);
     }
+
+	self.isActive = NO;
 
 	if (self.progressDelegate && [self.progressDelegate respondsToSelector:@selector(downloadTerminated)])
 		[self.progressDelegate downloadTerminated];
@@ -345,6 +402,8 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 		httpResponse.httpError = self.error;
         self.blocksCompletionHandler(httpResponse);
     }
+
+	self.isActive = NO;
 
 	if (self.progressDelegate && [self.progressDelegate respondsToSelector:@selector(downloadTerminated)])
 		[self.progressDelegate downloadTerminated];
@@ -402,13 +461,13 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     }
     else
     {
-        parsedResponse = [self parseResponse];
-        if ([parsedResponse isKindOfClass:[NSError class]])
-        {
-            err = parsedResponse;
-            parsedResponse = nil;
-        }
-        
+		parsedResponse = [self parseResponse];
+		if ([parsedResponse isKindOfClass:[NSError class]])
+		{
+			err = parsedResponse;
+			parsedResponse = nil;
+		}
+		
         if (![self isHttpSuccessResponseCode:httpResponseCode])
         {
             NSMutableDictionary* d = [NSMutableDictionary dictionary];
@@ -434,12 +493,15 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 - (id) parseResponse
 {
-	NSString* mimeType = self.response.MIMEType;
-	UUDebugLog(@"MIMEType: %@", mimeType);
+	if (self.clientRequest.processMimeTypes)
+	{
+		NSString* mimeType = self.response.MIMEType;
+		UUDebugLog(@"MIMEType: %@", mimeType);
 	
-	NSObject<UUHttpResponseHandler>* handler = [[[self class] sharedResponseHandlers] objectForKey:self.response.MIMEType];
-	if (handler)
-		return [handler parseResponse:self.rxBuffer response:self.response forRequest:self.request];
+		NSObject<UUHttpResponseHandler>* handler = [[[self class] sharedResponseHandlers] objectForKey:self.response.MIMEType];
+		if (handler)
+			return [handler parseResponse:self.rxBuffer response:self.response forRequest:self.request];
+	}
 	
 	return nil;
 }
