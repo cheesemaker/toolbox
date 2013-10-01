@@ -90,7 +90,7 @@ NSObject<UUImageCache>* theImageCache = nil;
 
 - (void) uuLoadImageFromURL:(NSURL*)url defaultImage:(UIImage*)defaultImage loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
 {
-    if (!url)
+    if (!url  || url.absoluteString.length <= 0)
     {
         [self finishLoadFromUrl:defaultImage loadCompleteHandler:loadCompleteHandler];
     }
