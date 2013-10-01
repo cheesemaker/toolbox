@@ -37,6 +37,9 @@
 
 - (bool) uuCsvContainsString:(NSString*)token;
 
+// Validates a string against RFC 2822
+- (BOOL) uuValidEmailAddress;
+
 @end
 
 
