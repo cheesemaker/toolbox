@@ -246,7 +246,7 @@
 				
     NSPredicate* emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES[c] %@", emailRegex];
 
-    return [emailTest evaluateWithObject:candidate];
+    return [emailTest evaluateWithObject:self];
 }
 
 @end
