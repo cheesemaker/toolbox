@@ -1,8 +1,9 @@
 //
 //  UUDate.m
 //  Useful Utilities - Extensions for NSDate
+//  (c) 2013, Jonathan Hays. All Rights Reserved.
 //
-//	License:
+//	Smile License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  Contact: @cheesemaker or jon@threejacks.com
@@ -55,16 +56,22 @@ NSString * const kUUDayOfMonthSuffixThirdKey            = @"UUDayOfMonthSuffixTh
 NSString * const kUUDayOfMonthSuffixNthKey              = @"UUDayOfMonthSuffixNthKey";
 
 // Common Date Formats
-NSString * const kUURFC3339DateTimeFormatter        = @"yyyy-MM-dd'T'HH:mm:ssZZ";
-NSString * const kUUISO8601DateFormatter            = @"yyyy-MM-dd";
-NSString * const kUUISO8601TimeFormatter            = @"HH:mm:ss";
-NSString * const kUUISO8601DateTimeFormatter        = @"yyyy-MM-dd HH:mm:ss";
-NSString * const kUUTimeOfDayDateformatter          = @"h:mm a";
-NSString * const kUUDayOfMonthDateFormatter         = @"d";
-NSString * const kUUShortMonthOfYearDateFormatter   = @"LLL";
-NSString * const kUULongMonthOfYearDateFormatter    = @"LLLL";
-NSString * const kUUDayOfWeekDateFormatter          = @"EEEE";
+NSString * const kUURFC3339DateTimeFormatter			= @"yyyy-MM-dd'T'HH:mm:ssZZ";
+NSString * const kUURFC3339DateTimeAlternateFormatter	= @"yyyy-MM-dd'T'HH:mm:ss.SSS'Z";
+NSString * const kUUISO8601DateFormatter				= @"yyyy-MM-dd";
+NSString * const kUUISO8601TimeFormatter				= @"HH:mm:ss";
+NSString * const kUUISO8601DateTimeFormatter			= @"yyyy-MM-dd HH:mm:ss";
+NSString * const kUUTimeOfDayDateformatter				= @"h:mm a";
+NSString * const kUUDayOfMonthDateFormatter				= @"d";
+NSString * const kUUShortMonthOfYearDateFormatter		= @"LLL";
+NSString * const kUULongMonthOfYearDateFormatter		= @"LLLL";
+NSString * const kUUDayOfWeekDateFormatter				= @"EEEE";
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Format Caching
+static NSMutableDictionary* theSharedDateFormatterCache = nil;
+static NSTimeZone* theDefaultTimeZone = nil;
 
 @implementation NSDate (UUStringFormatters)
 
@@ -72,7 +79,46 @@ NSString * const kUUDayOfWeekDateFormatter          = @"EEEE";
 
 - (NSString*) uuRfc3339String
 {
-    return [self uuStringFromDate:kUURFC3339DateTimeFormatter timeZone:nil];
+    NSString* string = [self uuStringFromDate:kUURFC3339DateTimeFormatter timeZone:nil];
+	if (!string)
+		string = [self uuStringFromDate:kUURFC3339DateTimeAlternateFormatter timeZone:nil];
+	
+	return string;
+}
+
+- (NSString*) uuRfc3339StringForUTCTimeZone
+{
+	NSTimeZone* utcTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    NSString* string = [self uuStringFromDate:kUURFC3339DateTimeFormatter timeZone:utcTimeZone];
+	if (!string)
+		string = [self uuStringFromDate:kUURFC3339DateTimeAlternateFormatter timeZone:utcTimeZone];
+	
+	return string;
+}
+
+- (NSString*) uuRfc3339StringForTimeZone:(NSTimeZone*)timeZone
+{
+    NSString* string = [self uuStringFromDate:kUURFC3339DateTimeFormatter timeZone:timeZone];
+	if (!string)
+		string = [self uuStringFromDate:kUURFC3339DateTimeAlternateFormatter timeZone:timeZone];
+	
+	return string;
+}
+
+- (NSString*) uuIso8601DateTimeString
+{
+    return [self uuStringFromDate:kUUISO8601DateTimeFormatter timeZone:nil];
+}
+
+- (NSString*) uuIso8601StringForUTCTimeZone
+{
+	NSTimeZone* utcTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    return [self uuStringFromDate:kUUISO8601DateTimeFormatter timeZone:utcTimeZone];
+}
+
+- (NSString*) uuIso8601StringForTimeZone:(NSTimeZone*)timeZone
+{
+    return [self uuStringFromDate:kUUISO8601DateTimeFormatter timeZone:timeZone];
 }
 
 - (NSString*) uuIso8601DateString
@@ -83,11 +129,6 @@ NSString * const kUUDayOfWeekDateFormatter          = @"EEEE";
 - (NSString*) uuIso8601TimeString
 {
     return [self uuStringFromDate:kUUISO8601TimeFormatter timeZone:nil];
-}
-
-- (NSString*) uuIso8601DateTimeString
-{
-    return [self uuStringFromDate:kUUISO8601DateTimeFormatter timeZone:nil];
 }
 
 - (NSString*) uuDayOfWeek
@@ -275,12 +316,46 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 
 + (NSDate*) uuDateFromRfc3339String:(NSString*)string
 {
-    return [self uuDateFromString:string withFormat:kUURFC3339DateTimeFormatter];
+	NSDate* date = [self uuDateFromString:string withFormat:kUURFC3339DateTimeFormatter timeZone:theDefaultTimeZone];
+	if (!date)
+		date = [self uuDateFromString:string withFormat:kUURFC3339DateTimeAlternateFormatter timeZone:theDefaultTimeZone];
+	
+	return date;
+}
+
++ (NSDate*) uuDateFromRfc3339StringUTCTimezone:(NSString*)string
+{
+	NSTimeZone* utcTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+	NSDate* date = [self uuDateFromString:string withFormat:kUURFC3339DateTimeFormatter timeZone:utcTimeZone];
+	if (!date)
+		date = [self uuDateFromString:string withFormat:kUURFC3339DateTimeAlternateFormatter timeZone:utcTimeZone];
+		
+	return date;
+}
+
++ (NSDate*) uuDateFromRfc3339String:(NSString*)string timeZone:(NSTimeZone*)timeZone
+{
+	NSDate* date = [self uuDateFromString:string withFormat:kUURFC3339DateTimeFormatter timeZone:timeZone];
+	if (!date)
+		date = [self uuDateFromString:string withFormat:kUURFC3339DateTimeAlternateFormatter timeZone:timeZone];
+	
+	return date;
 }
 
 + (NSDate*) uuDateFromIso8601String:(NSString*)string
 {
-    return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter];
+    return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:nil];
+}
+
++ (NSDate*) uuDateFromIso8601StringUTCTimezone:(NSString*)string
+{
+	NSTimeZone* utcTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+	return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:utcTimeZone];
+}
+
++ (NSDate*) uuDateFromIso8601String:(NSString*)string timeZone:(NSTimeZone*)timeZone
+{
+	return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:timeZone];
 }
 
 + (NSDate*) uuDateFromString:(NSString*)string withFormat:(NSString*)format
@@ -289,13 +364,23 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [df dateFromString:string];
 }
 
++ (NSDate*) uuDateFromStringUTCTimezone:(NSString*)string withFormat:(NSString*)format
+{
+	NSTimeZone* utcTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+	return [self uuDateFromString:string withFormat:format timeZone:utcTimeZone];
+}
+
++ (NSDate*) uuDateFromString:(NSString*)string withFormat:(NSString*)format timeZone:(NSTimeZone*)timeZone
+{
+    NSDateFormatter* df = [NSDateFormatter uuCachedDateFormatter:format];
+	if (timeZone)
+		[df setTimeZone:timeZone];
+		
+	return [df dateFromString:string];
+}
+
 @end
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Date Format Caching
-static NSMutableDictionary* theSharedDateFormatterCache = nil;
-static NSTimeZone* theDefaultTimeZone = nil;
 
 @implementation NSDateFormatter (UUDateFormatterCache)
 

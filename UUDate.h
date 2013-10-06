@@ -1,8 +1,9 @@
 //
 //  UUDate.h
 //  Useful Utilities - Extensions for NSDate
+//  (c) 2013, Jonathan Hays. All Rights Reserved.
 //
-//	License:
+//	Smile License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  Contact: @cheesemaker or jon@threejacks.com
@@ -16,16 +17,22 @@
 // Instance Methods
 
 // Returns an RFC 3339 Formatted string, ie - "yyyy-MM-dd'T'HH:mm:ssZZ"
+// Convenience functions for converting to alternate timezones are included (e.g. passing values to a web server)
 - (NSString*) uuRfc3339String;
+- (NSString*) uuRfc3339StringForUTCTimeZone;
+- (NSString*) uuRfc3339StringForTimeZone:(NSTimeZone*)timeZone;
+
+// Returns an ISO 8601 Formatted date/time, ie - "yyyy-MM-dd HH:mm:ss"
+// Convenience functions for converting to alternate timezones are included (e.g. passing values to a web server)
+- (NSString*) uuIso8601DateTimeString;
+- (NSString*) uuIso8601StringForUTCTimeZone;
+- (NSString*) uuIso8601StringForTimeZone:(NSTimeZone*)timeZone;
 
 // Returns an ISO 8601 Formatted date, ie - "yyyy-MM-dd"
 - (NSString*) uuIso8601DateString;
 
 // Returns an ISO 8601 Formatted time, ie - "HH:mm:ss"
 - (NSString*) uuIso8601TimeString;
-
-// Returns an ISO 8601 Formatted date/time, ie - "yyyy-MM-dd"
-- (NSString*) uuIso8601DateTimeString;
 
 // Returns a string day of week, ie - 'Monday' thru 'Sunday'
 - (NSString*) uuDayOfWeek;
@@ -60,28 +67,24 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Date Parsing
 @interface NSDate (UUDateParsing)
-
-// Uses kUURFC3339DateTimeFormatter
 //
-// Example:
+// If no timezone is specified, then the date string uses the default timezone in UUDateFormatterCache which
+// defaults to the device local timezone. Convenience functions for UTC timezone are included as well.
 //
-// NSDate* d = [NSDate uuDateFromRfc3339String:@"1776-07-04T12:30:00Z"];
-//
-// or
-//
-// NSDate* d = [NSDate uuDateFromRfc3339String:@"1776-07-04T12:30:00-700"];
-//
-+ (NSDate*) uuDateFromRfc3339String:(NSString*)string;
-
-// Uses kUUISO8601DateTimeFormatter
-//
-// Example:
-//
-// NSDate* d = [NSDate uuDateFromIso8601String:@"1776-07-04 12:30:00"];
-+ (NSDate*) uuDateFromIso8601String:(NSString*)string;
-
 
 + (NSDate*) uuDateFromString:(NSString*)string withFormat:(NSString*)format;
++ (NSDate*) uuDateFromStringUTCTimezone:(NSString*)string withFormat:(NSString*)format;
++ (NSDate*) uuDateFromString:(NSString*)string withFormat:(NSString*)format timeZone:(NSTimeZone*)timeZone;
+
+// kUURFC3339DateTimeFormatter "1776-07-04T12:30:00Z" or "1776-07-04T12:30:00-700"
++ (NSDate*) uuDateFromRfc3339String:(NSString*)string;
++ (NSDate*) uuDateFromRfc3339StringUTCTimezone:(NSString*)string;
++ (NSDate*) uuDateFromRfc3339String:(NSString*)string timeZone:(NSTimeZone*)timeZone;
+
+// Uses kUUISO8601DateTimeFormatter: 1776-07-04 12:30:00
++ (NSDate*) uuDateFromIso8601String:(NSString*)string;
++ (NSDate*) uuDateFromIso8601StringUTCTimezone:(NSString*)string;
++ (NSDate*) uuDateFromIso8601String:(NSString*)string timeZone:(NSTimeZone*)timeZone;
 
 @end
 
