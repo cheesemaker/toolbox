@@ -1,6 +1,7 @@
 //
 //  UUHttpClient.m
 //  Useful Utilities - Lightweight Objective C HTTP Client
+//  Copyright (c) 2013 Jonathan Hays. All rights reserved.
 //
 //	License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
@@ -566,6 +567,31 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 }
 
 
++ (NSString *)urlEncode:(NSString*)string
+{
+    NSMutableString *output = [NSMutableString string];
+    const unsigned char *source = (const unsigned char *)[string UTF8String];
+    for (int i = 0; i < string.length; ++i)
+	{
+        const unsigned char thisChar = source[i];
+        if (thisChar == ' ')
+		{
+            [output appendString:@"+"];
+        }
+		else if (thisChar == '.' || thisChar == '-' || thisChar == '_' || thisChar == '~' ||
+                   (thisChar >= 'a' && thisChar <= 'z') ||
+                   (thisChar >= 'A' && thisChar <= 'Z') ||
+                   (thisChar >= '0' && thisChar <= '9')) {
+            [output appendFormat:@"%c", thisChar];
+        }
+		else
+		{
+            [output appendFormat:@"%%%02X", thisChar];
+        }
+    }
+    return output;
+}
+
 + (NSString*) buildQueryString:(NSDictionary*)dictionary
 {
     NSMutableString* queryStringArgs = [NSMutableString string];
@@ -599,7 +625,10 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
                     [queryStringArgs appendString:@"&"];
                 }
                 
-                [queryStringArgs appendFormat:@"%@=%@", [key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], [val stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+				NSString* formattedKey = [self urlEncode:key];
+				NSString* formattedValue = [self urlEncode:val];
+
+                [queryStringArgs appendFormat:@"%@=%@", formattedKey, formattedValue];
                 ++count;
             }
         }
