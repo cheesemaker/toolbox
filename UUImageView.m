@@ -19,15 +19,11 @@
 	#define UU_RETAIN(x) [x retain]
 #endif
 
+typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
 
 @implementation UIImageView (UURemoteLoading)
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
-
+// The remote request queue is the mapping from url to completion block dictionary
 + (NSMutableDictionary*) uuRemoteRequestQueue
 {
 	static NSMutableDictionary* theRequestQueue = nil;
@@ -41,14 +37,30 @@ typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
 	return theRequestQueue;
 }
 
+// The remote requester list is an array of dictionaries in order to get the pending request url for a given image view
++ (NSMutableArray*) uuRemoteRequesterList
+{
+	static NSMutableArray* theRequestList = nil;
+	static dispatch_once_t onceToken;
+
+    dispatch_once (&onceToken, ^
+	{
+		theRequestList = [[NSMutableArray alloc] init];
+    });
+	
+	return theRequestList;
+}
+
+
 + (void) uuRemoteImageLoadCompleted:(NSURL*)url withImage:(UIImage*)image
 {
 	NSMutableDictionary* dictionary = [self uuRemoteRequestQueue];
 	NSMutableArray* completionBlockArray = [dictionary objectForKey:[url absoluteString]];
 	if (completionBlockArray)
 	{
-		for (UURemoteImageRequestCompletionHandler completionBlock in completionBlockArray)
+		for (NSDictionary* requestDictionary in completionBlockArray)
 		{
+			UURemoteImageRequestCompletionHandler completionBlock = [requestDictionary objectForKey:@"UURemoteRequestCompletionBlock"];
 			completionBlock(image);
 		}
 	}
@@ -57,7 +69,7 @@ typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
 	[dictionary removeObjectForKey:[url absoluteString]];
 }
 
-+ (BOOL) uuAddRemoteImageLoadCompletionBlock:(NSURL*)url block:(UURemoteImageRequestCompletionHandler)block
++ (BOOL) uuAddRemoteImageLoadCompletionBlock:(NSURL*)url imageView:(UIImageView*)imageView block:(UURemoteImageRequestCompletionHandler)block
 {
 	BOOL isLoadExisting = YES;
 	NSMutableDictionary* dictionary = [self uuRemoteRequestQueue];
@@ -69,9 +81,54 @@ typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
 		isLoadExisting = NO;
 	}
 	
-	[array addObject:Block_copy(block)];
+	[self uuAddRemoteRequestor:imageView for:url];
+	
+	NSDictionary* requestDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:imageView,			@"UURemoteRequestImageView",
+																				   Block_copy(block),	@"UURemoteRequestCompletionBlock",
+																				   nil];
+	[array addObject:requestDictionary];
 	
 	return isLoadExisting;
+}
+
++ (void) uuAddRemoteRequestor:(UIImageView*)imageView for:(NSURL*)url
+{
+	[self uuCancelExistingRemoteLoadRequestFor:imageView];
+	NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys:imageView, @"UURemoteRequestImageView",
+																		  url,		 @"UURemoteRequestURL",
+																		  nil];
+	NSMutableArray* array = [self uuRemoteRequesterList];
+	[array addObject:dictionary];
+}
+
++ (void) uuRemoveCompletionBlockFor:(UIImageView*)imageView with:(NSURL*)url
+{
+	NSMutableDictionary* requestQueueDictionary = [self uuRemoteRequestQueue];
+	NSMutableArray* requestList = [requestQueueDictionary objectForKey:url];
+	for (NSDictionary* requestDictionary in requestList)
+	{
+		UIImageView* requestor = [requestDictionary objectForKey:@"UURemoteRequestImageView"];
+		if (requestor == imageView)
+		{
+			[requestList removeObject:requestDictionary];
+			return;
+		}
+	}
+}
+
++ (void) uuCancelExistingRemoteLoadRequestFor:(UIImageView*)requestor
+{
+	NSMutableArray* array = [self uuRemoteRequesterList];
+	for (NSDictionary* dictionary in array)
+	{
+		UIImageView* imageView = [dictionary objectForKey:@"UURemoteRequestImageView"];
+		if (imageView == requestor)
+		{
+			NSURL* url = [dictionary objectForKey:@"UURemoteRequestURL"];
+			[self uuRemoveCompletionBlockFor:imageView with:url];
+			return;
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +221,7 @@ NSObject<UUImageCache>* theImageCache = nil;
         {
             self.image = defaultImage;
             
-			BOOL alreadyRequested = [UIImageView uuAddRemoteImageLoadCompletionBlock:url block:^(UIImage* image)
+			BOOL alreadyRequested = [UIImageView uuAddRemoteImageLoadCompletionBlock:url imageView:self block:^(UIImage* image)
 			{
                  [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
 			}];
@@ -190,7 +247,9 @@ NSObject<UUImageCache>* theImageCache = nil;
 
 - (void) finishLoadFromUrl:(UIImage*)image loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
 {
+	//We will let this go async from the URL loading
 	[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
+    //self.image = image;
     
     if (loadCompleteHandler)
     {
