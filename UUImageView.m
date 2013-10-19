@@ -19,17 +19,76 @@
 	#define UU_RETAIN(x) [x retain]
 #endif
 
+
 @implementation UIImageView (UURemoteLoading)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
+
++ (NSMutableDictionary*) uuRemoteRequestQueue
+{
+	static NSMutableDictionary* theRequestQueue = nil;
+	static dispatch_once_t onceToken;
+
+    dispatch_once (&onceToken, ^
+	{
+		theRequestQueue = [[NSMutableDictionary alloc] init];
+    });
+	
+	return theRequestQueue;
+}
+
++ (void) uuRemoteImageLoadCompleted:(NSURL*)url withImage:(UIImage*)image
+{
+	NSMutableDictionary* dictionary = [self uuRemoteRequestQueue];
+	NSMutableArray* completionBlockArray = [dictionary objectForKey:[url absoluteString]];
+	if (completionBlockArray)
+	{
+		for (UURemoteImageRequestCompletionHandler completionBlock in completionBlockArray)
+		{
+			completionBlock(image);
+		}
+	}
+	
+	[completionBlockArray removeAllObjects];
+	[dictionary removeObjectForKey:[url absoluteString]];
+}
+
++ (BOOL) uuAddRemoteImageLoadCompletionBlock:(NSURL*)url block:(UURemoteImageRequestCompletionHandler)block
+{
+	BOOL isLoadExisting = YES;
+	NSMutableDictionary* dictionary = [self uuRemoteRequestQueue];
+	NSMutableArray* array = [dictionary objectForKey:[url absoluteString]];
+	if (!array)
+	{
+		array = [NSMutableArray array];
+		[dictionary setObject:array forKey:[url absoluteString]];
+		isLoadExisting = NO;
+	}
+	
+	[array addObject:Block_copy(block)];
+	
+	return isLoadExisting;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 NSObject<UUImageCache>* theImageCache = nil;
 
 + (NSObject<UUImageCache>*) uuImageCache
 {
-	if (!theImageCache)
+	static dispatch_once_t onceToken;
+
+    dispatch_once (&onceToken, ^
 	{
 		theImageCache = (NSObject<UUImageCache>*)[UUDataCache sharedCache];
 		UU_RETAIN(theImageCache);
-	}
+    });
 	
 	return theImageCache;
 }
@@ -105,25 +164,33 @@ NSObject<UUImageCache>* theImageCache = nil;
         {
             self.image = defaultImage;
             
-            [UUHttpClient get:url.absoluteString queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
-             {
-                 UIImage* image = defaultImage;
-                 
-                 if (response.parsedResponse && [response.parsedResponse isKindOfClass:[UIImage class]])
-                 {
-                     image = (UIImage*)response.parsedResponse;
-                     [self uuCacheImage:image forURL:url];
-                 }
-                 
+			BOOL alreadyRequested = [UIImageView uuAddRemoteImageLoadCompletionBlock:url block:^(UIImage* image)
+			{
                  [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
-             }];
-        }
+			}];
+			
+			if (!alreadyRequested)
+			{
+				[UUHttpClient get:url.absoluteString queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
+				{
+					UIImage* image = defaultImage;
+                 
+					if (response.parsedResponse && [response.parsedResponse isKindOfClass:[UIImage class]])
+					{
+						image = (UIImage*)response.parsedResponse;
+						[self uuCacheImage:image forURL:url];
+					}
+                 
+					[UIImageView uuRemoteImageLoadCompleted:url withImage:image];
+				}];
+			}
+		}
     }
 }
 
 - (void) finishLoadFromUrl:(UIImage*)image loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
 {
-    self.image = image;
+	[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
     
     if (loadCompleteHandler)
     {
