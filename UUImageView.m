@@ -248,9 +248,11 @@ NSObject<UUImageCache>* theImageCache = nil;
 - (void) finishLoadFromUrl:(UIImage*)image loadCompleteHandler:(void (^)(UIImageView* imageView))loadCompleteHandler
 {
 	//We will let this go async from the URL loading
-	[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
-    //self.image = image;
-    
+	if ([[NSThread currentThread] isMainThread])
+		self.image = image;
+	else
+		[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
+	
     if (loadCompleteHandler)
     {
         loadCompleteHandler(self);
