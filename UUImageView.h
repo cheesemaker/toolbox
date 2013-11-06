@@ -2,7 +2,9 @@
 //  UUImageView.h
 //  Useful Utilities - UIImageView extensions
 //
-//	License:
+//  (c) 2013, Jonathan Hays. All Rights Reserved.
+//
+//	Smile License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  Contact: @cheesemaker or jon@threejacks.com

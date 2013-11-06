@@ -1,8 +1,9 @@
 //
 //  UUImageView.m
 //  Useful Utilities - UIImageView extensions
+//  (c) 2013, Jonathan Hays. All Rights Reserved.
 //
-//	License:
+//	Smile License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  Contact: @cheesemaker or jon@threejacks.com
@@ -208,6 +209,7 @@ NSObject<UUImageCache>* theImageCache = nil;
 {
     if (!url  || url.absoluteString.length <= 0)
     {
+		[UIImageView uuCancelExistingRemoteLoadRequestFor:self];
         [self finishLoadFromUrl:defaultImage loadCompleteHandler:loadCompleteHandler];
     }
     else
@@ -215,6 +217,7 @@ NSObject<UUImageCache>* theImageCache = nil;
         UIImage* image = [self uuImageFromCache:url];
         if (image)
         {
+			[UIImageView uuCancelExistingRemoteLoadRequestFor:self];
             [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
         }
         else
