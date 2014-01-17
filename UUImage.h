@@ -16,10 +16,17 @@
 - (UIImage*) uuScaleToSize:(CGSize)targetSize;
 - (UIImage*) uuScaleAndCropToSize:(CGSize)targetSize;
 - (UIImage*) uuCropToSize:(CGSize)targetSize;
+- (UIImage*) uuBlurWithRadius:(CGFloat)blurRadius tintColor:(UIColor *)tintColor saturationDeltaFactor:(CGFloat)saturationDeltaFactor maskImage:(UIImage *)maskImage;
+
++ (UIImage*) uuViewToImage:(UIView*)view;
 
 - (UIImage*) uuScaleToWidth:(CGFloat)width;
 
 + (UIImage*) uuMakeStretchableImage:(NSString*)imageName insets:(UIEdgeInsets)insets;
+
++ (UIImage*) uuSolidColorImage:(UIColor*)color;
++ (UIImage*) uuSolidColorImage:(UIColor*)color cornerRadius:(CGFloat)cornerRadius borderColor:(UIColor*)borderColor borderWidth:(CGFloat)borderWidth;
+
 
 @end
 
