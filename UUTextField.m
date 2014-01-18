@@ -9,6 +9,22 @@
 
 #import "UUTextField.h"
 
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+	#define UU_NATIVE_CAST(x)	(__bridge x)
+#else
+	#define UU_RELEASE(x)		[x release]
+	#define UU_RETAIN(x)		[x retain]
+	#define UU_AUTORELEASE(x)	[(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+	#define UU_NATIVE_CAST(x)	(x)
+#endif
+
 //Implementaiont Comment:
 //Unfortunately, while both UITextField and UITextView implement the UITextInput protocol the nearest shared base class they have
 //is UIView so we create a private category extension for UIView that is only for use with UITextField and UITextView.
@@ -20,6 +36,27 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Range manipulation on a UITextInput
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void) uuBackOneLetter
+{
+}
+
+- (void) uuAdvanceOneLetter
+{
+}
+
+- (void) uuBackOneWord
+{
+}
+
+- (void) uuAdvanceOneWord
+{
+}
+
+- (void) uuAddGestureNavigation
+{
+}
+
 
 + (NSRange) uuSelectedRange:(UIView<UITextInput>*)object
 {
@@ -181,27 +218,23 @@
 
 + (void) uuAddGestureNavigationToTextInput:(UIView<UITextInput>*)object
 {
-	UISwipeGestureRecognizer* swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuBackOneLetter)];
+	UISwipeGestureRecognizer* swipeHandler = UU_AUTORELEASE([[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuBackOneLetter)]);
 	swipeHandler.direction = UISwipeGestureRecognizerDirectionLeft;
 	[object.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
 	
-	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuAdvanceOneLetter)];
+	swipeHandler = UU_AUTORELEASE([[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuAdvanceOneLetter)]);
 	swipeHandler.direction = UISwipeGestureRecognizerDirectionRight;
 	[object.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
 
-	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuBackOneWord)];
+	swipeHandler = UU_AUTORELEASE([[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuBackOneWord)]);
 	swipeHandler.numberOfTouchesRequired = 2;
 	swipeHandler.direction = UISwipeGestureRecognizerDirectionLeft;
 	[object.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
 	
-	swipeHandler = [[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuAdvanceOneWord)];
+	swipeHandler = UU_AUTORELEASE([[UISwipeGestureRecognizer alloc] initWithTarget:object action:@selector(uuAdvanceOneWord)]);
 	swipeHandler.numberOfTouchesRequired = 2;
 	swipeHandler.direction = UISwipeGestureRecognizerDirectionRight;
 	[object.superview addGestureRecognizer:swipeHandler];
-	[swipeHandler release];
 }
 
 @end

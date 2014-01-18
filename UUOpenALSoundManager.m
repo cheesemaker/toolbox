@@ -12,6 +12,23 @@
 #import <OpenAL/alc.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+	#define UU_NATIVE_CAST(x)	(__bridge x)
+#else
+	#define UU_RELEASE(x)		[x release]
+	#define UU_RETAIN(x)		[x retain]
+	#define UU_AUTORELEASE(x)	[(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+	#define UU_NATIVE_CAST(x)	(x)
+#endif
+
 //If you want to provide your own logging mechanism, define UUDebugLog in your .pch
 #ifndef UUDebugLog
 	#ifdef DEBUG
@@ -205,7 +222,7 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
         ALenum  format;
         ALsizei size;
         ALsizei freq;
-        _rawData = UUGetOpenALAudioData((CFURLRef)soundFile, &size, &format, &freq);
+        _rawData = UUGetOpenALAudioData(UU_NATIVE_CAST(CFURLRef)soundFile, &size, &format, &freq);
 
         if((error = alGetError()) != AL_NO_ERROR) 
         {
@@ -255,7 +272,11 @@ void UUHandleOpenALRouteChanged(void* inClientData, AudioSessionPropertyID inID,
     alDeleteSources(1, &_source);
     alDeleteBuffers(1, &_buffer);
     
-    [super dealloc];
+	#if __has_feature(objc_arc)
+		//Do nothing
+	#else
+		[super dealloc];
+	#endif
 }
 
 - (void) playSound:(float)volume
@@ -298,8 +319,8 @@ static UUOpenALSoundManager* theSoundManager = nil;
     if (self)
     {
 		// setup our audio session
-		OSStatus result = AudioSessionInitialize(NULL, NULL, UUHandleOpenALInterruption, self);
-		if (result == kAudioSessionNoError) 
+		OSStatus result = AudioSessionInitialize(NULL, NULL, UUHandleOpenALInterruption, UU_NATIVE_CAST(void*)self);
+		if (result == kAudioSessionNoError)
         {
             BOOL isOtherMusicPlaying = [self isOtherMusicPlaying];
             
@@ -317,7 +338,7 @@ static UUOpenALSoundManager* theSoundManager = nil;
                 UUDebugLog(@"Error setting audio session category! %ld\n", result);
             }
             
-			result = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, UUHandleOpenALRouteChanged, self);
+			result = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, UUHandleOpenALRouteChanged, UU_NATIVE_CAST(void*)self);
 			if (result) 
             {
                 UUDebugLog(@"Couldn't add listener: %ld", result);
@@ -362,7 +383,11 @@ static UUOpenALSoundManager* theSoundManager = nil;
     alcDestroyContext(_openAlContext);
     alcCloseDevice(_openAlDevice);
     
-	[super dealloc];
+	#if __has_feature(objc_arc)
+		//Do nothing
+	#else
+		[super dealloc];
+	#endif
 }
 
 - (void) disableOtherMusicPlaying
@@ -389,7 +414,7 @@ static UUOpenALSoundManager* theSoundManager = nil;
 - (UUOpenALSoundClip*) soundClipFromResource:(NSString*)file Ext:(NSString*)ext
 {
     NSURL* url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:file ofType:ext]];
-    return [[[UUOpenALSoundClip alloc] initWithContext:_openAlContext SoundFile:url] autorelease];
+    return UU_AUTORELEASE([[UUOpenALSoundClip alloc] initWithContext:_openAlContext SoundFile:url]);
 }
 
 @end

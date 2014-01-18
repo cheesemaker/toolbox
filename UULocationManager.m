@@ -9,6 +9,20 @@
 
 #import "UULocationManager.h"
 
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+#else
+	#define UU_RELEASE(x) [x release]
+	#define UU_RETAIN(x) [x retain]
+	#define UU_AUTORELEASE(x) [(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+#endif
+
 NSString * const UULocationChangedNotification = @"UULocationChangedNotification";
 NSString * const UULocationNameChangedNotification = @"UULocationNameChangedNotification";
 NSString * const UULocationAuthChangedNotification = @"UULocationAuthChangedNotification";
@@ -77,7 +91,7 @@ static UULocationManager* theLocationManager = nil;
 		if ([CLLocationManager locationServicesEnabled])
 		{
 			// Initialize the locationManager
-			CLLocationManager* locManager = [[[CLLocationManager alloc] init] autorelease];        
+			CLLocationManager* locManager = UU_AUTORELEASE([[CLLocationManager alloc] init]);
 			locManager.delegate = self;
             
 			locManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -136,7 +150,7 @@ static UULocationManager* theLocationManager = nil;
 
 - (void) queryLocationName:(CLLocation*)location
 {
-    CLGeocoder* geoCoder = [[[CLGeocoder alloc] init] autorelease];
+    CLGeocoder* geoCoder = UU_AUTORELEASE([[CLGeocoder alloc] init]);
     [geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray* placemarks, NSError* error)
      {
          if (error == nil && placemarks != nil && placemarks.count > 0)

@@ -20,6 +20,23 @@
 #import "UUDebug.h"
 #import <asl.h>
 
+
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+	#define UU_NATIVE_CAST(x)	(__bridge x)
+#else
+	#define UU_RELEASE(x)		[x release]
+	#define UU_RETAIN(x)		[x retain]
+	#define UU_AUTORELEASE(x)	[(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+	#define UU_NATIVE_CAST(x)	(x)
+#endif
+
 @interface UUExternalLogDisplay : UIViewController
 	@property (retain) UITextView*		debugTextField;
 	@property (retain) UIWindow*		debugWindow;
@@ -105,13 +122,13 @@ UUExternalLogDisplay* theDebugger = nil;
 	if (!self.isAttached)
 	{
 		self.isAttached = YES;
-		self.debugWindow = [[[UIWindow alloc] initWithFrame:newScreen.bounds] autorelease];
+		self.debugWindow = UU_AUTORELEASE([[UIWindow alloc] initWithFrame:newScreen.bounds]);
 		[self.debugWindow setScreen:newScreen];
 		self.debugWindow.backgroundColor = [UIColor whiteColor];
 		self.debugWindow.hidden = false;
 		[self.debugWindow setRootViewController:self];
 			
-		self.debugTextField = [[[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.debugWindow.frame.size.width, self.debugWindow.frame.size.height)] autorelease];
+		self.debugTextField = UU_AUTORELEASE([[UITextView alloc] initWithFrame:CGRectMake(0, 0, self.debugWindow.frame.size.width, self.debugWindow.frame.size.height)]);
 		self.debugTextField.backgroundColor = [UIColor whiteColor];
 		self.debugTextField.textColor = [UIColor blackColor];
 		[self.view addSubview:self.debugTextField];
@@ -178,7 +195,7 @@ UUExternalLogDisplay* theDebugger = nil;
 			output = [NSString stringWithFormat:@"%@\r\n%@", debugText, output];
 		}
 
-		[self performSelectorOnMainThread:@selector(setDebuggingText:) withObject:output waitUntilDone:YES];
+		[self performSelectorOnMainThread:@selector(uuSetDebuggingText:) withObject:output waitUntilDone:YES];
 	}
 }
 

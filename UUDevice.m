@@ -13,6 +13,23 @@
 
 #import "UUDevice.h"
 
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+	#define UU_NATIVE_CAST(x)	(__bridge x)
+#else
+	#define UU_RELEASE(x)		[x release]
+	#define UU_RETAIN(x)		[x retain]
+	#define UU_AUTORELEASE(x)	[(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+	#define UU_NATIVE_CAST(x)	(x)
+#endif
+
+
 @implementation UIDevice (UUDevice)
 
 #define UU_UIDEVICE_UNIQUE_IDENTIFIER @"UU::UIDevice::UniqueUserIdentifier"
@@ -48,10 +65,10 @@
 + (NSString*) uuGenerateUniqueIdentifier
 {
 	CFUUIDRef uuid = CFUUIDCreate(NULL);
-	NSString* uniqueID = (NSString*)CFUUIDCreateString(NULL, uuid);
+	NSString* uniqueID = UU_NATIVE_CAST(NSString*)CFUUIDCreateString(NULL, uuid);
 	CFRelease(uuid);
 
-	return [uniqueID autorelease];
+	return UU_AUTORELEASE(uniqueID);
 }
 
 - (NSString*) uuUniqueIdentifierOS5

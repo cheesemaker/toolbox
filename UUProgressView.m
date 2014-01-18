@@ -12,6 +12,21 @@
 #import "UUProgressView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+#else
+	#define UU_RELEASE(x) [x release]
+	#define UU_RETAIN(x) [x retain]
+	#define UU_AUTORELEASE(x) [(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+#endif
+
+
 @interface UUProgressView ()
 
 @property (nonatomic, retain) UIView* backgroundView;
@@ -81,12 +96,16 @@
     self.label = nil;
     self.spinner = nil;
     
-    [super dealloc];
+	#if __has_feature(objc_arc)
+		//Do nothing
+	#else
+		[super dealloc];
+	#endif
 }
 
 - (void) createBackgroundView
 {
-	self.backgroundView = [[[UIView alloc] initWithFrame:self.frame] autorelease];
+	self.backgroundView = UU_AUTORELEASE([[UIView alloc] initWithFrame:self.frame]);
 	self.backgroundView.backgroundColor = [UIColor blackColor];
 	self.backgroundView.alpha = 0.75f;
 	self.backgroundView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin  | UIViewAutoresizingFlexibleWidth |
@@ -99,7 +118,7 @@
 - (void) createSpinnerView
 {
 	CGFloat halfHeight = self.frame.size.height / 2.0f;
-	self.spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
+	self.spinner = UU_AUTORELEASE([[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite]);
 	self.spinner.center = CGPointMake(18, halfHeight);
 	self.spinner.hidesWhenStopped = YES;
 	[self.spinner startAnimating];
@@ -110,8 +129,8 @@
 {
 	CGFloat halfHeight = self.frame.size.height / 2.0f;
 	CGFloat quarterHeight = halfHeight / 2.0f;
-	self.label = [[[UILabel alloc] initWithFrame:CGRectMake(42, quarterHeight, 103 , halfHeight)] autorelease];
-	self.label.textAlignment = UITextAlignmentLeft;
+	self.label = UU_AUTORELEASE([[UILabel alloc] initWithFrame:CGRectMake(42, quarterHeight, 103 , halfHeight)]);
+	self.label.textAlignment = NSTextAlignmentLeft;
 	self.label.textColor = [UIColor whiteColor];
 	self.label.backgroundColor = [UIColor clearColor];
 	self.label.font = [UIFont boldSystemFontOfSize:14.0f];

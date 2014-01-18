@@ -15,6 +15,23 @@
 #import <objc/runtime.h> 
 #import <objc/message.h>
 
+
+#if __has_feature(objc_arc)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+	#define UU_NATIVE_CAST(x)	(__bridge x)
+#else
+	#define UU_RELEASE(x)		[x release]
+	#define UU_RETAIN(x)		[x retain]
+	#define UU_AUTORELEASE(x)	[(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+	#define UU_NATIVE_CAST(x)	(x)
+#endif
+
 //If you want to provide your own logging mechanism, define UUDebugLog in your .pch
 #ifndef UUDebugLog
 	#ifdef DEBUG
@@ -42,11 +59,11 @@
 	if (self)
 	{
 		self.zoomValue = 1.0;
-		self.captureSession = [[[AVCaptureSession alloc] init] autorelease];
+		self.captureSession = UU_AUTORELEASE([[AVCaptureSession alloc] init]);
 
 		NSString* setting = AVCaptureSessionPresetPhoto;
 		self.captureSession.sessionPreset = setting;
-		self.previewLayer = [[[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession] autorelease];
+		self.previewLayer = UU_AUTORELEASE([[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession]);
 		[self.previewLayer setBackgroundColor:[[UIColor blackColor] CGColor]];
 		[self.previewLayer setVideoGravity:AVLayerVideoGravityResizeAspect];
 		[self.previewLayer setFrame:self.frame];
@@ -65,10 +82,10 @@
     if (self)
 	{
 		self.zoomValue = 1.0;
-		self.captureSession = [[[AVCaptureSession alloc] init] autorelease];
+		self.captureSession = UU_AUTORELEASE([[AVCaptureSession alloc] init]);
 		NSString* setting = AVCaptureSessionPresetPhoto;
 		self.captureSession.sessionPreset = setting;
-		self.previewLayer = [[[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession] autorelease];
+		self.previewLayer = UU_AUTORELEASE([[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession]);
 		[self.previewLayer setBackgroundColor:[[UIColor blackColor] CGColor]];
 		[self.previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
 		[self.previewLayer setFrame:frame];
@@ -157,14 +174,14 @@
 		[self.captureSession addInput:input];
 
 		//Create the still image output...
-		self.stillOutput = [[[AVCaptureStillImageOutput alloc] init] autorelease];
+		self.stillOutput = UU_AUTORELEASE([[AVCaptureStillImageOutput alloc] init]);
 
 		//Add the outputs to the capture session...
 		[self.captureSession addOutput:self.stillOutput];
 	
 		//Configure our connection...
 		self.connection = [self.stillOutput connectionWithMediaType:AVMediaTypeVideo];
-		self.connection.videoMaxFrameDuration= CMTimeMake(1, 10); //kCMTimeZero
+		//self.connection.videoMaxFrameDuration= CMTimeMake(1, 10); //kCMTimeZero
 		self.connection.videoOrientation = AVCaptureVideoOrientationPortrait;
 	}
 }

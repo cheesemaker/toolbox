@@ -1,9 +1,8 @@
 //
 //  UUImageView.m
 //  Useful Utilities - UIImageView extensions
-//  (c) 2013, Jonathan Hays. All Rights Reserved.
 //
-//	Smile License:
+//	License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  Contact: @cheesemaker or jon@threejacks.com
@@ -13,11 +12,17 @@
 #import "UUDataCache.h"
 
 #if __has_feature(objc_arc)
-	#define UU_RELEASE(x) (void)(0)
-	#define UU_RETAIN(x)  (void)(0)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
 #else
 	#define UU_RELEASE(x) [x release]
 	#define UU_RETAIN(x) [x retain]
+	#define UU_AUTORELEASE(x) [(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
 #endif
 
 typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
@@ -85,7 +90,7 @@ typedef void (^UURemoteImageRequestCompletionHandler)(UIImage* imageView);
 	[self uuAddRemoteRequestor:imageView for:url];
 	
 	NSDictionary* requestDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:imageView,			@"UURemoteRequestImageView",
-																				   Block_copy(block),	@"UURemoteRequestCompletionBlock",
+																				   UU_BLOCK_COPY(block),@"UURemoteRequestCompletionBlock",
 																				   nil];
 	[array addObject:requestDictionary];
 	
@@ -144,8 +149,7 @@ NSObject<UUImageCache>* theImageCache = nil;
 
     dispatch_once (&onceToken, ^
 	{
-		theImageCache = (NSObject<UUImageCache>*)[UUDataCache sharedCache];
-		UU_RETAIN(theImageCache);
+		theImageCache = UU_RETAIN((NSObject<UUImageCache>*)[UUDataCache sharedCache]);
     });
 	
 	return theImageCache;
@@ -155,8 +159,7 @@ NSObject<UUImageCache>* theImageCache = nil;
 {
 	if (theImageCache)
 		UU_RELEASE(theImageCache);
-	theImageCache = (NSObject<UUImageCache>*)cache;
-	UU_RETAIN(theImageCache);
+	theImageCache = UU_RETAIN((NSObject<UUImageCache>*)cache);
 }
 
 - (UIImage*) uuImageFromBundle:(NSURL*)url
@@ -209,7 +212,6 @@ NSObject<UUImageCache>* theImageCache = nil;
 {
     if (!url  || url.absoluteString.length <= 0)
     {
-		[UIImageView uuCancelExistingRemoteLoadRequestFor:self];
         [self finishLoadFromUrl:defaultImage loadCompleteHandler:loadCompleteHandler];
     }
     else
@@ -217,7 +219,6 @@ NSObject<UUImageCache>* theImageCache = nil;
         UIImage* image = [self uuImageFromCache:url];
         if (image)
         {
-			[UIImageView uuCancelExistingRemoteLoadRequestFor:self];
             [self finishLoadFromUrl:image loadCompleteHandler:loadCompleteHandler];
         }
         else
@@ -231,17 +232,28 @@ NSObject<UUImageCache>* theImageCache = nil;
 			
 			if (!alreadyRequested)
 			{
-				[UUHttpClient get:url.absoluteString queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
+				UUHttpClientRequest* httpRequest = UU_AUTORELEASE([[UUHttpClientRequest alloc] initWithUrl:url.absoluteString]);
+				httpRequest.httpMethod = UUHttpMethodGet;
+				httpRequest.processMimeTypes = NO;
+				
+				[UUHttpClient executeRequest:httpRequest completionHandler:^(UUHttpClientResponse *response)
 				{
-					UIImage* image = defaultImage;
-                 
-					if (response.parsedResponse && [response.parsedResponse isKindOfClass:[UIImage class]])
+					NSData* data = response.rawResponse;
+					if (data)
 					{
-						image = (UIImage*)response.parsedResponse;
-						[self uuCacheImage:image forURL:url];
+						UIImage* image = [UIImage imageWithData:data];
+
+						if (image)
+						{
+							NSObject<UUImageCache>* imageCache = [UIImageView uuImageCache];
+							if ([imageCache respondsToSelector:@selector(setObject:forKey:)])
+							{
+								[imageCache setObject:data forKey:[url absoluteString]];
+							}
+							
+							[UIImageView uuRemoteImageLoadCompleted:url withImage:image];
+						}
 					}
-                 
-					[UIImageView uuRemoteImageLoadCompleted:url withImage:image];
 				}];
 			}
 		}
@@ -263,3 +275,5 @@ NSObject<UUImageCache>* theImageCache = nil;
 }
 
 @end
+
+
