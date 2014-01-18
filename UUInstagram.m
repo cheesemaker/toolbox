@@ -1,10 +1,12 @@
 //
-//  UUInstagram.m
-//  UUInstagramatic
+//  UUInstagram
+//  Useful Utilities - Useful functions to interact with Instagram
+// (c) Copyright Jonathan Hays, all rights reserved
 //
-//  Created by Jonathan Hays on 1/17/14.
-//  Copyright (c) 2014 Threejacks Software. All rights reserved.
+//	License:
+//  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
+//  Contact: @cheesemaker or jon@threejacks.com
 
 #import "UUInstagram.h"
 #import "UUString.h"
