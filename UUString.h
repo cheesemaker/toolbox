@@ -31,6 +31,8 @@
 - (bool) uuEndsWithSubstring:(NSString *)inSubstring;
 - (NSString *) uuReverse;
 
++ (NSString*) uuGenerateUUIDString;
+
 - (NSData*) uuToHexData;
 + (NSData*) uuToHexData:(NSString*)string;
 + (NSString*) uuHexStringFromData:(NSData*)data;
@@ -49,17 +51,19 @@
 // NSString* url = http://www.threejacks.com?someArg=foobar&anotherArg=blarfo
 // NSString* arg = [url parseQueryStringArg:@"someArg"];
 // arg is 'foobar'
-- (NSString*) uuFindQueryStringArg:(NSString*)argName;
-- (NSString *) uuUrlEncoded;
-- (NSString *) uuUrlDecoded;
+- (NSDictionary*) uuDictionaryFromQueryString;
+- (NSString*)	  uuFindQueryStringArg:(NSString*)argName;
+- (NSString *)	  uuUrlEncoded;
+- (NSString *)	  uuUrlDecoded;
 
 @end
 
 @interface NSString (UUStringEncryption)
 
-- (bool) uuIsValidMD5Hash:(NSData*)buffer;
-+ (NSData*) uuAESEncryptString:(NSString*)string with:(NSString*)key;
-+ (NSString*) uuAESDecryptData:(NSData*)data with:(NSString*)key;
+- (bool)		uuIsValidMD5Hash:(NSData*)buffer;
+- (NSString*)	uuHMACSHA1:(NSString*)key;
++ (NSData*)		uuAESEncryptString:(NSString*)string with:(NSString*)key;
++ (NSString*)	uuAESDecryptData:(NSData*)data with:(NSString*)key;
 
 @end
 

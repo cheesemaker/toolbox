@@ -12,22 +12,23 @@
 #import "UUString.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonHMAC.h>
 
 //If you want to impement your own UU_RELEASE and UU_AUTORELEASE mechanisms in your .pch, you may do so, just remember to define UU_MEMORY_MANAGEMENT
-#ifndef UU_MEMORY_MANAGEMENT
-	#if !__has_feature(objc_arc)
-		#define UU_AUTORELEASE(x) [(x) autorelease]
-		#define UU_RELEASE(x)	  [(x) release]
-	#else
-		#define UU_AUTORELEASE(x) x
-		#define UU_RELEASE(x)     (void)(0)
-	#endif
-#endif
-
 #if __has_feature(objc_arc)
-    #define UU_BRIDGE(x) (__bridge x)
+	#define UU_RELEASE(x)		(void)(0)
+	#define UU_RETAIN(x)		x
+	#define UU_AUTORELEASE(x)	x
+	#define UU_BLOCK_RELEASE(x) (void)(0)
+	#define UU_BLOCK_COPY(x)    [x copy]
+	#define UU_NATIVE_CAST(x)	(__bridge x)
 #else
-    #define UU_BRIDGE(x) (x)
+	#define UU_RELEASE(x)		[x release]
+	#define UU_RETAIN(x)		[x retain]
+	#define UU_AUTORELEASE(x)	[(x) autorelease]
+	#define UU_BLOCK_RELEASE(x) Block_release(x)
+	#define UU_BLOCK_COPY(x)    Block_copy(x)
+	#define UU_NATIVE_CAST(x)	(x)
 #endif
 
 @implementation NSString (UUStringTwiddling)
@@ -77,6 +78,15 @@
 	}
 	
 	return data;
+}
+
++ (NSString*) uuGenerateUUIDString
+{
+	CFUUIDRef uuid = CFUUIDCreate(NULL);
+	NSString* uniqueID = UU_NATIVE_CAST(NSString*)CFUUIDCreateString(NULL, uuid);
+	CFRelease(uuid);
+
+	return UU_AUTORELEASE(uniqueID);
 }
 
 + (NSString*) uuFormatCurrency:(NSDecimalNumber*)value withLocale:(NSLocale*)locale
@@ -262,7 +272,7 @@
 {
 	CFStringRef cf = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]", kCFStringEncodingUTF8);
 	if (cf) {
-		NSString* s = UU_BRIDGE(NSString *)cf;
+		NSString* s = UU_NATIVE_CAST(NSString *)cf;
 		return UU_AUTORELEASE(s);
 	}
 	else {
@@ -274,7 +284,7 @@
 {
 	CFStringRef cf = CFURLCreateStringByReplacingPercentEscapes (NULL, (CFStringRef)self, CFSTR(""));
 	if (cf) {
-		NSString* s = UU_BRIDGE(NSString *)cf;
+		NSString* s = UU_NATIVE_CAST(NSString *)cf;
 		return UU_AUTORELEASE(s);
 	}
 	else {
@@ -310,6 +320,32 @@
     return nil;
 }
 
+- (NSDictionary*) uuDictionaryFromQueryString
+{
+	NSString* queryString = self;
+    NSRange queryMarkerRange = [self rangeOfString:@"?"];
+    if (queryMarkerRange.location != NSNotFound)
+	{
+		queryString = [self substringFromIndex:(queryMarkerRange.location + 1)];
+	}
+	
+	NSMutableDictionary* dictionary = [NSMutableDictionary dictionary];
+	NSArray* arguments = [queryString componentsSeparatedByString:@"&"];
+	for (NSString* argument in arguments)
+	{
+		NSArray* elements = [argument componentsSeparatedByString:@"="];
+		if (elements.count == 2)
+		{
+			NSString* key = [elements objectAtIndex:0];
+			NSString* value = [elements objectAtIndex:1];
+			key = [key uuUrlDecoded];
+			value = [value uuUrlDecoded];
+			[dictionary setObject:value forKey:key];
+		}
+	}
+	
+	return dictionary;
+}
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -335,6 +371,20 @@
 	return [[self lowercaseString] isEqualToString:[digest lowercaseString]];
 }
 
+- (NSString*) uuHMACSHA1:(NSString*)key
+{
+    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
+    const char *cData = [self cStringUsingEncoding:NSASCIIStringEncoding];
+
+    unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
+
+    CCHmac(kCCHmacAlgSHA1, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
+
+    NSData* HMAC = [[NSData alloc] initWithBytes:cHMAC length:sizeof(cHMAC)];
+
+    NSString *hash = [HMAC base64Encoding];//[HMAC base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    return hash;
+}
 
 + (NSData*) uuAESEncryptString:(NSString*)string with:(NSString*)key
 {
