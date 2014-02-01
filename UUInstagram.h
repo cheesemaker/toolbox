@@ -11,7 +11,10 @@
 #import <Foundation/Foundation.h>
 
 @interface UUInstagram : NSObject
-	+ (void) authenticate:(UIViewController*)parent completionHandler:(void (^)(BOOL success, NSString* userKey))completionBlock;
+	+ (void) initialize:(NSString*)clientId secret:(NSString*)clientSecret redirect:(NSString*)redirectURL;
+	+ (void) authenticate:(UIViewController*)parent completionHandler:(void (^)(BOOL success, NSError* error))completionBlock;
+
+	+ (NSString*) userName;
 	+ (void) logout;
 	
 	+ (void) getUserMedia:(void (^)(BOOL success, NSDictionary* userMedia))completionBlock;
@@ -25,8 +28,3 @@
 	+ (NSString*) accessToken;
 @end
 
-
-//The application should set these prior to calling authenticate
-extern NSString * const UUInstagramRedirectURL;
-extern NSString * const UUInstagramClientID;
-extern NSString * const UUInstagramClientSecret;
