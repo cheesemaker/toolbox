@@ -210,6 +210,23 @@
 	}];
 }
 
++ (BOOL) checkForAnyError:(UUHttpClientResponse*)response
+{
+	NSDictionary* dictionary = response.parsedResponse;
+
+	if (!dictionary)
+	{
+		dictionary = [NSJSONSerialization JSONObjectWithData:response.rawResponse options:NSJSONReadingMutableContainers error:nil];
+	}
+	
+	NSString* status = [dictionary objectForKey:@"stat"];
+	if ([status isEqualToString:@"fail"])
+	{
+		return YES;
+	}
+	
+	return NO;
+}
 
 + (BOOL) checkForAuthorizationError:(UUHttpClientResponse*)response
 {
@@ -220,7 +237,9 @@
 		dictionary = [NSJSONSerialization JSONObjectWithData:response.rawResponse options:NSJSONReadingMutableContainers error:nil];
 	}
 	
-	if ([dictionary objectForKey:@"stat"] && [[dictionary objectForKey:@"stat"] isEqualToString:@"fail"])
+	NSString* status = [dictionary objectForKey:@"stat"];
+	NSNumber* code = [dictionary objectForKey:@"code"];
+	if ([status isEqualToString:@"fail"] && (code.integerValue == 108 || code.integerValue == 96))
 	{
 		[UUFlickr sharedInstance].oAuthSecret = nil;
 		[UUFlickr sharedInstance].oAuthToken = nil;
@@ -367,8 +386,13 @@
 	{
 		if (!response.httpError)
 		{
-			if ([UUFlickr checkForAuthorizationError:response])
+			if ([UUFlickr checkForAnyError:response])
+			{
+				if (completionBlock)
+					completionBlock(NO, nil);
+				
 				return;
+			}
 
 			NSDictionary* dictionary = response.parsedResponse;
 			NSDictionary* containerDictionary = [dictionary objectForKey:responseObject];
@@ -417,13 +441,13 @@
 	[UUFlickr requestMediaPage:parameters array:nil responseObject:@"photos" completionBlock:completionBlock];
 }
 
-+ (void) getPhotoSetMedia:(NSNumber*)photoSetId completionBlock:(void (^)(BOOL success, NSArray* userMedia))completionBlock
++ (void) getPhotoSetMedia:(NSString*)photoSetId completionBlock:(void (^)(BOOL success, NSArray* userMedia))completionBlock
 {
 	NSString* userId = [UUFlickr sharedInstance].userId;
 	
 	NSMutableDictionary* parameters = [NSMutableDictionary dictionaryWithDictionary:
 							   @{ @"method"			: @"flickr.photosets.getPhotos",
-								  @"photoset_id"	: photoSetId.stringValue,
+								  @"photoset_id"	: photoSetId,
 								  @"media"			: @"photos",
 								  @"user_id"		: userId,
 								  @"format"			: @"json",
@@ -444,15 +468,20 @@
 								  @"format"			: @"json",
 								  @"nojsoncallback" : @"1",
 								  @"per_page"		: @"500",
-								  @"extras"			: @"geo,date_taken",
+								  @"primary_photo_extras" : @"url_sq",
 								  @"api_key"		: [UUFlickr sharedInstance].appKey };
 	NSString* signedRequest = [UUFlickr buildAndSignForURLRequest:parameters baseURL:url method:@"GET"];
 	[UUHttpClient get:signedRequest queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
 	{
 		if (!response.httpError)
 		{
-			if ([UUFlickr checkForAuthorizationError:response])
+			if ([UUFlickr checkForAnyError:response])
+			{
+				if (completionBlock)
+					completionBlock(NO, nil);
+				
 				return;
+			}
 
 			NSMutableArray* returnedPhotoSets = [NSMutableArray array];
 			NSDictionary* dictionary = response.parsedResponse;
@@ -464,8 +493,9 @@
 				NSDictionary* titleDictionary = [singleSetDictionary objectForKey:@"title"];
 				NSString* titleString = [titleDictionary objectForKey:@"_content"];
 				NSNumber* count = [singleSetDictionary objectForKey:@"photos"];
+				NSString* primaryPhotoURL = [[singleSetDictionary objectForKey:@"primary_photo_extras"] objectForKey:@"url_sq"];
 				
-				[returnedPhotoSets addObject:@{ @"id" : identifier, @"title" : titleString, @"count" : count }];
+				[returnedPhotoSets addObject:@{ @"id" : identifier, @"title" : titleString, @"count" : count, @"primary_photo_url" : primaryPhotoURL }];
 			}
 		
 			if (completionBlock)
@@ -479,6 +509,40 @@
 	}];
 }
 
++ (void) getUserPhotoCount:(void (^)(BOOL success, NSInteger count))completionBlock
+{
+	NSString* userId = [UUFlickr sharedInstance].userId;
+	NSURL* url = [NSURL URLWithString:@"http://api.flickr.com/services/rest/"];
+	NSDictionary* parameters = @{ @"method"			: @"flickr.people.getPhotos",
+								  @"user_id"		: userId,
+								  @"format"			: @"json",
+								  @"nojsoncallback" : @"1",
+								  @"per_page"		: @"0",
+								  @"api_key"		: [UUFlickr sharedInstance].appKey };
+	NSString* signedRequest = [UUFlickr buildAndSignForURLRequest:parameters baseURL:url method:@"GET"];
+	[UUHttpClient get:signedRequest queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
+	 {
+		 if (!response.httpError)
+		 {
+			if ([UUFlickr checkForAnyError:response])
+			{
+				if (completionBlock)
+					completionBlock(NO, 0);
+				
+				return;
+			}
+			 
+			 NSDictionary* dictionary = response.parsedResponse;
+			 NSNumber* total_photos = [[dictionary objectForKey:@"photos"] objectForKey:@"total"];
+			 
+			 completionBlock(YES, [total_photos integerValue]);
+		 }
+		 else
+		 {
+			completionBlock(NO, 0);
+		 }
+	 }];
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - General Functions

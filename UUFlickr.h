@@ -18,8 +18,9 @@
 	+ (void) logout;
 
 	+ (void) getUserMedia:(void (^)(BOOL success, NSArray* userMedia))completionBlock;
-	+ (void) getPhotoSetMedia:(NSNumber*)photoSetId completionBlock:(void (^)(BOOL success, NSArray* userMedia))completionBlock;
+	+ (void) getPhotoSetMedia:(NSString*)photoSetId completionBlock:(void (^)(BOOL success, NSArray* userMedia))completionBlock;
 	+ (void) getUserPhotoSets:(void (^)(BOOL success, NSArray* photoSets))completionBlock;
+	+ (void) getUserPhotoCount:(void (^)(BOOL success, NSInteger count))completionBlock;
 
 	// Call this from your App Delegate
 	+ (BOOL) handleURLCallback:(NSURL*)url;
