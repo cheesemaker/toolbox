@@ -152,7 +152,7 @@
 + (void) requestOAuthToken
 {
 	NSDictionary* parameters = @{ @"oauth_callback" : [UUFlickr sharedInstance].appCallback };
-	NSURL* url = [NSURL URLWithString:@"http://www.flickr.com/services/oauth/request_token"];
+	NSURL* url = [NSURL URLWithString:@"https://www.flickr.com/services/oauth/request_token"];
 	NSString* urlPath = [UUFlickr buildAndSignForURLRequest:parameters baseURL:url method:@"GET"];
 
 	[UUHttpClient get:urlPath queryArguments:nil completionHandler:^(UUHttpClientResponse *response)
@@ -163,7 +163,7 @@
 
 + (void) requestUserAuthorization
 {
-	NSString* urlPath = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@", [[UUFlickr sharedInstance].oAuthToken uuUrlEncoded]];
+	NSString* urlPath = [NSString stringWithFormat:@"https://www.flickr.com/services/oauth/authorize?oauth_token=%@", [[UUFlickr sharedInstance].oAuthToken uuUrlEncoded]];
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlPath]];
 }
 
@@ -172,7 +172,7 @@
 	UUFlickr* flickr = [UUFlickr sharedInstance];
 
 	NSDictionary* arguments = [NSDictionary dictionary];
-	NSURL* url = [NSURL URLWithString:@"http://www.flickr.com/services/oauth/access_token"];
+	NSURL* url = [NSURL URLWithString:@"https://www.flickr.com/services/oauth/access_token"];
 	NSString* signedURL = [UUFlickr buildAndSignForURLRequest:arguments baseURL:url method:@"GET"];
 	[UUHttpClient get:signedURL queryArguments:arguments completionHandler:^(UUHttpClientResponse *response)
 	{
@@ -297,9 +297,10 @@
 		flickr.oAuthVerifier = oauthVerifier;
 	
 		[UUFlickr exchangeForAccessToken];
+		return YES;
 	}
 	
-	return YES;
+	return NO;
 }
 
 
@@ -407,7 +408,7 @@
 			NSMutableArray* photosToAdd = [UUFlickr parseMediaDictionary:response.parsedResponse];
 			[photoArray addObjectsFromArray:photosToAdd];
 				
-			if ([totalPages isEqualToNumber:currentPage])
+			if (([totalPages integerValue] == 0) || [totalPages isEqualToNumber:currentPage])
 			{
 				if (completionBlock)
 					completionBlock(YES, photoArray);

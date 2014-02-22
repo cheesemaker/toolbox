@@ -380,7 +380,7 @@
     UINavigationItem* item = UU_AUTORELEASE([[UINavigationItem alloc] initWithTitle:@"Login"]);
     
     UIBarButtonItem* b = UU_AUTORELEASE([[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelClicked:)]);
-    item.rightBarButtonItem = b;
+    item.leftBarButtonItem = b;
     
     [self.navBar pushNavigationItem:item animated:NO];
     
