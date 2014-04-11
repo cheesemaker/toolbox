@@ -257,6 +257,44 @@
     return image;
 }
 
++ (UIImage*) uuSolidColorImage:(UIColor*)color
+                  cornerRadius:(CGFloat)cornerRadius
+                   borderColor:(UIColor*)borderColor
+                   borderWidth:(CGFloat)borderWidth
+                roundedCorners:(UIRectCorner)roundedCorners
+{
+    CGRect rect = CGRectMake(0, 0, (cornerRadius * 2) + 1, (cornerRadius * 2) + 1);
+    rect = CGRectMake(0, 0, rect.size.width * 2, rect.size.height * 2);
+    
+    UIView* view = [[UIView alloc] initWithFrame:rect];
+    view.backgroundColor = color;
+    
+    UIBezierPath* maskPath = [UIBezierPath bezierPathWithRoundedRect:rect
+                                                   byRoundingCorners:roundedCorners
+                                                         cornerRadii:CGSizeMake(cornerRadius, cornerRadius)];
+    
+    CAShapeLayer* maskLayer = [CAShapeLayer layer];
+    maskLayer.frame = rect;
+    maskLayer.path = maskPath.CGPath;
+    
+    view.layer.mask = maskLayer;
+    
+    CAShapeLayer* shapeLayer = [CAShapeLayer layer];
+    shapeLayer.frame = rect;
+    shapeLayer.path = maskPath.CGPath;
+    shapeLayer.fillColor = [color CGColor];
+    shapeLayer.strokeColor = [borderColor CGColor];
+    shapeLayer.lineWidth = borderWidth;
+    
+    [view.layer addSublayer:shapeLayer];
+    
+    UIImage* image = [self uuViewToImage:view];
+    
+    CGFloat r = cornerRadius;
+    image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(r, r, r, r)];
+    return image;
+}
+
 - (UIImage*) uuBlurWithRadius:(CGFloat)blurRadius tintColor:(UIColor *)tintColor saturationDeltaFactor:(CGFloat)saturationDeltaFactor maskImage:(UIImage *)maskImage
 {
     if (self.size.width < 1 || self.size.height < 1)
