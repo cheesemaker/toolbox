@@ -310,6 +310,32 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 @end
 
 
+@implementation NSDate (UUDateComparison)
+
+- (BOOL) uuIsToday
+{
+	NSDateComponents* thisDay = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:self];
+	NSDateComponents* today = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:[NSDate date]];
+	return ([today day] == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
+}
+
+- (BOOL) uuIsTomorrow
+{
+	NSDateComponents* thisDay = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:self];
+	NSDateComponents* today = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:[NSDate date]];
+	return (([today day] + 1) == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
+}
+
+- (BOOL) uuIsYesterday
+{
+	NSDateComponents* thisDay = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:self];
+	NSDateComponents* today = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:[NSDate date]];
+	return (([today day] - 1) == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
+}
+
+
+@end
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Date Parsing
 @implementation NSDate (UUDateParsing)

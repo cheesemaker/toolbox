@@ -10,6 +10,14 @@
 
 #import <Foundation/Foundation.h>
 
+@interface NSDate (UUDateComparison)
+
+- (BOOL) uuIsToday;
+- (BOOL) uuIsTomorrow;
+- (BOOL) uuIsYesterday;
+
+@end
+
 // Date Format Helpers
 @interface NSDate (UUStringFormatters)
 
