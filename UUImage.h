@@ -27,6 +27,11 @@
 + (UIImage*) uuSolidColorImage:(UIColor*)color;
 + (UIImage*) uuSolidColorImage:(UIColor*)color cornerRadius:(CGFloat)cornerRadius borderColor:(UIColor*)borderColor borderWidth:(CGFloat)borderWidth;
 
++ (UIImage*) uuSolidColorImage:(UIColor*)color
+                  cornerRadius:(CGFloat)cornerRadius
+                   borderColor:(UIColor*)borderColor
+                   borderWidth:(CGFloat)borderWidth
+                roundedCorners:(UIRectCorner)roundedCorners;
 
 @end
 
