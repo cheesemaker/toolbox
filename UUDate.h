@@ -10,11 +10,27 @@
 
 #import <Foundation/Foundation.h>
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Comparison
 @interface NSDate (UUDateComparison)
 
 - (BOOL) uuIsToday;
 - (BOOL) uuIsTomorrow;
 - (BOOL) uuIsYesterday;
+
+@end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Math
+@interface NSDate (UUDateMath)
+
+- (NSDate*) uuAddSeconds:(int)seconds;
+- (NSDate*) uuAddMinutes:(int)minutes;
+- (NSDate*) uuAddHours:(int)hours;
+- (NSDate*) uuAddDays:(int)days;
+- (NSDate*) uuAddWeeks:(int)weeks;
+- (NSDate*) uuAddMonths:(int)months;
+- (NSDate*) uuAddYears:(int)years;
 
 @end
 

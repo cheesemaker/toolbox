@@ -333,6 +333,67 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 	return (([today day] - 1) == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
 }
 
+@end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Math
+
+#define kUUAllDateComponents (NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond)
+
+@implementation NSDate (UUDateMath)
+
+- (NSDate*) uuAddSeconds:(int)seconds
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+    dc.second += seconds;
+    return [cal dateFromComponents:dc];
+}
+
+- (NSDate*) uuAddMinutes:(int)minutes
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+    dc.minute += minutes;
+    return [cal dateFromComponents:dc];
+}
+
+- (NSDate*) uuAddHours:(int)hours
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+    dc.hour += hours;
+    return [cal dateFromComponents:dc];
+}
+
+- (NSDate*) uuAddDays:(int)days
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+    dc.day += days;
+    return [cal dateFromComponents:dc];
+}
+
+- (NSDate*) uuAddWeeks:(int)weeks
+{
+    return [self uuAddDays:(weeks * 7)];
+}
+
+- (NSDate*) uuAddMonths:(int)months
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+    dc.month += months;
+    return [cal dateFromComponents:dc];
+}
+
+- (NSDate*) uuAddYears:(int)years
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+    dc.year += years;
+    return [cal dateFromComponents:dc];
+}
 
 @end
 
