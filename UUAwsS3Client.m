@@ -24,6 +24,9 @@ static NSString* theAwsBucket = nil;
 @property (nonatomic, copy) UUAwsS3UploadCompletionHandler completionBlock;
 @property (nonatomic, copy) NSString* fileName;
 
+// Set in didFailWithError
+@property (nonatomic, strong) NSError* error;
+
 @end
 
 @implementation UUAwsS3Client
@@ -94,9 +97,9 @@ static NSString* theAwsBucket = nil;
         self.accessId = accessId;
         self.secretKey = secretKey;
         self.bucket = bucket;
+        self.error = nil;
         
         self.s3Client = [[AmazonS3Client alloc] initWithAccessKey:self.accessId withSecretKey:self.secretKey];
-        [self.s3Client createBucket:[[S3CreateBucketRequest alloc] initWithName:self.bucket]];
     }
     
     return self;
@@ -125,7 +128,7 @@ static NSString* theAwsBucket = nil;
 {
     //UUDebugLog(@"\nRequest: %@\n\nResponse:\n%@\n\nError: %@\n\n", request.url, response, response.error);
     
-    [self finishUpload:response.error];
+    [self finishUpload];
 }
 
 -(void)request:(AmazonServiceRequest *)request didSendData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten totalBytesExpectedToWrite:(long long)totalBytesExpectedToWrite
@@ -139,7 +142,8 @@ static NSString* theAwsBucket = nil;
 {
     //UUDebugLog(@"\nRequest: %@\n\nError:\n%@\n\n", request.url, error);
     
-    [self finishUpload:error];
+    // Store the error here.  didCompleteWithResonse will still be called.
+    self.error = error;
 }
 
 #pragma mark - Private
@@ -153,17 +157,19 @@ static NSString* theAwsBucket = nil;
     }
 }
 
-- (void) finishUpload:(NSError*)error
+- (void) finishUpload
 {
     if (self.completionBlock)
     {
         NSString* url = nil;
-        if (!error)
+        if (!self.error)
         {
             url = [self formatPublicUrl:self.fileName];
         }
         
-        self.completionBlock(url, error);
+        self.completionBlock(url, self.error);
+        self.completionBlock = nil;
+        self.progressBlock = nil;
     }
     
     [[[self class] pendingRequests] removeObjectForKey:self.fileName];
