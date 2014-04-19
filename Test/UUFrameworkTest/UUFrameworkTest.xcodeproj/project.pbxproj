@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		08C58F7819023CAA004EA13C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7719023CAA004EA13C /* XCTest.framework */; };
+		08C58F7A19023CAA004EA13C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7919023CAA004EA13C /* Foundation.framework */; };
+		08C58F7C19023CAA004EA13C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7B19023CAA004EA13C /* UIKit.framework */; };
+		08C58F8219023CAA004EA13C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 08C58F8019023CAA004EA13C /* InfoPlist.strings */; };
+		08C58F8419023CAA004EA13C /* UUToolboxTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C58F8319023CAA004EA13C /* UUToolboxTest.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		08C58F7419023CA9004EA13C /* UUToolboxTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUToolboxTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08C58F7719023CAA004EA13C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		08C58F7919023CAA004EA13C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		08C58F7B19023CAA004EA13C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		08C58F7F19023CAA004EA13C /* UUToolboxTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UUToolboxTest-Info.plist"; sourceTree = "<group>"; };
+		08C58F8119023CAA004EA13C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		08C58F8319023CAA004EA13C /* UUToolboxTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UUToolboxTest.m; sourceTree = "<group>"; };
+		08C58F8519023CAA004EA13C /* UUToolboxTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UUToolboxTest-Prefix.pch"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		08C58F7119023CA9004EA13C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08C58F7819023CAA004EA13C /* XCTest.framework in Frameworks */,
+				08C58F7C19023CAA004EA13C /* UIKit.framework in Frameworks */,
+				08C58F7A19023CAA004EA13C /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08C58F6919023C4E004EA13C = {
+			isa = PBXGroup;
+			children = (
+				08C58F7D19023CAA004EA13C /* UUToolboxTest */,
+				08C58F7619023CAA004EA13C /* Frameworks */,
+				08C58F7519023CA9004EA13C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		08C58F7519023CA9004EA13C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				08C58F7419023CA9004EA13C /* UUToolboxTest.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		08C58F7619023CAA004EA13C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				08C58F7719023CAA004EA13C /* XCTest.framework */,
+				08C58F7919023CAA004EA13C /* Foundation.framework */,
+				08C58F7B19023CAA004EA13C /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		08C58F7D19023CAA004EA13C /* UUToolboxTest */ = {
+			isa = PBXGroup;
+			children = (
+				08C58F8319023CAA004EA13C /* UUToolboxTest.m */,
+				08C58F7E19023CAA004EA13C /* Supporting Files */,
+			);
+			path = UUToolboxTest;
+			sourceTree = "<group>";
+		};
+		08C58F7E19023CAA004EA13C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				08C58F7F19023CAA004EA13C /* UUToolboxTest-Info.plist */,
+				08C58F8019023CAA004EA13C /* InfoPlist.strings */,
+				08C58F8519023CAA004EA13C /* UUToolboxTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		08C58F7319023CA9004EA13C /* UUToolboxTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08C58F8619023CAA004EA13C /* Build configuration list for PBXNativeTarget "UUToolboxTest" */;
+			buildPhases = (
+				08C58F7019023CA9004EA13C /* Sources */,
+				08C58F7119023CA9004EA13C /* Frameworks */,
+				08C58F7219023CA9004EA13C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UUToolboxTest;
+			productName = UUToolboxTest;
+			productReference = 08C58F7419023CA9004EA13C /* UUToolboxTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08C58F6A19023C4E004EA13C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = 08C58F6D19023C4E004EA13C /* Build configuration list for PBXProject "UUFrameworkTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 08C58F6919023C4E004EA13C;
+			productRefGroup = 08C58F7519023CA9004EA13C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				08C58F7319023CA9004EA13C /* UUToolboxTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		08C58F7219023CA9004EA13C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08C58F8219023CAA004EA13C /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		08C58F7019023CA9004EA13C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08C58F8419023CAA004EA13C /* UUToolboxTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		08C58F8019023CAA004EA13C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				08C58F8119023CAA004EA13C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		08C58F6E19023C4E004EA13C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		08C58F6F19023C4E004EA13C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		08C58F8719023CAA004EA13C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UUToolboxTest/UUToolboxTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "UUToolboxTest/UUToolboxTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		08C58F8819023CAA004EA13C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UUToolboxTest/UUToolboxTest-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "UUToolboxTest/UUToolboxTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		08C58F6D19023C4E004EA13C /* Build configuration list for PBXProject "UUFrameworkTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08C58F6E19023C4E004EA13C /* Debug */,
+				08C58F6F19023C4E004EA13C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		08C58F8619023CAA004EA13C /* Build configuration list for PBXNativeTarget "UUToolboxTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08C58F8719023CAA004EA13C /* Debug */,
+				08C58F8819023CAA004EA13C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08C58F6A19023C4E004EA13C /* Project object */;
+}
