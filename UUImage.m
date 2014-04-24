@@ -123,7 +123,6 @@
     UIGraphicsBeginImageContext(destSize);
     
     CGRect destRect = CGRectZero;
-    //destRect.origin = thumbnailPoint;
     destRect.size.width  = targetWidth;
     destRect.size.height = targetHeight;
     
@@ -134,11 +133,56 @@
     
     if(newImage == nil)
     {
-        //NSLog(@"could not scale image");
         newImage = self;
     }
     
     return newImage;
+}
+
+- (UIImage*) uuScaleToHeight:(CGFloat)height
+{
+    UIImage *newImage = nil;
+    
+    CGSize srcSize = self.size;
+    CGFloat srcWidth = srcSize.width;
+    CGFloat srcHeight = srcSize.height;
+    CGFloat srcAspectRatio = srcWidth / srcHeight;
+    
+    CGFloat targetHeight = height * ([[UIScreen mainScreen] scale]);
+    CGFloat targetWidth = targetHeight * srcAspectRatio;
+    
+    CGSize destSize = CGSizeMake(targetWidth, targetHeight);
+    
+    // this is actually the interesting part:
+    UIGraphicsBeginImageContext(destSize);
+    
+    CGRect destRect = CGRectZero;
+    destRect.size.width  = targetWidth;
+    destRect.size.height = targetHeight;
+    
+    [self drawInRect:destRect];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    if(newImage == nil)
+    {
+        newImage = self;
+    }
+    
+    return newImage;
+}
+
+- (UIImage*) uuScaleSmallestDimensionToSize:(CGFloat)size
+{
+    if (self.size.width < self.size.height)
+    {
+        return [self uuScaleToWidth:size];
+    }
+    else
+    {
+        return [self uuScaleToHeight:size];
+    }
 }
 
 -(UIImage*) uuScaleAndCropToSize:(CGSize)targetSize
