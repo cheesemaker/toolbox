@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		084D3A0D190E2BB4002EDB67 /* UUString.m in Sources */ = {isa = PBXBuildFile; fileRef = 084D3A0C190E2BB4002EDB67 /* UUString.m */; };
+		084D3A10190E2BDE002EDB67 /* UUView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084D3A0F190E2BDE002EDB67 /* UUView.m */; };
 		08C58F7819023CAA004EA13C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7719023CAA004EA13C /* XCTest.framework */; };
 		08C58F7A19023CAA004EA13C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7919023CAA004EA13C /* Foundation.framework */; };
 		08C58F7C19023CAA004EA13C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7B19023CAA004EA13C /* UIKit.framework */; };
@@ -15,6 +17,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		084D3A0B190E2BB4002EDB67 /* UUString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UUString.h; path = ../../UUString.h; sourceTree = "<group>"; };
+		084D3A0C190E2BB4002EDB67 /* UUString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUString.m; path = ../../UUString.m; sourceTree = "<group>"; };
+		084D3A0E190E2BDE002EDB67 /* UUView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UUView.h; path = ../../UUView.h; sourceTree = "<group>"; };
+		084D3A0F190E2BDE002EDB67 /* UUView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUView.m; path = ../../UUView.m; sourceTree = "<group>"; };
 		08C58F7419023CA9004EA13C /* UUToolboxTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUToolboxTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		08C58F7719023CAA004EA13C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		08C58F7919023CAA004EA13C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -39,9 +45,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		084D3A0A190E2BA0002EDB67 /* UUSource */ = {
+			isa = PBXGroup;
+			children = (
+				084D3A0B190E2BB4002EDB67 /* UUString.h */,
+				084D3A0C190E2BB4002EDB67 /* UUString.m */,
+				084D3A0E190E2BDE002EDB67 /* UUView.h */,
+				084D3A0F190E2BDE002EDB67 /* UUView.m */,
+			);
+			name = UUSource;
+			sourceTree = "<group>";
+		};
 		08C58F6919023C4E004EA13C = {
 			isa = PBXGroup;
 			children = (
+				084D3A0A190E2BA0002EDB67 /* UUSource */,
 				08C58F7D19023CAA004EA13C /* UUToolboxTest */,
 				08C58F7619023CAA004EA13C /* Frameworks */,
 				08C58F7519023CA9004EA13C /* Products */,
@@ -146,7 +164,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				084D3A0D190E2BB4002EDB67 /* UUString.m in Sources */,
 				08C58F8419023CAA004EA13C /* UUToolboxTest.m in Sources */,
+				084D3A10190E2BDE002EDB67 /* UUView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +303,7 @@
 				08C58F8819023CAA004EA13C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
