@@ -270,7 +270,7 @@
 - (void) uuAlignBottom:(UIView*)anchorView margin:(CGFloat)margin
 {
     CGRect f = self.frame;
-    f.origin.y = anchorView.frame.origin.y + anchorView.frame.size.height - margin;
+    f.origin.y = anchorView.frame.origin.y + anchorView.frame.size.height - f.size.height - margin;
     self.frame = f;
 }
 
@@ -357,7 +357,7 @@
     [self uuResizeHeight:kUUNoResizingConstraint];
 }
 
-- (void) uuResizeHeight:(CGFloat)minimumHeight minSize:(CGSize)minSize;
+- (void) uuResizeHeight:(CGFloat)minimumHeight
 {
     CGRect originalFrame = [self uuOriginalFrame];
     
