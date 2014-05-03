@@ -21,12 +21,21 @@
 + (UIImage*) uuViewToImage:(UIView*)view;
 
 - (UIImage*) uuScaleToWidth:(CGFloat)width;
+- (UIImage*) uuScaleToHeight:(CGFloat)height;
+
+// Picks the smaller of height or width and scales the image 
+- (UIImage*) uuScaleSmallestDimensionToSize:(CGFloat)size;
 
 + (UIImage*) uuMakeStretchableImage:(NSString*)imageName insets:(UIEdgeInsets)insets;
 
 + (UIImage*) uuSolidColorImage:(UIColor*)color;
 + (UIImage*) uuSolidColorImage:(UIColor*)color cornerRadius:(CGFloat)cornerRadius borderColor:(UIColor*)borderColor borderWidth:(CGFloat)borderWidth;
 
++ (UIImage*) uuSolidColorImage:(UIColor*)color
+                  cornerRadius:(CGFloat)cornerRadius
+                   borderColor:(UIColor*)borderColor
+                   borderWidth:(CGFloat)borderWidth
+                roundedCorners:(UIRectCorner)roundedCorners;
 
 @end
 

@@ -123,7 +123,6 @@
     UIGraphicsBeginImageContext(destSize);
     
     CGRect destRect = CGRectZero;
-    //destRect.origin = thumbnailPoint;
     destRect.size.width  = targetWidth;
     destRect.size.height = targetHeight;
     
@@ -134,11 +133,56 @@
     
     if(newImage == nil)
     {
-        //NSLog(@"could not scale image");
         newImage = self;
     }
     
     return newImage;
+}
+
+- (UIImage*) uuScaleToHeight:(CGFloat)height
+{
+    UIImage *newImage = nil;
+    
+    CGSize srcSize = self.size;
+    CGFloat srcWidth = srcSize.width;
+    CGFloat srcHeight = srcSize.height;
+    CGFloat srcAspectRatio = srcWidth / srcHeight;
+    
+    CGFloat targetHeight = height * ([[UIScreen mainScreen] scale]);
+    CGFloat targetWidth = targetHeight * srcAspectRatio;
+    
+    CGSize destSize = CGSizeMake(targetWidth, targetHeight);
+    
+    // this is actually the interesting part:
+    UIGraphicsBeginImageContext(destSize);
+    
+    CGRect destRect = CGRectZero;
+    destRect.size.width  = targetWidth;
+    destRect.size.height = targetHeight;
+    
+    [self drawInRect:destRect];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    if(newImage == nil)
+    {
+        newImage = self;
+    }
+    
+    return newImage;
+}
+
+- (UIImage*) uuScaleSmallestDimensionToSize:(CGFloat)size
+{
+    if (self.size.width < self.size.height)
+    {
+        return [self uuScaleToWidth:size];
+    }
+    else
+    {
+        return [self uuScaleToHeight:size];
+    }
 }
 
 -(UIImage*) uuScaleAndCropToSize:(CGSize)targetSize
@@ -250,6 +294,44 @@
     view.layer.cornerRadius = cornerRadius;
     view.layer.masksToBounds = YES;
     view.layer.borderWidth = borderWidth;
+    UIImage* image = [self uuViewToImage:view];
+    
+    CGFloat r = cornerRadius;
+    image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(r, r, r, r)];
+    return image;
+}
+
++ (UIImage*) uuSolidColorImage:(UIColor*)color
+                  cornerRadius:(CGFloat)cornerRadius
+                   borderColor:(UIColor*)borderColor
+                   borderWidth:(CGFloat)borderWidth
+                roundedCorners:(UIRectCorner)roundedCorners
+{
+    CGRect rect = CGRectMake(0, 0, (cornerRadius * 2) + 1, (cornerRadius * 2) + 1);
+    rect = CGRectMake(0, 0, rect.size.width * 2, rect.size.height * 2);
+    
+    UIView* view = [[UIView alloc] initWithFrame:rect];
+    view.backgroundColor = color;
+    
+    UIBezierPath* maskPath = [UIBezierPath bezierPathWithRoundedRect:rect
+                                                   byRoundingCorners:roundedCorners
+                                                         cornerRadii:CGSizeMake(cornerRadius, cornerRadius)];
+    
+    CAShapeLayer* maskLayer = [CAShapeLayer layer];
+    maskLayer.frame = rect;
+    maskLayer.path = maskPath.CGPath;
+    
+    view.layer.mask = maskLayer;
+    
+    CAShapeLayer* shapeLayer = [CAShapeLayer layer];
+    shapeLayer.frame = rect;
+    shapeLayer.path = maskPath.CGPath;
+    shapeLayer.fillColor = [color CGColor];
+    shapeLayer.strokeColor = [borderColor CGColor];
+    shapeLayer.lineWidth = borderWidth;
+    
+    [view.layer addSublayer:shapeLayer];
+    
     UIImage* image = [self uuViewToImage:view];
     
     CGFloat r = cornerRadius;

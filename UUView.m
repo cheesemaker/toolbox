@@ -9,6 +9,7 @@
 //  Contact: @cheesemaker or jon@threejacks.com
 
 #import "UUView.h"
+#import <objc/runtime.h>
 
 @implementation UIView (UUFramework)
 
@@ -189,5 +190,223 @@
 	}];
 }
 
+
+@end
+
+
+
+
+
+
+
+
+
+
+#define kUUUILabelOriginalFrameKey @"UUUILabelOriginalFrameKey"
+
+@implementation UIView (UUViewPositioning)
+
+- (CGRect) uuOriginalFrame
+{
+    NSValue* val = objc_getAssociatedObject(self, kUUUILabelOriginalFrameKey);
+    if (!val)
+    {
+        val = [NSValue valueWithCGRect:self.frame];
+        objc_setAssociatedObject(self, kUUUILabelOriginalFrameKey, val, OBJC_ASSOCIATION_RETAIN);
+    }
+    
+    return [val CGRectValue];
+}
+
+- (void) uuPositionRightOf:(UIView*)anchorView withSpacing:(CGFloat)spacing
+{
+    CGRect f = self.frame;
+    f.origin.x = anchorView.frame.origin.x + anchorView.frame.size.width + spacing;
+    self.frame = f;
+}
+
+- (void) uuPositionLeftOf:(UIView*)anchorView withSpacing:(CGFloat)spacing
+{
+    CGRect f = self.frame;
+    f.origin.x = anchorView.frame.origin.x - self.frame.size.width - spacing;
+    self.frame = f;
+}
+
+- (void) uuPositionBelow:(UIView*)anchorView withSpacing:(CGFloat)spacing
+{
+    CGRect f = self.frame;
+    f.origin.y = anchorView.frame.origin.y + anchorView.frame.size.height + spacing;
+    self.frame = f;
+}
+
+- (void) uuPositionAbove:(UIView*)anchorView withSpacing:(CGFloat)spacing
+{
+    CGRect f = self.frame;
+    f.origin.y = anchorView.frame.origin.y - self.frame.size.height - spacing;
+    self.frame = f;
+}
+
+- (void) uuAlignLeft:(UIView*)anchorView margin:(CGFloat)margin
+{
+    CGRect f = self.frame;
+    f.origin.x = anchorView.frame.origin.x + margin;
+    self.frame = f;
+}
+
+- (void) uuAlignRight:(UIView*)anchorView margin:(CGFloat)margin
+{
+    CGRect f = self.frame;
+    f.origin.x = anchorView.frame.origin.x + anchorView.frame.size.width - margin;
+    self.frame = f;
+}
+
+- (void) uuAlignTop:(UIView*)anchorView margin:(CGFloat)margin
+{
+    CGRect f = self.frame;
+    f.origin.y = anchorView.frame.origin.y + margin;
+    self.frame = f;
+}
+
+- (void) uuAlignBottom:(UIView*)anchorView margin:(CGFloat)margin
+{
+    CGRect f = self.frame;
+    f.origin.y = anchorView.frame.origin.y + anchorView.frame.size.height - f.size.height - margin;
+    self.frame = f;
+}
+
+- (void) uuAlignToParentLeft:(CGFloat)margin
+{
+    [self uuAlignLeft:self.superview margin:margin];
+}
+
+- (void) uuAlignToParentRight:(CGFloat)margin
+{
+    [self uuAlignRight:self.superview margin:margin];
+}
+
+- (void) uuAlignToParentBottom:(CGFloat)margin
+{
+    [self uuAlignBottom:self.superview margin:margin];
+}
+
+- (void) uuAlignToParentTop:(CGFloat)margin
+{
+    [self uuAlignTop:self.superview margin:margin];
+}
+
+- (void) uuCenterHorizontallyInParent
+{
+    CGRect f = self.frame;
+    f.origin.x = (self.superview.bounds.size.width - f.size.width) / 2.0f;
+    self.frame = f;
+}
+
+- (void) uuCenterVerticallyInParent
+{
+    CGRect f = self.frame;
+    f.origin.y = (self.superview.bounds.size.height - f.size.height) / 2.0f;
+    self.frame = f;
+}
+
+- (void) uuCenterInParent
+{
+    CGRect f = self.frame;
+    f.origin.x = (self.superview.bounds.size.width - f.size.width) / 2.0f;
+    f.origin.y = (self.superview.bounds.size.height - f.size.height) / 2.0f;
+    self.frame = f;
+}
+
+
+@end
+
+
+#define kUUNoResizingConstraint -1
+
+@implementation UIView (UUViewResizing)
+
+- (void) uuResizeWidth
+{
+    [self uuResizeWidth:kUUNoResizingConstraint];
+}
+
+- (void) uuResizeWidth:(CGFloat)minimumWidth
+{
+    CGRect originalFrame = [self uuOriginalFrame];
+    
+    self.frame = originalFrame;
+    [self sizeToFit];
+    
+    CGRect f = originalFrame;
+    f.size.width = self.frame.size.width;
+    if (minimumWidth > 0 && f.size.width < minimumWidth)
+    {
+        f.size.width = minimumWidth;
+    }
+    
+    self.frame = f;
+}
+
+- (void) uuResizeWidthOriginalAsMin
+{
+    CGRect originalFrame = [self uuOriginalFrame];
+    [self uuResizeWidth:originalFrame.size.width];
+}
+
+- (void) uuResizeHeight
+{
+    [self uuResizeHeight:kUUNoResizingConstraint];
+}
+
+- (void) uuResizeHeight:(CGFloat)minimumHeight
+{
+    CGRect originalFrame = [self uuOriginalFrame];
+    
+    self.frame = originalFrame;
+    [self sizeToFit];
+    
+    CGRect f = originalFrame;
+    f.size.height = self.frame.size.height;
+    if (minimumHeight > 0 && f.size.height < minimumHeight)
+    {
+        f.size.height = minimumHeight;
+    }
+    
+    self.frame = f;
+}
+
+- (void) uuResizeHeightOriginalAsMin
+{
+    CGRect originalFrame = [self uuOriginalFrame];
+    [self uuResizeHeight:originalFrame.size.height];
+}
+
+- (void) uuResizeWidthAndHeight
+{
+    [self uuResizeWidthAndHeight:UIEdgeInsetsZero minSize:CGSizeMake(kUUNoResizingConstraint, kUUNoResizingConstraint)];
+}
+
+- (void) uuResizeWidthAndHeight:(UIEdgeInsets)padding minSize:(CGSize)minSize
+{
+    self.frame = [self uuOriginalFrame];
+    [self sizeToFit];
+    
+    CGRect f = self.frame;
+    
+    if (minSize.width > 0 && f.size.width < minSize.width)
+    {
+        f.size.width = minSize.width;
+    }
+    
+    if (minSize.height > 0 && f.size.height < minSize.height)
+    {
+        f.size.height = minSize.height;
+    }
+    
+    f.origin.x -= padding.left;
+    f.origin.y -= padding.top;
+    f.size.height += (padding.top + padding.bottom);
+    f.size.width += (padding.left + padding.right);
+    self.frame = f;
+}
 
 @end
