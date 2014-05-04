@@ -75,6 +75,7 @@ typedef enum
 
 // Static helper functions for the most common cases
 + (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments;
++ (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments;
 + (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 + (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 
@@ -116,6 +117,7 @@ typedef enum
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Static verb interface
 + (instancetype) get:(NSString*)url  queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 + (instancetype) put:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 + (instancetype) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 + (instancetype) executeRequest:(UUHttpClientRequest*)request completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
@@ -125,6 +127,7 @@ typedef enum
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Synchronous interface. The returned response contains all relevant information about the transaction
 + (UUHttpClientResponse*) synchronousGet:(NSString*)url  queryArguments:(NSDictionary*)queryArguments;
++ (UUHttpClientResponse*) synchronousDelete:(NSString*)url  queryArguments:(NSDictionary*)queryArguments;
 + (UUHttpClientResponse*) synchronousPut:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType;
 + (UUHttpClientResponse*) synchronousPost:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType;
 
