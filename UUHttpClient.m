@@ -99,6 +99,14 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     return cr;
 }
 
++ (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments
+{
+    UUHttpClientRequest* cr = UU_AUTORELEASE([[UUHttpClientRequest alloc] initWithUrl:url]);
+    cr.httpMethod = UUHttpMethodDelete;
+    cr.queryArguments = queryArguments;
+    return cr;
+}
+
 + (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType
 {
     UUHttpClientRequest* cr = UU_AUTORELEASE([[UUHttpClientRequest alloc] initWithUrl:url]);
@@ -201,6 +209,12 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     return [self executeRequest:request completionHandler:completionHandler];
 }
 
++ (instancetype) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
+{
+    UUHttpClientRequest* request = [UUHttpClientRequest deleteRequest:url queryArguments:queryArguments];
+    return [self executeRequest:request completionHandler:completionHandler];
+}
+
 + (instancetype) put:(NSString*)url queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
     UUHttpClientRequest* request = [UUHttpClientRequest putRequest:url queryArguments:queryArguments body:putBody contentType:contentType];
@@ -245,6 +259,23 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	{
 		returnObject = response;
 	}];
+	
+	while (client.isActive)
+	{
+		[[NSRunLoop currentRunLoop] run];
+	}
+	
+	return returnObject;
+}
+
++ (UUHttpClientResponse*) synchronousDelete:(NSString*)url  queryArguments:(NSDictionary*)queryArguments
+{
+	__block UUHttpClientResponse* returnObject = nil;
+	
+	UUHttpClient* client = [UUHttpClient delete:url queryArguments:queryArguments completionHandler:^(UUHttpClientResponse* response)
+    {
+        returnObject = response;
+    }];
 	
 	while (client.isActive)
 	{
