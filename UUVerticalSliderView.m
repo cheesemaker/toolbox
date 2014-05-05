@@ -38,7 +38,7 @@
 	UIColor* color = [UIColor blueColor];
 	UIColor* borderColor = [UIColor colorWithWhite:0.98 alpha:0.9];
 	
-    CGRect rect = CGRectMake(0, 0, 22, 22);
+    CGRect rect = CGRectMake(0, 0, 20, 20);
     
     UIView* view = [[UIView alloc] initWithFrame:rect];
     view.backgroundColor = color;
@@ -154,24 +154,6 @@
 
 - (void) setThumbImage:(UIImage *)image forState:(UIControlState)state
 {
-	/*CGRect viewFrame = self.frame;
-	
-	//Adjust it back from the slider size first.
-	viewFrame.origin.y += (self.sliderImage.frame.size.height / 2.0);
-	viewFrame.size.height -= (self.sliderImage.frame.size.height);
-
-	CGPoint center = self.sliderImage.center;
-	self.sliderImage.image = image;
-	CGRect frame = self.sliderImage.frame;
-	frame.size = image.size;
-	self.sliderImage.frame = frame;
-	self.sliderImage.center = center;
-	
-	//Adjust it for the thumb
-	viewFrame.origin.y -= image.size.height / 2.0;
-	viewFrame.size.height += image.size.height;
-	self.frame = frame;*/
-	
 	self.sliderImage.image = image;
 	
 }
