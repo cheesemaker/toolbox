@@ -38,7 +38,7 @@
 	UIColor* color = [UIColor blueColor];
 	UIColor* borderColor = [UIColor colorWithWhite:0.98 alpha:0.9];
 	
-    CGRect rect = CGRectMake(0, 0, 20, 20);
+    CGRect rect = CGRectMake(0, 0, 40, 40);
     
     UIView* view = [[UIView alloc] initWithFrame:rect];
     view.backgroundColor = color;
