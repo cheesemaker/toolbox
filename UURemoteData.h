@@ -1,5 +1,5 @@
 //
-//  UURemoteDataCache.h
+//  UURemoteData.h
 //  Useful Utilities - An extension to Useful Utilities UUDataCache that fetches
 //  data from a remote source
 //
@@ -7,7 +7,7 @@
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 //  
-//  UUDataCacheRemote provides a centralized place where application components can request
+//  UURemoteData provides a centralized place where application components can request
 //  data that may come from a remote source.  It utilizes existing UUDataCache functionality
 //  to locally store files for later fetching.  It will intelligently handle multiple requests for the
 //  same image so that extraneous network requests are not needed.
@@ -34,7 +34,7 @@ extern NSString * const kUUDataDownloadedNotification;
 extern NSString * const kUUDataRemotePathKey;
 extern NSString * const kUUDataKey;
 
-@interface UURemoteDataCache : NSObject
+@interface UURemoteData : NSObject
 
 + (instancetype) sharedInstance;
 
