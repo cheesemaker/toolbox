@@ -1,5 +1,5 @@
 //
-//  UURemoteDataCache.m
+//  UURemoteData.m
 //  Useful Utilities - An extension to Useful Utilities UUDataCache that fetches
 //  data from a remote source
 //
@@ -8,7 +8,7 @@
 //
 
 
-#import "UURemoteDataCache.h"
+#import "UURemoteData.h"
 #import "UUHttpClient.h"
 #import "UUDataCache.h"
 
@@ -16,12 +16,12 @@ NSString * const kUUDataDownloadedNotification      = @"UUDataDownloadedNotifica
 NSString * const kUUDataRemotePathKey               = @"UUDataRemotePathKey";
 NSString * const kUUDataKey                         = @"UUDataKey";
 
-@interface UURemoteDataCache ()
+@interface UURemoteData ()
 
 @property (nonatomic, strong) NSMutableDictionary* pendingDownloads;
 @end
 
-@implementation UURemoteDataCache
+@implementation UURemoteData
 
 + (instancetype) sharedInstance
 {
