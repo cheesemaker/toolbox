@@ -109,22 +109,13 @@
 {
     UIImage *newImage = nil;
     
-    CGSize srcSize = self.size;
-    CGFloat srcWidth = srcSize.width;
-    CGFloat srcHeight = srcSize.height;
-    CGFloat srcAspectRatio = srcHeight / srcWidth;
-    
-    CGFloat targetWidth = width * ([[UIScreen mainScreen] scale]);
-    CGFloat targetHeight = targetWidth * srcAspectRatio;
-    
-    CGSize destSize = CGSizeMake(targetWidth, targetHeight);
+    CGSize destSize = [self uuCalculateScaleToWidthDestSize:width];
     
     // this is actually the interesting part:
     UIGraphicsBeginImageContext(destSize);
     
     CGRect destRect = CGRectZero;
-    destRect.size.width  = targetWidth;
-    destRect.size.height = targetHeight;
+    destRect.size = destSize;
     
     [self drawInRect:destRect];
     
@@ -143,22 +134,13 @@
 {
     UIImage *newImage = nil;
     
-    CGSize srcSize = self.size;
-    CGFloat srcWidth = srcSize.width;
-    CGFloat srcHeight = srcSize.height;
-    CGFloat srcAspectRatio = srcWidth / srcHeight;
-    
-    CGFloat targetHeight = height * ([[UIScreen mainScreen] scale]);
-    CGFloat targetWidth = targetHeight * srcAspectRatio;
-    
-    CGSize destSize = CGSizeMake(targetWidth, targetHeight);
+    CGSize destSize = [self uuCalculateScaleToHeightDestSize:height];
     
     // this is actually the interesting part:
     UIGraphicsBeginImageContext(destSize);
     
     CGRect destRect = CGRectZero;
-    destRect.size.width  = targetWidth;
-    destRect.size.height = targetHeight;
+    destRect.size = destSize;
     
     [self drawInRect:destRect];
     
@@ -184,6 +166,47 @@
         return [self uuScaleToHeight:size];
     }
 }
+
+- (CGSize) uuCalculateScaleToWidthDestSize:(CGFloat)width
+{
+    CGSize srcSize = self.size;
+    CGFloat srcWidth = srcSize.width;
+    CGFloat srcHeight = srcSize.height;
+    CGFloat srcAspectRatio = srcHeight / srcWidth;
+    
+    CGFloat targetWidth = width * ([[UIScreen mainScreen] scale]);
+    CGFloat targetHeight = targetWidth * srcAspectRatio;
+    
+    CGSize destSize = CGSizeMake(targetWidth, targetHeight);
+    return destSize;
+}
+
+- (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height
+{
+    CGSize srcSize = self.size;
+    CGFloat srcWidth = srcSize.width;
+    CGFloat srcHeight = srcSize.height;
+    CGFloat srcAspectRatio = srcWidth / srcHeight;
+    
+    CGFloat targetHeight = height * ([[UIScreen mainScreen] scale]);
+    CGFloat targetWidth = targetHeight * srcAspectRatio;
+    
+    CGSize destSize = CGSizeMake(targetWidth, targetHeight);
+    return destSize;
+}
+
+- (CGSize) uuCalculateScaleToFitDestSize:(CGFloat)size
+{
+    if (self.size.width < self.size.height)
+    {
+        return [self uuCalculateScaleToWidthDestSize:size];
+    }
+    else
+    {
+        return [self uuCalculateScaleToHeightDestSize:size];
+    }
+}
+
 
 -(UIImage*) uuScaleAndCropToSize:(CGSize)targetSize
 {

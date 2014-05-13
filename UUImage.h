@@ -26,6 +26,10 @@
 // Picks the smaller of height or width and scales the image 
 - (UIImage*) uuScaleSmallestDimensionToSize:(CGFloat)size;
 
+- (CGSize) uuCalculateScaleToWidthDestSize:(CGFloat)width;
+- (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height;
+- (CGSize) uuCalculateScaleToFitDestSize:(CGFloat)size;
+
 + (UIImage*) uuMakeStretchableImage:(NSString*)imageName insets:(UIEdgeInsets)insets;
 
 + (UIImage*) uuSolidColorImage:(UIColor*)color;
