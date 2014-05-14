@@ -95,7 +95,7 @@ static UULocationManager* theLocationManager = nil;
 			locManager.delegate = self;
             
 			locManager.desiredAccuracy = kCLLocationAccuracyBest;
-			locManager.distanceFilter = kCLDistanceFilterNone;  
+			locManager.distanceFilter = self.distanceThreshold;
 			self.clLocationManager = locManager;
 		
 			//Go!!!
@@ -103,6 +103,12 @@ static UULocationManager* theLocationManager = nil;
 		}	
 	}
 	return self;
+}
+
+- (void) setDistanceThreshold:(CLLocationDistance)distanceThreshold
+{
+    _distanceThreshold = distanceThreshold;
+    self.clLocationManager.distanceFilter = distanceThreshold;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
