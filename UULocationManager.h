@@ -34,10 +34,10 @@ extern NSString * const UULocationErrorNotification;
 - (bool) hasValidLocation;
 
 // Configuration Properties
-@property (assign) CGFloat distanceThreshold;			//Defaults to 10 meters
-@property (assign) CGFloat timeThreshold;				//Defaults to 30 minutes (time is in seconds)
-@property (assign) bool monitorLocationName;			//Defaults to NO
-@property (assign) bool delayLocationUpdates;			//Defaults to NO
-@property (assign) NSTimeInterval locationUpdateDelay;	//Defaults to 1 second
+@property (assign, setter = setDistsanceThreshold:) CLLocationDistance distanceThreshold;	// Defaults to 10 meters
+@property (assign) NSTimeInterval timeThreshold;			// Defaults to 30 minutes (time is in seconds)
+@property (assign) bool monitorLocationName;                // Defaults to NO
+@property (assign) bool delayLocationUpdates;               // Defaults to NO
+@property (assign) NSTimeInterval locationUpdateDelay;      // Defaults to 1 second
 
 @end
