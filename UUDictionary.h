@@ -40,4 +40,8 @@
 // specified NSDateFormatter
 - (NSDate*) uuSafeGetDate:(NSString*)key formatter:(NSDateFormatter*)formatter;
 
+// Convenience wrappers
+- (NSDictionary*) uuSafeGetDictionary:(NSString*)key;
+- (NSArray*) uuSafeGetArray:(NSString*)key;
+
 @end
