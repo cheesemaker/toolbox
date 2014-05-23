@@ -88,4 +88,14 @@
     }
 }
 
+- (NSDictionary*) uuSafeGetDictionary:(NSString*)key
+{
+    return [self uuSafeGet:key forClass:[NSDictionary class]];
+}
+
+- (NSArray*) uuSafeGetArray:(NSString*)key
+{
+    return [self uuSafeGet:key forClass:[NSArray class]];
+}
+
 @end
