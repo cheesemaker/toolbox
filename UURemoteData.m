@@ -7,10 +7,18 @@
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 
-
 #import "UURemoteData.h"
 #import "UUHttpClient.h"
 #import "UUDataCache.h"
+
+//If you want to provide your own logging mechanism, define UUDebugLog in your .pch
+#ifndef UUDebugLog
+#ifdef DEBUG
+#define UUDebugLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#define UUDebugLog(fmt, ...)
+#endif
+#endif
 
 NSString * const kUUDataDownloadedNotification      = @"UUDataDownloadedNotification";
 NSString * const kUUDataRemotePathKey               = @"UUDataRemotePathKey";
