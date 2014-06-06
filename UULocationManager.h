@@ -33,6 +33,11 @@ extern NSString * const UULocationErrorNotification;
 
 - (bool) hasValidLocation;
 
+- (void) startTracking;
+- (void) stopTracking;
+- (void) startTrackingSignificantLocationChanges;
+- (void) stopTrackingSignificantLocationChanges;
+
 // Configuration Properties
 @property (assign, setter = setDistsanceThreshold:) CLLocationDistance distanceThreshold;	// Defaults to 10 meters
 @property (assign) NSTimeInterval timeThreshold;			// Defaults to 30 minutes (time is in seconds)

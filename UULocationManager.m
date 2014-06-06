@@ -105,6 +105,27 @@ static UULocationManager* theLocationManager = nil;
 	return self;
 }
 
+- (void) startTracking
+{
+    [self.clLocationManager startUpdatingLocation];
+}
+
+- (void) stopTracking
+{
+    self.clLocation = nil;
+    [self.clLocationManager stopUpdatingLocation];
+}
+
+- (void) startTrackingSignificantLocationChanges
+{
+    [self.clLocationManager startMonitoringSignificantLocationChanges];
+}
+
+- (void) stopTrackingSignificantLocationChanges
+{
+    [self.clLocationManager stopMonitoringSignificantLocationChanges];
+}
+
 - (void) setDistanceThreshold:(CLLocationDistance)distanceThreshold
 {
     _distanceThreshold = distanceThreshold;
