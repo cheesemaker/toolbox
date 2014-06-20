@@ -20,6 +20,8 @@
 		08C58F7C19023CAA004EA13C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7B19023CAA004EA13C /* UIKit.framework */; };
 		08C58F8219023CAA004EA13C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 08C58F8019023CAA004EA13C /* InfoPlist.strings */; };
 		08C58F8419023CAA004EA13C /* UUToolboxTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C58F8319023CAA004EA13C /* UUToolboxTest.m */; };
+		08F53A3119548F410097518A /* UURandom.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F53A3019548F410097518A /* UURandom.m */; };
+		08F53A331954965B0097518A /* UURandomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F53A321954965B0097518A /* UURandomTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,9 @@
 		08C58F8119023CAA004EA13C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		08C58F8319023CAA004EA13C /* UUToolboxTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UUToolboxTest.m; sourceTree = "<group>"; };
 		08C58F8519023CAA004EA13C /* UUToolboxTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UUToolboxTest-Prefix.pch"; sourceTree = "<group>"; };
+		08F53A2F19548F410097518A /* UURandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UURandom.h; path = ../../UURandom.h; sourceTree = "<group>"; };
+		08F53A3019548F410097518A /* UURandom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UURandom.m; path = ../../UURandom.m; sourceTree = "<group>"; };
+		08F53A321954965B0097518A /* UURandomTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UURandomTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +78,8 @@
 				08A1760B1919F73200EFA68A /* UUDate.m */,
 				08A176071919F71200EFA68A /* UUDictionary.h */,
 				08A176081919F71200EFA68A /* UUDictionary.m */,
+				08F53A2F19548F410097518A /* UURandom.h */,
+				08F53A3019548F410097518A /* UURandom.m */,
 			);
 			name = UUSource;
 			sourceTree = "<group>";
@@ -108,6 +115,7 @@
 		08C58F7D19023CAA004EA13C /* UUToolboxTest */ = {
 			isa = PBXGroup;
 			children = (
+				08F53A321954965B0097518A /* UURandomTests.m */,
 				08A175FE1919F54500EFA68A /* UUDictionaryTests.m */,
 				08A175FF1919F54500EFA68A /* UUStringTests.m */,
 				08C58F8319023CAA004EA13C /* UUToolboxTest.m */,
@@ -188,12 +196,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08F53A3119548F410097518A /* UURandom.m in Sources */,
 				084D3A0D190E2BB4002EDB67 /* UUString.m in Sources */,
 				08A176091919F71200EFA68A /* UUDictionary.m in Sources */,
 				08A176001919F54500EFA68A /* UUDictionaryTests.m in Sources */,
 				08C58F8419023CAA004EA13C /* UUToolboxTest.m in Sources */,
 				08A176011919F54500EFA68A /* UUStringTests.m in Sources */,
 				084D3A10190E2BDE002EDB67 /* UUView.m in Sources */,
+				08F53A331954965B0097518A /* UURandomTests.m in Sources */,
 				08A176041919F55600EFA68A /* UUColor.m in Sources */,
 				08A176061919F57B00EFA68A /* UUColorTests.m in Sources */,
 				08A1760C1919F73200EFA68A /* UUDate.m in Sources */,
