@@ -18,6 +18,7 @@
 	+ (void)	uuClearCacheContents;
     + (void)    uuPurgeExpiredContent;
     + (void)    uuPurgeContentAboveSize:(unsigned long long)purgeFileSize;
+    + (BOOL)    uuDoesCachedFileExistForURL:(NSURL*)url;
 
 	+ (UUDataCache*) sharedCache;
 
