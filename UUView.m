@@ -276,22 +276,30 @@
 
 - (void) uuAlignToParentLeft:(CGFloat)margin
 {
-    [self uuAlignLeft:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.x = margin;
+    self.frame = f;
 }
 
 - (void) uuAlignToParentRight:(CGFloat)margin
 {
-    [self uuAlignRight:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.x = self.superview.bounds.size.width - f.size.width - margin;
+    self.frame = f;
 }
 
 - (void) uuAlignToParentBottom:(CGFloat)margin
 {
-    [self uuAlignBottom:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.y = self.superview.bounds.size.height - f.size.height - margin;
+    self.frame = f;
 }
 
 - (void) uuAlignToParentTop:(CGFloat)margin
 {
-    [self uuAlignTop:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.y = margin;
+    self.frame = f;
 }
 
 - (void) uuCenterHorizontallyInParent
