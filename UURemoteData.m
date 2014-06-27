@@ -77,21 +77,66 @@ NSString * const kUUDataKey                         = @"UUDataKey";
 	request.processMimeTypes = NO;
     UUHttpClient* client = [UUHttpClient executeRequest:request completionHandler:^(UUHttpClientResponse *response)
     {
-        if (response.rawResponse)
-        {
-            [[UUDataCache sharedCache] setObject:response.rawResponse forKey:path];
-            
-            NSMutableDictionary* md = [NSMutableDictionary dictionary];
-            [md setValue:response.rawResponse forKeyPath:kUUDataKey];
-            [md setValue:path forKeyPath:kUUDataRemotePathKey];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kUUDataDownloadedNotification object:nil userInfo:md];
-            [self.pendingDownloads removeObjectForKey:path];
-        }
+        [self handleDownloadResponse:response forPath:path];
     }];
     
     [self.pendingDownloads setValue:client forKey:path];
     
     return nil;
+}
+
+- (void) handleDownloadResponse:(UUHttpClientResponse*)response forPath:(NSString*)path
+{
+    if (response.rawResponse)
+    {
+        [[UUDataCache sharedCache] setObject:response.rawResponse forKey:path];
+        
+        NSMutableDictionary* md = [NSMutableDictionary dictionary];
+        [md setValue:response.rawResponse forKeyPath:kUUDataKey];
+        [md setValue:path forKeyPath:kUUDataRemotePathKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kUUDataDownloadedNotification object:nil userInfo:md];
+        [self.pendingDownloads removeObjectForKey:path];
+    }
+}
+
+- (void) fetchMultiple:(NSArray*)remotePaths completion:(void(^)(NSDictionary* results))completion
+{
+    __block int processedCount = 0;
+    __block int totalToProcess = remotePaths.count;
+    __block NSMutableDictionary* md = [NSMutableDictionary dictionary];
+    
+    void (^block)(NSString* remotePath, UUHttpClientResponse* response) = ^(NSString* remotePath, UUHttpClientResponse* response)
+    {
+        ++processedCount;
+        
+        if (response.httpError)
+        {
+            [md setValue:response.httpError forKey:remotePath];
+        }
+        
+        UUDebugLog(@"Processed %d of %d", processedCount, totalToProcess);
+        
+        if (processedCount >= totalToProcess)
+        {
+            if (completion)
+            {
+                completion(md);
+            }
+        }
+    };
+    
+    for (NSString* path in remotePaths)
+    {
+        UUHttpClientRequest* request = [UUHttpClientRequest getRequest:path queryArguments:nil];
+        request.processMimeTypes = NO;
+        UUHttpClient* client = [UUHttpClient executeRequest:request completionHandler:^(UUHttpClientResponse *response)
+        {
+            [self handleDownloadResponse:response forPath:path];
+            block(path, response);
+        }];
+        
+        [self.pendingDownloads setValue:client forKey:path];
+    }
 }
 
 @end
