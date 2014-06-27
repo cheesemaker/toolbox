@@ -43,4 +43,9 @@ extern NSString * const kUUDataKey;
 // a remote request has either been started or is already in progress.
 - (NSData*) dataForPath:(NSString*)path;
 
+// Fetches multiple remote data objects and calls the completion block only when all
+// have completed.  The completion block is an NSDictionary of NSString->NSError objects. If
+// empty it means all completed successfully.
+- (void) fetchMultiple:(NSArray*)remotePaths completion:(void(^)(NSDictionary* results))completion;
+
 @end
