@@ -309,28 +309,55 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 
 @end
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Creation
+@implementation NSDate (UUDateCreation)
 
+- (NSDate*) uuDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSCalendarUnit units = (NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay);
+    NSDateComponents* dc = [cal components:units fromDate:self];
+    dc.hour = 0;
+    dc.minute = 0;
+    dc.second = 0;
+    return [cal dateFromComponents:dc];
+}
+
+- (NSDate*) uuStartOfDay
+{
+    return [self uuDateWithHour:0 minute:0 second:0];
+}
+
+@end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Comparison
 @implementation NSDate (UUDateComparison)
+
+#define kUUDateOnlyComponents (NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay)
+
+- (BOOL) uuIsDatePartEqual:(NSDate*)other
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* thisDate = [cal components:kUUDateOnlyComponents fromDate:self];
+    NSDateComponents* otherDate = [cal components:kUUDateOnlyComponents fromDate:other];
+    return (thisDate.year == otherDate.year && thisDate.month == otherDate.month && thisDate.day == otherDate.day);
+}
 
 - (BOOL) uuIsToday
 {
-	NSDateComponents* thisDay = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:self];
-	NSDateComponents* today = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:[NSDate date]];
-	return ([today day] == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
+    return [self uuIsDatePartEqual:[NSDate date]];
 }
 
 - (BOOL) uuIsTomorrow
 {
-	NSDateComponents* thisDay = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:self];
-	NSDateComponents* today = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:[NSDate date]];
-	return (([today day] + 1) == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
+    return [self uuIsDatePartEqual:[[NSDate date] uuAddDays:1]];
 }
 
 - (BOOL) uuIsYesterday
 {
-	NSDateComponents* thisDay = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:self];
-	NSDateComponents* today = [[NSCalendar currentCalendar] components:NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:[NSDate date]];
-	return (([today day] - 1) == [thisDay day] && [today month] == [thisDay month] && [today year] == [thisDay year] && [today era] == [thisDay era]);
+    return [self uuIsDatePartEqual:[[NSDate date] uuAddDays:-1]];
 }
 
 @end
@@ -342,7 +369,7 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 
 @implementation NSDate (UUDateMath)
 
-- (NSDate*) uuAddSeconds:(int)seconds
+- (NSDate*) uuAddSeconds:(NSInteger)seconds
 {
     NSCalendar* cal = [NSCalendar currentCalendar];
     NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
@@ -350,7 +377,7 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [cal dateFromComponents:dc];
 }
 
-- (NSDate*) uuAddMinutes:(int)minutes
+- (NSDate*) uuAddMinutes:(NSInteger)minutes
 {
     NSCalendar* cal = [NSCalendar currentCalendar];
     NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
@@ -358,7 +385,7 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [cal dateFromComponents:dc];
 }
 
-- (NSDate*) uuAddHours:(int)hours
+- (NSDate*) uuAddHours:(NSInteger)hours
 {
     NSCalendar* cal = [NSCalendar currentCalendar];
     NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
@@ -366,7 +393,7 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [cal dateFromComponents:dc];
 }
 
-- (NSDate*) uuAddDays:(int)days
+- (NSDate*) uuAddDays:(NSInteger)days
 {
     NSCalendar* cal = [NSCalendar currentCalendar];
     NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
@@ -374,12 +401,12 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [cal dateFromComponents:dc];
 }
 
-- (NSDate*) uuAddWeeks:(int)weeks
+- (NSDate*) uuAddWeeks:(NSInteger)weeks
 {
     return [self uuAddDays:(weeks * 7)];
 }
 
-- (NSDate*) uuAddMonths:(int)months
+- (NSDate*) uuAddMonths:(NSInteger)months
 {
     NSCalendar* cal = [NSCalendar currentCalendar];
     NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
@@ -387,7 +414,7 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [cal dateFromComponents:dc];
 }
 
-- (NSDate*) uuAddYears:(int)years
+- (NSDate*) uuAddYears:(NSInteger)years
 {
     NSCalendar* cal = [NSCalendar currentCalendar];
     NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];

@@ -11,8 +11,19 @@
 #import <Foundation/Foundation.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Creation
+@interface NSDate (UUDateCreation)
+
+- (NSDate*) uuDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second;
+- (NSDate*) uuStartOfDay; // Sets Hour/Minute/Second to zero
+
+@end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Date Comparison
 @interface NSDate (UUDateComparison)
+
+- (BOOL) uuIsDatePartEqual:(NSDate*)other;
 
 - (BOOL) uuIsToday;
 - (BOOL) uuIsTomorrow;
@@ -24,13 +35,13 @@
 // Date Math
 @interface NSDate (UUDateMath)
 
-- (NSDate*) uuAddSeconds:(int)seconds;
-- (NSDate*) uuAddMinutes:(int)minutes;
-- (NSDate*) uuAddHours:(int)hours;
-- (NSDate*) uuAddDays:(int)days;
-- (NSDate*) uuAddWeeks:(int)weeks;
-- (NSDate*) uuAddMonths:(int)months;
-- (NSDate*) uuAddYears:(int)years;
+- (NSDate*) uuAddSeconds:(NSInteger)seconds;
+- (NSDate*) uuAddMinutes:(NSInteger)minutes;
+- (NSDate*) uuAddHours:(NSInteger)hours;
+- (NSDate*) uuAddDays:(NSInteger)days;
+- (NSDate*) uuAddWeeks:(NSInteger)weeks;
+- (NSDate*) uuAddMonths:(NSInteger)months;
+- (NSDate*) uuAddYears:(NSInteger)years;
 
 @end
 
