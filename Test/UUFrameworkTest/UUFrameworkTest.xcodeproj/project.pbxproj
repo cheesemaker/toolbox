@@ -16,6 +16,8 @@
 		08A176061919F57B00EFA68A /* UUColorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A176051919F57B00EFA68A /* UUColorTests.m */; };
 		08A176091919F71200EFA68A /* UUDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A176081919F71200EFA68A /* UUDictionary.m */; };
 		08A1760C1919F73200EFA68A /* UUDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1760B1919F73200EFA68A /* UUDate.m */; };
+		08BBEEB319636E2B00D4FD52 /* UUReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BBEEB219636E2B00D4FD52 /* UUReachability.m */; };
+		08BBEEB519637D3300D4FD52 /* UUReachabilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BBEEB419637D3300D4FD52 /* UUReachabilityTests.m */; };
 		08C58F7819023CAA004EA13C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7719023CAA004EA13C /* XCTest.framework */; };
 		08C58F7A19023CAA004EA13C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7919023CAA004EA13C /* Foundation.framework */; };
 		08C58F7C19023CAA004EA13C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C58F7B19023CAA004EA13C /* UIKit.framework */; };
@@ -40,6 +42,9 @@
 		08A176081919F71200EFA68A /* UUDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUDictionary.m; path = ../../UUDictionary.m; sourceTree = "<group>"; };
 		08A1760A1919F73200EFA68A /* UUDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UUDate.h; path = ../../UUDate.h; sourceTree = "<group>"; };
 		08A1760B1919F73200EFA68A /* UUDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUDate.m; path = ../../UUDate.m; sourceTree = "<group>"; };
+		08BBEEB119636E2B00D4FD52 /* UUReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UUReachability.h; path = ../../UUReachability.h; sourceTree = "<group>"; };
+		08BBEEB219636E2B00D4FD52 /* UUReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUReachability.m; path = ../../UUReachability.m; sourceTree = "<group>"; };
+		08BBEEB419637D3300D4FD52 /* UUReachabilityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UUReachabilityTests.m; sourceTree = "<group>"; };
 		08C58F7419023CA9004EA13C /* UUToolboxTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUToolboxTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		08C58F7719023CAA004EA13C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		08C58F7919023CAA004EA13C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -82,6 +87,8 @@
 				08A176081919F71200EFA68A /* UUDictionary.m */,
 				08F53A2F19548F410097518A /* UURandom.h */,
 				08F53A3019548F410097518A /* UURandom.m */,
+				08BBEEB119636E2B00D4FD52 /* UUReachability.h */,
+				08BBEEB219636E2B00D4FD52 /* UUReachability.m */,
 			);
 			name = UUSource;
 			sourceTree = "<group>";
@@ -122,8 +129,9 @@
 				08A175FF1919F54500EFA68A /* UUStringTests.m */,
 				08C58F8319023CAA004EA13C /* UUToolboxTest.m */,
 				08A176051919F57B00EFA68A /* UUColorTests.m */,
-				08C58F7E19023CAA004EA13C /* Supporting Files */,
 				0803222A1963320700E4AF2C /* UUDateTests.m */,
+				08BBEEB419637D3300D4FD52 /* UUReachabilityTests.m */,
+				08C58F7E19023CAA004EA13C /* Supporting Files */,
 			);
 			path = UUToolboxTest;
 			sourceTree = "<group>";
@@ -202,12 +210,14 @@
 				08F53A3119548F410097518A /* UURandom.m in Sources */,
 				084D3A0D190E2BB4002EDB67 /* UUString.m in Sources */,
 				08A176091919F71200EFA68A /* UUDictionary.m in Sources */,
+				08BBEEB319636E2B00D4FD52 /* UUReachability.m in Sources */,
 				08A176001919F54500EFA68A /* UUDictionaryTests.m in Sources */,
 				08C58F8419023CAA004EA13C /* UUToolboxTest.m in Sources */,
 				08A176011919F54500EFA68A /* UUStringTests.m in Sources */,
 				084D3A10190E2BDE002EDB67 /* UUView.m in Sources */,
 				08F53A331954965B0097518A /* UURandomTests.m in Sources */,
 				08A176041919F55600EFA68A /* UUColor.m in Sources */,
+				08BBEEB519637D3300D4FD52 /* UUReachabilityTests.m in Sources */,
 				08A176061919F57B00EFA68A /* UUColorTests.m in Sources */,
 				08A1760C1919F73200EFA68A /* UUDate.m in Sources */,
 				0803222B1963320700E4AF2C /* UUDateTests.m in Sources */,
