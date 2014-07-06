@@ -246,6 +246,21 @@
     self.frame = f;
 }
 
+// Align view center points
+- (void) uuAlignVerticalCenter:(UIView*)anchorView
+{
+    CGPoint p = self.center;
+    p.y = anchorView.center.y;
+    self.center = p;
+}
+
+- (void) uuAlignHorizontalCenter:(UIView*)anchorView
+{
+    CGPoint p = self.center;
+    p.x = anchorView.center.x;
+    self.center = p;
+}
+
 - (void) uuAlignLeft:(UIView*)anchorView margin:(CGFloat)margin
 {
     CGRect f = self.frame;

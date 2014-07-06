@@ -41,6 +41,10 @@
 - (void) uuPositionBelow:(UIView*)anchorView withSpacing:(CGFloat)spacing;
 - (void) uuPositionAbove:(UIView*)anchorView withSpacing:(CGFloat)spacing;
 
+// Align view center points
+- (void) uuAlignVerticalCenter:(UIView*)anchorView;
+- (void) uuAlignHorizontalCenter:(UIView*)anchorView;
+
 // Alignment helpers to move the frame to align with an anchor view
 - (void) uuAlignLeft:(UIView*)anchorView margin:(CGFloat)margin;
 - (void) uuAlignRight:(UIView*)anchorView margin:(CGFloat)margin;
