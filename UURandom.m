@@ -71,7 +71,7 @@
 
 - (NSUInteger) uuRandomIndex
 {
-    return [UURandom uuRandomUInt32BetweenLow:0 high:(self.count - 1)];
+    return [UURandom uuRandomUInt32BetweenLow:0 high:(u_int32_t)(self.count - 1)];
 }
 
 - (id) uuRandomElement
@@ -110,7 +110,7 @@
         for (int i = 0; i < (self.count * UU_RANDOMIZE_ARRAY_FACTOR); i++)
         {
             NSUInteger a = [self uuRandomIndex];
-            NSUInteger b = [UURandom uuRandomUInt32BetweenLow:0 high:(self.count - 1) not:a];
+            NSUInteger b = [UURandom uuRandomUInt32BetweenLow:0 high:(u_int32_t)(self.count - 1) not:(u_int32_t)a];
             
             [self exchangeObjectAtIndex:a withObjectAtIndex:b];
         }
