@@ -58,6 +58,11 @@ NSString * const kUUDataKey                         = @"UUDataKey";
 
 - (NSData*) dataForPath:(NSString*)path
 {
+    if (!path)
+    {
+        return nil;
+    }
+    
     NSData* data = [[UUDataCache sharedCache] objectForKey:path];
     if (data)
     {
