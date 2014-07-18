@@ -58,7 +58,7 @@ NSString * const kUUDataKey                         = @"UUDataKey";
 
 - (NSData*) dataForPath:(NSString*)path
 {
-    if (!path)
+    if (!path || path.length <= 0)
     {
         return nil;
     }
