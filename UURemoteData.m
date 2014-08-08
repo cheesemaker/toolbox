@@ -100,8 +100,13 @@ NSString * const kUUDataKey                         = @"UUDataKey";
         [md setValue:response.rawResponse forKeyPath:kUUDataKey];
         [md setValue:path forKeyPath:kUUDataRemotePathKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:kUUDataDownloadedNotification object:nil userInfo:md];
-        [self.pendingDownloads removeObjectForKey:path];
     }
+    else
+    {
+        UUDebugLog(@"Image Download Failed!\n\nPath: %@\nStatusCode: %d\nError: %@\n", path, response.httpResponse.statusCode, response.httpError);
+    }
+    
+    [self.pendingDownloads removeObjectForKey:path];
 }
 
 - (void) fetchMultiple:(NSArray*)remotePaths completion:(void(^)(NSDictionary* results))completion
