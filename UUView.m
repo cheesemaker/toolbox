@@ -271,7 +271,7 @@
 - (void) uuAlignRight:(UIView*)anchorView margin:(CGFloat)margin
 {
     CGRect f = self.frame;
-    f.origin.x = anchorView.frame.origin.x + anchorView.frame.size.width - margin;
+    f.origin.x = anchorView.frame.origin.x + anchorView.frame.size.width - f.size.width - margin;
     self.frame = f;
 }
 
