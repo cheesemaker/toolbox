@@ -29,10 +29,13 @@
 //
 // kUUDataRemotePathKey - NSString of the remote path
 // kUUDataKey - UIImage
+// kUUErrorKey - NSError (may be nil)
 //
 extern NSString * const kUUDataDownloadedNotification;
+extern NSString * const kUUDataDownloadFailedNotification;
 extern NSString * const kUUDataRemotePathKey;
 extern NSString * const kUUDataKey;
+extern NSString * const kUUErrorKey;
 
 @interface UURemoteData : NSObject
 

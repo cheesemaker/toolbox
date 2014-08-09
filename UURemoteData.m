@@ -21,8 +21,10 @@
 #endif
 
 NSString * const kUUDataDownloadedNotification      = @"UUDataDownloadedNotification";
+NSString * const kUUDataDownloadFailedNotification  = @"UUDataDownloadFailedNotification";
 NSString * const kUUDataRemotePathKey               = @"UUDataRemotePathKey";
 NSString * const kUUDataKey                         = @"UUDataKey";
+NSString * const kUUErrorKey                        = @"UUErrorKey";
 
 @interface UURemoteData ()
 
@@ -92,18 +94,22 @@ NSString * const kUUDataKey                         = @"UUDataKey";
 
 - (void) handleDownloadResponse:(UUHttpClientResponse*)response forPath:(NSString*)path
 {
+    NSMutableDictionary* md = [NSMutableDictionary dictionary];
+    [md setValue:path forKeyPath:kUUDataRemotePathKey];
+    
     if (response.rawResponse)
     {
         [[UUDataCache sharedCache] setObject:response.rawResponse forKey:path];
         
-        NSMutableDictionary* md = [NSMutableDictionary dictionary];
         [md setValue:response.rawResponse forKeyPath:kUUDataKey];
-        [md setValue:path forKeyPath:kUUDataRemotePathKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:kUUDataDownloadedNotification object:nil userInfo:md];
     }
     else
     {
         UUDebugLog(@"Image Download Failed!\n\nPath: %@\nStatusCode: %d\nError: %@\n", path, response.httpResponse.statusCode, response.httpError);
+        
+        [md setValue:response.httpError forKeyPath:kUUErrorKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kUUDataDownloadFailedNotification object:nil userInfo:md];
     }
     
     [self.pendingDownloads removeObjectForKey:path];
