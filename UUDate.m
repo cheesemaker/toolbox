@@ -63,6 +63,7 @@ NSString * const kUUISO8601TimeFormatter				= @"HH:mm:ss";
 NSString * const kUUISO8601DateTimeFormatter			= @"yyyy-MM-dd HH:mm:ss";
 NSString * const kUUTimeOfDayDateformatter				= @"h:mm a";
 NSString * const kUUDayOfMonthDateFormatter				= @"d";
+NSString * const kUUNumericMonthOfYearDateFormatter		= @"L";
 NSString * const kUUShortMonthOfYearDateFormatter		= @"LLL";
 NSString * const kUULongMonthOfYearDateFormatter		= @"LLLL";
 NSString * const kUUDayOfWeekDateFormatter				= @"EEEE";
@@ -134,6 +135,11 @@ static NSTimeZone* theDefaultTimeZone = nil;
 - (NSString*) uuDayOfWeek
 {
     return [self uuStringFromDate:kUUDayOfWeekDateFormatter timeZone:nil];
+}
+
+- (NSString*) uuNumericMonthOfYear
+{
+    return [self uuStringFromDate:kUUNumericMonthOfYearDateFormatter timeZone:nil];
 }
 
 - (NSString*) uuLongMonthOfYear
