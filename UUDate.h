@@ -72,6 +72,9 @@
 // Returns a string day of week, ie - 'Monday' thru 'Sunday'
 - (NSString*) uuDayOfWeek;
 
+// Returns a numeric month of year, ie - 1, 2, 3 .. 12
+- (NSString*) uuNumericMonthOfYear;
+
 // Returns a string month of year, the full month, ie - July or September
 - (NSString*) uuLongMonthOfYear;
 
@@ -166,6 +169,7 @@ extern NSString * const kUUISO8601TimeFormatter;            // @"HH:mm:ss"
 extern NSString * const kUUISO8601DateTimeFormatter;        // @"yyyy-MM-dd HH:mm:ss"
 extern NSString * const kUUTimeOfDayDateformatter;          // @"h:mm a"
 extern NSString * const kUUDayOfMonthDateFormatter;         // @"d"
+extern NSString * const kUUNumericMonthOfYearDateFormatter;  // @"L"
 extern NSString * const kUUShortMonthOfYearDateFormatter;   // @"LLL"
 extern NSString * const kUULongMonthOfYearDateFormatter;    // @"LLLL"
 extern NSString * const kUUDayOfWeekDateFormatter;          // @"EEEE"
