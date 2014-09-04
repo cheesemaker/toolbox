@@ -288,7 +288,6 @@
 
 + (UIImage*) uuViewToImage:(UIView*)view
 {
-    UIGraphicsBeginImageContext(view.bounds.size);
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, [[UIScreen mainScreen] scale]);
     CGContextRef outputContext = UIGraphicsGetCurrentContext();
     
