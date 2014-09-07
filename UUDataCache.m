@@ -197,6 +197,12 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 	return path;
 }
 
++ (BOOL) uuDoesCachedFileExistForURL:(NSURL*)url
+{
+    NSString* cacheLocation = [UUDataCache uuCachePathForURL:url];
+    return [[NSFileManager defaultManager] fileExistsAtPath:cacheLocation];
+}
+
 + (UUDataCache*) sharedCache
 {
 	static UUDataCache* theSharedCache = nil;

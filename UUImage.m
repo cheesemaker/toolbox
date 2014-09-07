@@ -169,7 +169,16 @@
 
 - (CGSize) uuCalculateScaleToWidthDestSize:(CGFloat)width
 {
-    CGSize srcSize = self.size;
+    return [[self class] uuCalculateScaleToWidthDestSize:width fromSize:self.size];
+}
+
+- (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height
+{
+    return [[self class] uuCalculateScaleToHeightDestSize:height fromSize:self.size];
+}
+
++ (CGSize) uuCalculateScaleToWidthDestSize:(CGFloat)width fromSize:(CGSize)srcSize
+{
     CGFloat srcWidth = srcSize.width;
     CGFloat srcHeight = srcSize.height;
     CGFloat srcAspectRatio = srcHeight / srcWidth;
@@ -181,9 +190,8 @@
     return destSize;
 }
 
-- (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height
++ (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height fromSize:(CGSize)srcSize
 {
-    CGSize srcSize = self.size;
     CGFloat srcWidth = srcSize.width;
     CGFloat srcHeight = srcSize.height;
     CGFloat srcAspectRatio = srcWidth / srcHeight;
@@ -280,7 +288,6 @@
 
 + (UIImage*) uuViewToImage:(UIView*)view
 {
-    UIGraphicsBeginImageContext(view.bounds.size);
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, [[UIScreen mainScreen] scale]);
     CGContextRef outputContext = UIGraphicsGetCurrentContext();
     

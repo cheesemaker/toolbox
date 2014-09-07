@@ -246,6 +246,21 @@
     self.frame = f;
 }
 
+// Align view center points
+- (void) uuAlignVerticalCenter:(UIView*)anchorView
+{
+    CGPoint p = self.center;
+    p.y = anchorView.center.y;
+    self.center = p;
+}
+
+- (void) uuAlignHorizontalCenter:(UIView*)anchorView
+{
+    CGPoint p = self.center;
+    p.x = anchorView.center.x;
+    self.center = p;
+}
+
 - (void) uuAlignLeft:(UIView*)anchorView margin:(CGFloat)margin
 {
     CGRect f = self.frame;
@@ -256,7 +271,7 @@
 - (void) uuAlignRight:(UIView*)anchorView margin:(CGFloat)margin
 {
     CGRect f = self.frame;
-    f.origin.x = anchorView.frame.origin.x + anchorView.frame.size.width - margin;
+    f.origin.x = anchorView.frame.origin.x + anchorView.frame.size.width - f.size.width - margin;
     self.frame = f;
 }
 
@@ -276,22 +291,30 @@
 
 - (void) uuAlignToParentLeft:(CGFloat)margin
 {
-    [self uuAlignLeft:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.x = margin;
+    self.frame = f;
 }
 
 - (void) uuAlignToParentRight:(CGFloat)margin
 {
-    [self uuAlignRight:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.x = self.superview.bounds.size.width - f.size.width - margin;
+    self.frame = f;
 }
 
 - (void) uuAlignToParentBottom:(CGFloat)margin
 {
-    [self uuAlignBottom:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.y = self.superview.bounds.size.height - f.size.height - margin;
+    self.frame = f;
 }
 
 - (void) uuAlignToParentTop:(CGFloat)margin
 {
-    [self uuAlignTop:self.superview margin:margin];
+    CGRect f = self.frame;
+    f.origin.y = margin;
+    self.frame = f;
 }
 
 - (void) uuCenterHorizontallyInParent

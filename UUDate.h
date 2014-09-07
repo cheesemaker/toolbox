@@ -11,8 +11,19 @@
 #import <Foundation/Foundation.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Date Creation
+@interface NSDate (UUDateCreation)
+
+- (NSDate*) uuDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second;
+- (NSDate*) uuStartOfDay; // Sets Hour/Minute/Second to zero
+
+@end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Date Comparison
 @interface NSDate (UUDateComparison)
+
+- (BOOL) uuIsDatePartEqual:(NSDate*)other;
 
 - (BOOL) uuIsToday;
 - (BOOL) uuIsTomorrow;
@@ -24,13 +35,13 @@
 // Date Math
 @interface NSDate (UUDateMath)
 
-- (NSDate*) uuAddSeconds:(int)seconds;
-- (NSDate*) uuAddMinutes:(int)minutes;
-- (NSDate*) uuAddHours:(int)hours;
-- (NSDate*) uuAddDays:(int)days;
-- (NSDate*) uuAddWeeks:(int)weeks;
-- (NSDate*) uuAddMonths:(int)months;
-- (NSDate*) uuAddYears:(int)years;
+- (NSDate*) uuAddSeconds:(NSInteger)seconds;
+- (NSDate*) uuAddMinutes:(NSInteger)minutes;
+- (NSDate*) uuAddHours:(NSInteger)hours;
+- (NSDate*) uuAddDays:(NSInteger)days;
+- (NSDate*) uuAddWeeks:(NSInteger)weeks;
+- (NSDate*) uuAddMonths:(NSInteger)months;
+- (NSDate*) uuAddYears:(NSInteger)years;
 
 @end
 
@@ -60,6 +71,9 @@
 
 // Returns a string day of week, ie - 'Monday' thru 'Sunday'
 - (NSString*) uuDayOfWeek;
+
+// Returns a numeric month of year, ie - 1, 2, 3 .. 12
+- (NSString*) uuNumericMonthOfYear;
 
 // Returns a string month of year, the full month, ie - July or September
 - (NSString*) uuLongMonthOfYear;
@@ -155,6 +169,7 @@ extern NSString * const kUUISO8601TimeFormatter;            // @"HH:mm:ss"
 extern NSString * const kUUISO8601DateTimeFormatter;        // @"yyyy-MM-dd HH:mm:ss"
 extern NSString * const kUUTimeOfDayDateformatter;          // @"h:mm a"
 extern NSString * const kUUDayOfMonthDateFormatter;         // @"d"
+extern NSString * const kUUNumericMonthOfYearDateFormatter;  // @"L"
 extern NSString * const kUUShortMonthOfYearDateFormatter;   // @"LLL"
 extern NSString * const kUULongMonthOfYearDateFormatter;    // @"LLLL"
 extern NSString * const kUUDayOfWeekDateFormatter;          // @"EEEE"

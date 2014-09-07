@@ -33,6 +33,7 @@
 NSString * const kUUContentTypeApplicationJson  = @"application/json";
 NSString * const kUUContentTypeTextJson         = @"text/json";
 NSString * const kUUContentTypeTextHtml         = @"text/html";
+NSString * const kUUContentTypeTextPlain        = @"text/plain";
 NSString * const kUUContentTypeBinary           = @"application/octet-stream";
 NSString * const kUUContentTypeImagePng         = @"image/png";
 NSString * const kUUContentTypeImageJpeg        = @"image/jpeg";
@@ -761,7 +762,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 
 - (NSArray*) supportedMimeTypes
 {
-    return @[kUUContentTypeTextHtml];
+    return @[kUUContentTypeTextHtml, kUUContentTypeTextPlain];
 }
 
 - (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request

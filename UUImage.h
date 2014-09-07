@@ -30,6 +30,10 @@
 - (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height;
 - (CGSize) uuCalculateScaleToFitDestSize:(CGFloat)size;
 
+// Pure math functions handy to use in layout methods
++ (CGSize) uuCalculateScaleToWidthDestSize:(CGFloat)width fromSize:(CGSize)srcSize;
++ (CGSize) uuCalculateScaleToHeightDestSize:(CGFloat)height fromSize:(CGSize)srcSize;
+
 + (UIImage*) uuMakeStretchableImage:(NSString*)imageName insets:(UIEdgeInsets)insets;
 
 + (UIImage*) uuSolidColorImage:(UIColor*)color;

@@ -29,10 +29,13 @@
 //
 // kUUDataRemotePathKey - NSString of the remote path
 // kUUDataKey - UIImage
+// kUUErrorKey - NSError (may be nil)
 //
 extern NSString * const kUUDataDownloadedNotification;
+extern NSString * const kUUDataDownloadFailedNotification;
 extern NSString * const kUUDataRemotePathKey;
 extern NSString * const kUUDataKey;
+extern NSString * const kUUErrorKey;
 
 @interface UURemoteData : NSObject
 
@@ -42,5 +45,10 @@ extern NSString * const kUUDataKey;
 // immediately.  If nil is returned, there is no local copy of the resource, and it indicates
 // a remote request has either been started or is already in progress.
 - (NSData*) dataForPath:(NSString*)path;
+
+// Fetches multiple remote data objects and calls the completion block only when all
+// have completed.  The completion block is an NSDictionary of NSString->NSError objects. If
+// empty it means all completed successfully.
+- (void) fetchMultiple:(NSArray*)remotePaths completion:(void(^)(NSDictionary* results))completion;
 
 @end
