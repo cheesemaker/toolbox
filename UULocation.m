@@ -105,9 +105,14 @@
 	return [[UUSystemLocation sharedLocation] lastReportedLocation];
 }
 
++ (BOOL) isTrackingDenied
+{
+	return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied;
+}
+
 + (BOOL) isAuthorizedToTrack
 {
-	return [CLLocationManager locationServicesEnabled];
+	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized));
 }
 
 + (void) requestStartTracking:(void(^)(BOOL authorized))callback
@@ -263,7 +268,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-	if (self.authorizationCallback)
+	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
 	{
 		self.authorizationCallback(status == kCLAuthorizationStatusAuthorized);
 	}

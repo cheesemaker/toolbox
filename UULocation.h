@@ -42,6 +42,8 @@
 
 	//Global settings interface.
 	+ (BOOL) isAuthorizedToTrack;
+	+ (BOOL) isTrackingDenied;
+
 	+ (void) requestStartTracking:(void(^)(BOOL authorized))callback;
 	+ (void) requestStopTracking;
 	+ (void) startTrackingSignificantLocationChanges;
