@@ -233,6 +233,11 @@
 - (void) startTracking
 {
 	[self.clLocationManager startUpdatingLocation];
+	
+	if (self.clLocationManager.location)
+	{
+		[self checkForNewLocation:self.clLocationManager.location];
+	}
 }
 
 - (void) stopTracking
@@ -266,34 +271,13 @@
 	}
 }
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
-{
-	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
-	{
-		self.authorizationCallback(status == kCLAuthorizationStatusAuthorized);
-	}
-}
-
-- (BOOL) shouldUseLocationUpdate:(CLLocation*)reportedLocation
-{
-    if (!self.lastReportedLocation ||
-		//!CLLocationCoordinate2DIsValid(self.clLocation.coordinate) ||
-        [self.lastReportedLocation.clLocation distanceFromLocation:reportedLocation] > self.distanceThreshold ||
-        [self.lastReportedLocation.clLocation.timestamp timeIntervalSinceDate:reportedLocation.timestamp] > self.timeThreshold ||
-        reportedLocation.horizontalAccuracy < self.lastReportedLocation.clLocation.horizontalAccuracy)
-	{
-		return YES;
-	}
-	
-	return NO;
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)reportedLocation fromLocation:(CLLocation *)oldLocation;
+- (void) checkForNewLocation:(CLLocation*)reportedLocation
 {
     if ([self shouldUseLocationUpdate:reportedLocation])
 	{
 		UULocation* newLocation = [[UULocation alloc] init];
 		newLocation.clLocation = reportedLocation;
+		self.lastReportedLocation = newLocation;
 		
         if (self.delayLocationUpdates)
         {
@@ -318,6 +302,33 @@
             [self queryLocationName:self.lastReportedLocation.clLocation];
         }
 	}
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
+	{
+		self.authorizationCallback(status == kCLAuthorizationStatusAuthorized);
+	}
+}
+
+- (BOOL) shouldUseLocationUpdate:(CLLocation*)reportedLocation
+{
+    if (!self.lastReportedLocation ||
+		//!CLLocationCoordinate2DIsValid(self.clLocation.coordinate) ||
+        [self.lastReportedLocation.clLocation distanceFromLocation:reportedLocation] > self.distanceThreshold ||
+        [self.lastReportedLocation.clLocation.timestamp timeIntervalSinceDate:reportedLocation.timestamp] > self.timeThreshold ||
+        reportedLocation.horizontalAccuracy < self.lastReportedLocation.clLocation.horizontalAccuracy)
+	{
+		return YES;
+	}
+	
+	return NO;
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)reportedLocation fromLocation:(CLLocation *)oldLocation;
+{
+	[self checkForNewLocation:reportedLocation];
 }
 
 - (void) postLocationChangedTimer:(NSTimer*)timer
