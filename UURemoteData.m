@@ -106,7 +106,7 @@ NSString * const kUUErrorKey                        = @"UUErrorKey";
     }
     else
     {
-        UUDebugLog(@"Image Download Failed!\n\nPath: %@\nStatusCode: %d\nError: %@\n", path, response.httpResponse.statusCode, response.httpError);
+        UUDebugLog(@"Image Download Failed!\n\nPath: %@\nStatusCode: %d\nError: %@\n", path, (int)response.httpResponse.statusCode, response.httpError);
         
         [md setValue:response.httpError forKeyPath:kUUErrorKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:kUUDataDownloadFailedNotification object:nil userInfo:md];
@@ -118,7 +118,7 @@ NSString * const kUUErrorKey                        = @"UUErrorKey";
 - (void) fetchMultiple:(NSArray*)remotePaths completion:(void(^)(NSDictionary* results))completion
 {
     __block int processedCount = 0;
-    __block int totalToProcess = remotePaths.count;
+    __block int totalToProcess = (int)remotePaths.count;
     __block NSMutableDictionary* md = [NSMutableDictionary dictionary];
     
     void (^block)(NSString* remotePath, UUHttpClientResponse* response) = ^(NSString* remotePath, UUHttpClientResponse* response)
