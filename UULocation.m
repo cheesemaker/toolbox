@@ -118,7 +118,17 @@
 + (void) requestStartTracking:(void(^)(BOOL authorized))callback
 {
 	[UUSystemLocation sharedLocation].authorizationCallback = callback;
-	[[UUSystemLocation sharedLocation] startTracking];
+	
+	CLLocationManager* locationManater = [UUSystemLocation sharedLocation].clLocationManager;
+	if ([locationManater respondsToSelector:@selector(requestAlwaysAuthorization)])
+	{
+		NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
+		NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationAlwaysUsageDescription");
+		
+		[locationManater performSelector:@selector(requestAlwaysAuthorization)];
+	}
+	
+//	[[UUSystemLocation sharedLocation] startTracking];
 }
 
 + (void) requestStopTracking
@@ -308,6 +318,7 @@
 {
 	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
 	{
+		[self startTracking];
 		self.authorizationCallback(status == kCLAuthorizationStatusAuthorized);
 	}
 }
