@@ -119,16 +119,18 @@
 {
 	[UUSystemLocation sharedLocation].authorizationCallback = callback;
 	
-	CLLocationManager* locationManater = [UUSystemLocation sharedLocation].clLocationManager;
-	if ([locationManater respondsToSelector:@selector(requestAlwaysAuthorization)])
+	CLLocationManager* locationManager = [UUSystemLocation sharedLocation].clLocationManager;
+	if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
 	{
 		NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
 		NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationAlwaysUsageDescription");
 		
-		[locationManater performSelector:@selector(requestAlwaysAuthorization)];
+		[locationManager performSelector:@selector(requestAlwaysAuthorization)];
 	}
-	
-//	[[UUSystemLocation sharedLocation] startTracking];
+	else
+	{
+		[[UUSystemLocation sharedLocation] startTracking];
+	}
 }
 
 + (void) requestStopTracking
