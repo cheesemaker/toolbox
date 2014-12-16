@@ -71,6 +71,7 @@ typedef enum
 @property (atomic, strong) NSDictionary*	headerFields;
 @property (atomic, strong) NSData*			body;
 @property (atomic, assign) NSTimeInterval	timeout;
+@property (atomic, strong) NSURLCredential* credentials;
 @property (atomic, assign) BOOL				processMimeTypes;
 
 // Static helper functions for the most common cases
@@ -78,6 +79,12 @@ typedef enum
 + (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments;
 + (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 + (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
+
+//Basic auth helper functions
++ (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password;
++ (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password;
++ (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password;
++ (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password;
 
 @end
 
@@ -123,6 +130,15 @@ typedef enum
 + (instancetype) executeRequest:(UUHttpClientRequest*)request completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
 
 + (instancetype) getImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale completionHandler:(void (^)(NSError* error, UIImage* image))completionHandler;
+
+// Statis verb interface + basic auth helper functions
++ (instancetype) get:(NSString*)url  queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) put:(NSString*)url  queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
++ (instancetype) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler;
+
++ (instancetype) getImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(NSError* error, UIImage* image))completionHandler;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Synchronous interface. The returned response contains all relevant information about the transaction

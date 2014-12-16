@@ -138,6 +138,52 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     return cr;
 }
 
++ (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password
+{
+	UUHttpClientRequest* cr = [self getRequest:url queryArguments:queryArguments];
+	cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+	[self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+
+	return cr;
+}
+
++ (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password
+{
+	UUHttpClientRequest* cr = [self deleteRequest:url queryArguments:queryArguments];
+	cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+	[self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+
+	return cr;
+}
+
++ (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password
+{
+	UUHttpClientRequest* cr = [self putRequest:url queryArguments:queryArguments body:body contentType:contentType];
+	cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+	[self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+
+	return cr;
+}
+
++ (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password
+{
+	UUHttpClientRequest* cr = [self postRequest:url queryArguments:queryArguments body:body contentType:contentType];
+	cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+	[self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+
+	return cr;
+}
+
++ (NSDictionary*) addBasicAuthToHeaders:(NSDictionary*)headers user:(NSString*)user password:(NSString*)password
+{
+	NSMutableDictionary* newDictionary = [NSMutableDictionary dictionaryWithDictionary:headers];
+	NSData* authorizationData = [[NSString stringWithFormat:@"%@:%@", user, password] dataUsingEncoding:NSASCIIStringEncoding];
+	NSString* authorizationString = [authorizationData base64EncodedStringWithOptions:0];
+	[newDictionary setValue:authorizationString forKey:@"Authorization"];
+	
+	return newDictionary;
+}
+
 @end
 
 @implementation UUHttpClientResponse
@@ -204,6 +250,22 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	}];
 }
 
++ (instancetype) getImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale user:(NSString *)user password:(NSString *)password completionHandler:(void (^)(NSError *, UIImage *))completionHandler
+{
+	UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments user:user password:password];
+	request.processMimeTypes = NO;
+	return [self executeRequest:request completionHandler:^(UUHttpClientResponse *response)
+	{
+		UIImage* image = nil;
+		if (response.rawResponse)
+		{
+			image = [UIImage imageWithData:response.rawResponse scale:imageScale];
+		}
+		
+		completionHandler(response.httpError, image);
+	}];
+}
+
 + (instancetype) get:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
 {
     UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments];
@@ -235,6 +297,30 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     return client;
 }
 
++ (instancetype) get:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
+{
+    UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments user:user password:password];
+    return [self executeRequest:request completionHandler:completionHandler];
+}
+
++ (instancetype) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
+{
+    UUHttpClientRequest* request = [UUHttpClientRequest deleteRequest:url queryArguments:queryArguments user:user password:password];
+    return [self executeRequest:request completionHandler:completionHandler];
+}
+
++ (instancetype) put:(NSString*)url queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
+{
+    UUHttpClientRequest* request = [UUHttpClientRequest putRequest:url queryArguments:queryArguments body:putBody contentType:contentType user:user password:password];
+    return [self executeRequest:request completionHandler:completionHandler];
+}
+
++ (instancetype) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password completionHandler:(void (^)(UUHttpClientResponse* response))completionHandler
+{
+    UUHttpClientRequest* request = [UUHttpClientRequest postRequest:url queryArguments:queryArguments body:postBody contentType:contentType user:user password:password];
+    return [self executeRequest:request completionHandler:completionHandler];
+}
+                            
 + (UUHttpClientResponse*) synchronousGetImage:(NSString*)url queryArguments:(NSDictionary*)queryArguments scale:(float)imageScale
 {
 	UUHttpClientRequest* request = [UUHttpClientRequest getRequest:url queryArguments:queryArguments];
@@ -482,7 +568,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     NSError* err = nil;
     id parsedResponse = nil;
     
-    int httpResponseCode = self.response.statusCode;
+    NSInteger httpResponseCode = self.response.statusCode;
     
     if (self.response == nil)
     {
@@ -524,12 +610,25 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     [UUHttpClient removeFromRequestQueue:self];
 }
 
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+	UUDebugLog(@"Received authentication challenge");
+    if (![challenge previousFailureCount])
+	{
+		if (self.clientRequest.credentials)
+		{
+			[challenge.sender useCredential:self.clientRequest.credentials forAuthenticationChallenge:challenge];
+		}
+    }
+}
+
 - (id) parseResponse
 {
 	if (self.clientRequest.processMimeTypes)
 	{
 		NSString* mimeType = self.response.MIMEType;
 		UUDebugLog(@"MIMEType: %@", mimeType);
+		UUDebugLog(@"%@", [[NSString alloc] initWithData:self.rxBuffer encoding:NSUTF8StringEncoding]);
 	
 		NSObject<UUHttpResponseHandler>* handler = [[[self class] sharedResponseHandlers] objectForKey:self.response.MIMEType];
 		if (handler)
@@ -591,7 +690,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     
     if (request.body)
     {
-        [req setValue:[NSString stringWithFormat:@"%d", request.body.length] forHTTPHeaderField:kUUContentLengthHeader];
+        [req setValue:[NSString stringWithFormat:@"%d", (int)request.body.length] forHTTPHeaderField:kUUContentLengthHeader];
         [req setHTTPBody:request.body];
     }
     
@@ -686,8 +785,8 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     NSMutableArray* queue = [self sharedRequestQueue];
     @synchronized(queue)
     {
-        int count = queue.count;
-        for (int i = 0; i < count; i++)
+        NSUInteger count = queue.count;
+        for (NSUInteger i = 0; i < count; i++)
         {
             [[queue objectAtIndex:i] cancel];
         }
@@ -723,7 +822,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     }
 }
 
-- (BOOL) isHttpSuccessResponseCode:(int)responseCode
+- (BOOL) isHttpSuccessResponseCode:(NSInteger)responseCode
 {
     switch (responseCode)
     {
