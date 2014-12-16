@@ -436,9 +436,9 @@
 			{
                 radius += 1; // force radius to be odd so that the three box-blur methodology works.
             }
-            vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
-            vImageBoxConvolve_ARGB8888(&effectOutBuffer, &effectInBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
-            vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
+            vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, (uint32_t)radius, (uint32_t)radius, 0, kvImageEdgeExtend);
+            vImageBoxConvolve_ARGB8888(&effectOutBuffer, &effectInBuffer, NULL, 0, 0, (uint32_t)radius, (uint32_t)radius, 0, kvImageEdgeExtend);
+            vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, (uint32_t)radius, (uint32_t)radius, 0, kvImageEdgeExtend);
         }
         BOOL effectImageBuffersAreSwapped = NO;
         if (hasSaturationChange)
@@ -563,7 +563,7 @@
 + (UIImage*) uuImageWithGIFData:(NSData*)data
 {
     CGImageSourceRef imageRef = CGImageSourceCreateWithData(UU_BRIDGE(CFDataRef)data, NULL);
-    int frameCount = CGImageSourceGetCount(imageRef);
+    int frameCount = (int)CGImageSourceGetCount(imageRef);
     NSTimeInterval duration = [UIImage uuGIFDuration:imageRef frameCount:frameCount];
     NSArray* frames = [UIImage uuGIFCreateFrames:imageRef count:frameCount];
     UIImage* image = [UIImage animatedImageWithImages:frames duration:duration];
