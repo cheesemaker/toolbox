@@ -8,7 +8,7 @@
 //  Contact: @cheesemaker or jon@threejacks.com
 
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 typedef void (^UUActionSheetDelegateBlock)(UIActionSheet* sheet, NSInteger buttonIndex);
 

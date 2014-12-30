@@ -10,7 +10,7 @@
 //	Questions/comments/complaints:
 //		contact: @cheesemaker or jon@threejacks.com
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface UIDevice(UUDevice)
 	- (NSString*) uuUniqueIdentifier;
