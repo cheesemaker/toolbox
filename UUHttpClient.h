@@ -42,7 +42,7 @@
 //	UIImage* image = response.parsedResponse;
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @protocol UUHttpResponseHandler;
 @protocol UUHttpProgressDelegate;

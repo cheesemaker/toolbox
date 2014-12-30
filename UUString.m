@@ -38,7 +38,7 @@
 	NSMutableString* sb = UU_AUTORELEASE([[NSMutableString alloc] init]);
     
     const char* rawData = [data bytes];
-    int count = data.length;
+    NSUInteger count = data.length;
     for (int i = 0; i < count; i++)
     {
         [sb appendFormat:@"%02X", (UInt8)rawData[i]];
@@ -54,7 +54,7 @@
 
 - (NSData*) uuToHexData
 {
-	int length = self.length;
+	NSUInteger length = self.length;
 	
 	// Must be divisible by two
 	if ((length % 2) != 0)
@@ -219,7 +219,7 @@
 - (NSString *) uuReverse
 {
 	NSMutableString* reversed = [NSMutableString stringWithCapacity:[self length]];
-	for (int i = [self length] - 1; i >= 0; i--) {
+	for (NSInteger i = [self length] - 1; i >= 0; i--) {
 		[reversed appendString:[self substringWithRange:NSMakeRange (i, 1)]];
 	}
 	return reversed;	
@@ -292,7 +292,6 @@
 	}
 }
 
-
 - (NSString*) uuFindQueryStringArg:(NSString*)argName
 {
     NSRange queryMarkerRange = [self rangeOfString:@"?"];
@@ -346,6 +345,7 @@
 	
 	return dictionary;
 }
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,7 +359,7 @@
 	unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
  
 	// Create 16 byte MD5 hash value, store in buffer
-	CC_MD5(buffer.bytes, buffer.length, md5Buffer);
+	CC_MD5(buffer.bytes, (CC_LONG)buffer.length, md5Buffer);
  
 	// Convert unsigned char buffer to NSString of hex values
 	NSMutableString* digest = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
@@ -382,7 +382,7 @@
 
     NSData* HMAC = [[NSData alloc] initWithBytes:cHMAC length:sizeof(cHMAC)];
 
-    NSString *hash = [HMAC base64Encoding];//[HMAC base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSString *hash = [HMAC base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     return hash;
 }
 
