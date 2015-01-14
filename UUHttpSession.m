@@ -23,9 +23,15 @@ NSString * const kUUHttpSessionHttpErrorCodeKey      = @"kUUHttpSessionHttpError
 NSString * const kUUHttpSessionHttpErrorMessageKey   = @"kUUHttpSessionHttpErrorMessageKey";
 NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppResponseKey";
 
-//const NSTimeInterval kUUDefaultHttpTimeout  = 60.0f;
+const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@interface UUHttpRequest ()
+
+@property (atomic, strong, readwrite) NSURLRequest* httpRequest;
+
+@end
 
 @implementation UUHttpRequest
 
@@ -37,7 +43,6 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
     {
         self.url = url;
         self.httpMethod = UUHttpMethodGet;
-        //self.timeout = theDefaultHttpTimeout;
 		self.processMimeTypes = YES;
     }
     
@@ -90,6 +95,52 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
     return cr;
 }
 
++ (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password
+{
+    UUHttpRequest* cr = [self getRequest:url queryArguments:queryArguments];
+    cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    
+    return cr;
+}
+
++ (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password
+{
+    UUHttpRequest* cr = [self deleteRequest:url queryArguments:queryArguments];
+    cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    
+    return cr;
+}
+
++ (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password
+{
+    UUHttpRequest* cr = [self putRequest:url queryArguments:queryArguments body:body contentType:contentType];
+    cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    
+    return cr;
+}
+
++ (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType user:(NSString*)user password:(NSString*)password
+{
+    UUHttpRequest* cr = [self postRequest:url queryArguments:queryArguments body:body contentType:contentType];
+    cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
+    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    
+    return cr;
+}
+
++ (NSDictionary*) addBasicAuthToHeaders:(NSDictionary*)headers user:(NSString*)user password:(NSString*)password
+{
+    NSMutableDictionary* newDictionary = [NSMutableDictionary dictionaryWithDictionary:headers];
+    NSData* authorizationData = [[NSString stringWithFormat:@"%@:%@", user, password] dataUsingEncoding:NSASCIIStringEncoding];
+    NSString* authorizationString = [authorizationData base64EncodedStringWithOptions:0];
+    [newDictionary setValue:authorizationString forKey:@"Authorization"];
+    
+    return newDictionary;
+}
+
 @end
 
 @implementation UUHttpResponse
@@ -101,11 +152,21 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
 
 
 
-@interface UUHttpSession ()
+@interface UUHttpSession () <NSURLSessionDelegate>
 
 @property (nonatomic, strong) NSURLSession* urlSession;
+@property (nonatomic, strong) NSURLSessionConfiguration* sessionConfiguration;
 @property (nonatomic, strong) NSMutableArray* activeTasks;
 @property (nonatomic, strong) NSMutableDictionary* responseHandlers;
+
++ (instancetype) sharedInstance;
+
+- (UUHttpRequest*) executeRequest:(UUHttpRequest*)request completionHandler:(UUHttpSessionResponseHandler)completionHandler;
+
+- (UUHttpRequest*) get:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(UUHttpSessionResponseHandler)completionHandler;
+- (UUHttpRequest*) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(UUHttpSessionResponseHandler)completionHandler;
+- (UUHttpRequest*) put:(NSString*)url queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(UUHttpSessionResponseHandler)completionHandler;
+- (UUHttpRequest*) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(UUHttpSessionResponseHandler)completionHandler;
 
 @end
 
@@ -149,10 +210,10 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
         NSOperationQueue* queue = [[NSOperationQueue alloc] init];
         [queue setMaxConcurrentOperationCount:1];
         
-        NSURLSessionConfiguration* sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-        sessionConfiguration.timeoutIntervalForRequest = 60.0f;
+        self.sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        self.sessionConfiguration.timeoutIntervalForRequest = kUUDefaultHttpRequestTimeout;
         
-        self.urlSession = [NSURLSession sessionWithConfiguration:sessionConfiguration];
+        self.urlSession = [NSURLSession sessionWithConfiguration:self.sessionConfiguration delegate:self delegateQueue:queue];
         
         self.activeTasks = [NSMutableArray array];
         self.responseHandlers = [NSMutableDictionary dictionary];
@@ -186,7 +247,7 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
     return [self executeRequest:req completionHandler:completionHandler];
 }
 
-- (UUHttpRequest*) executeRequest:(UUHttpRequest*)request completionHandler:(void (^)(UUHttpResponse* response))completionHandler
+- (UUHttpRequest*) executeRequest:(UUHttpRequest*)request completionHandler:(UUHttpSessionResponseHandler)completionHandler
 {
     NSURLRequest* httpRequest = [[self class] buildRequest:request];
     
@@ -196,6 +257,7 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
         [self handleResponse:request httpRequest:httpRequest data:data response:response error:error completion:completionHandler];
     }];
     
+    request.httpRequest = httpRequest;
     [self.activeTasks addObject:task];
     [task resume];
     return request;
@@ -269,8 +331,8 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
 {
     switch (responseCode)
     {
-        case 200: // OK
-        case 201: // Created
+        case UUHttpResponseCodeOK:
+        case UUHttpResponseCodeCreated:
             return YES;
             
         default:
@@ -290,6 +352,41 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
     }
     
 	return nil;
+}
+
++ (void) setOperationQueue:(NSOperationQueue*)operationQueue
+{
+    
+}
+
++ (void) setRequestTimeout:(NSTimeInterval)requestTimeout
+{
+    [[[self sharedInstance] sessionConfiguration] setTimeoutIntervalForRequest:requestTimeout];
+}
+
++ (UUHttpRequest*) executeRequest:(UUHttpRequest*)request completionHandler:(UUHttpSessionResponseHandler)completionHandler
+{
+    return [[self sharedInstance] executeRequest:request completionHandler:completionHandler];
+}
+
++ (UUHttpRequest*) get:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(UUHttpSessionResponseHandler)completionHandler
+{
+    return [[self sharedInstance] get:url queryArguments:queryArguments completionHandler:completionHandler];
+}
+
++ (UUHttpRequest*) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(UUHttpSessionResponseHandler)completionHandler
+{
+    return [[self sharedInstance] delete:url queryArguments:queryArguments completionHandler:completionHandler];
+}
+
++ (UUHttpRequest*) put:(NSString*)url queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(UUHttpSessionResponseHandler)completionHandler
+{
+    return [[self sharedInstance] put:url queryArguments:queryArguments putBody:putBody contentType:contentType completionHandler:completionHandler];
+}
+
++ (UUHttpRequest*) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(UUHttpSessionResponseHandler)completionHandler
+{
+    return [[self sharedInstance] post:url queryArguments:queryArguments postBody:postBody contentType:contentType completionHandler:completionHandler];
 }
 
 #pragma mark - Private Methods
@@ -351,5 +448,26 @@ NSString * const kUUHttpSessionAppResponseKey        = @"kUUHttpSessionAppRespon
     
     return req;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark - NSURLSessionDelegate
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error
+{
+    
+}
+
+- (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+{
+    
+}
+
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session
+{
+    
+}
+
 
 @end
