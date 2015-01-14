@@ -45,3 +45,12 @@
 - (NSArray*) uuSafeGetArray:(NSString*)key;
 
 @end
+
+
+@interface NSDictionary (UUHttpDictionary)
+
+// Builds a formatted query string from the dictionary arguments.  Only handles
+// value objects that are NSNumber or NSString.
+- (NSString*) uuBuildQueryString;
+
+@end
