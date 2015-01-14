@@ -207,13 +207,10 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     
     if (self)
     {
-        NSOperationQueue* queue = [[NSOperationQueue alloc] init];
-        [queue setMaxConcurrentOperationCount:1];
-        
         self.sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
         self.sessionConfiguration.timeoutIntervalForRequest = kUUDefaultHttpRequestTimeout;
         
-        self.urlSession = [NSURLSession sessionWithConfiguration:self.sessionConfiguration delegate:self delegateQueue:queue];
+        self.urlSession = [NSURLSession sessionWithConfiguration:self.sessionConfiguration];// delegate:self delegateQueue:nil];
         
         self.activeTasks = [NSMutableArray array];
         self.responseHandlers = [NSMutableDictionary dictionary];
@@ -344,6 +341,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     NSString* mimeType = httpResponse.MIMEType;
     UUDebugLog(@"MIMEType: %@", mimeType);
+    UUDebugLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     
     NSObject<UUHttpResponseHandler>* handler = [self.responseHandlers objectForKey:mimeType];
     if (handler)
