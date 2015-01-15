@@ -246,22 +246,23 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 
 - (UUHttpRequest*) executeRequest:(UUHttpRequest*)request completionHandler:(UUHttpSessionResponseHandler)completionHandler
 {
-    NSURLRequest* httpRequest = [[self class] buildRequest:request];
+    request.httpRequest = [[self class] buildRequest:request];
     
-    NSURLSessionTask* task = [self.urlSession dataTaskWithRequest:httpRequest
+    UUDebugLog(@"Begin Request\n\nMethod: %@\nURL: %@\n\n", request.httpRequest.HTTPMethod, request.httpRequest.URL);
+    
+    NSURLSessionTask* task = [self.urlSession dataTaskWithRequest:request.httpRequest
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
-        [self handleResponse:request httpRequest:httpRequest data:data response:response error:error completion:completionHandler];
+        [self handleResponse:request data:data response:response error:error completion:completionHandler];
     }];
     
-    request.httpRequest = httpRequest;
+    
     [self.activeTasks addObject:task];
     [task resume];
     return request;
 }
 
 - (void) handleResponse:(UUHttpRequest*)request
-            httpRequest:(NSURLRequest*)httpRequest
                    data:(NSData*)data
                response:(NSURLResponse*)response
                   error:(NSError*)error
@@ -271,7 +272,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     
     UUHttpResponse* uuResponse = [UUHttpResponse new];
     uuResponse.httpResponse = httpResponse;
-    uuResponse.httpRequest = httpRequest;
+    uuResponse.httpRequest = request.httpRequest;
     uuResponse.rawResponse = data;
     
     NSError* err = nil;
@@ -296,7 +297,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     {
         if (request.processMimeTypes)
         {
-            parsedResponse = [self parseResponse:httpRequest httpResponse:httpResponse data:data];
+            parsedResponse = [self parseResponse:request httpResponse:httpResponse data:data];
             if ([parsedResponse isKindOfClass:[NSError class]])
             {
                 err = parsedResponse;
@@ -337,8 +338,10 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     }
 }
 
-- (id) parseResponse:(NSURLRequest*)httpRequest httpResponse:(NSHTTPURLResponse*)httpResponse data:(NSData*)data
+- (id) parseResponse:(UUHttpRequest*)request httpResponse:(NSHTTPURLResponse*)httpResponse data:(NSData*)data
 {
+    NSURLRequest* httpRequest = request.httpRequest;
+    
     NSString* mimeType = httpResponse.MIMEType;
     UUDebugLog(@"MIMEType: %@", mimeType);
     UUDebugLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
@@ -346,15 +349,43 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     NSObject<UUHttpResponseHandler>* handler = [self.responseHandlers objectForKey:mimeType];
     if (handler)
     {
-        return [handler parseResponse:data response:httpResponse forRequest:httpRequest];
+        id parsedResponse = [handler parseResponse:data response:httpResponse forRequest:httpRequest];
+        return [self postProcessResponse:request parsedResponse:parsedResponse];
     }
     
 	return nil;
 }
 
-+ (void) setOperationQueue:(NSOperationQueue*)operationQueue
+- (id) postProcessResponse:(UUHttpRequest*)request parsedResponse:(id)parsedResponse
 {
+    if (request.objectFactoryClass && [request.objectFactoryClass conformsToProtocol:@protocol(UUObjectFactory)])
+    {
+        if ([parsedResponse isKindOfClass:[NSDictionary class]])
+        {
+            id singleResponse = [request.objectFactoryClass uuObjectFromDictionary:parsedResponse];
+            parsedResponse = singleResponse;
+        }
+        else if ([parsedResponse isKindOfClass:[NSArray class]])
+        {
+            NSMutableArray* list = [NSMutableArray array];
+            
+            for (id node in parsedResponse)
+            {
+                if ([node isKindOfClass:[NSDictionary class]])
+                {
+                    id nodeObj = [request.objectFactoryClass uuObjectFromDictionary:node];
+                    if (nodeObj)
+                    {
+                        [list addObject:nodeObj];
+                    }
+                }
+            }
+            
+            parsedResponse = list;
+        }
+    }
     
+    return parsedResponse;
 }
 
 + (void) setRequestTimeout:(NSTimeInterval)requestTimeout

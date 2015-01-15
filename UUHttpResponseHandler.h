@@ -72,3 +72,18 @@ extern NSString * const kUUHttpMethodHead;
 
 @interface UUImageResponseHandler : NSObject<UUHttpResponseHandler>
 @end
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Object Factory
+@protocol UUObjectFactory <NSObject>
+
++ (id) uuObjectFromDictionary:(NSDictionary*)dictionary;
+
+@end
+
+
+
+
+
+
+
