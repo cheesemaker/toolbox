@@ -343,8 +343,8 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     NSURLRequest* httpRequest = request.httpRequest;
     
     NSString* mimeType = httpResponse.MIMEType;
-    UUDebugLog(@"MIMEType: %@", mimeType);
-    UUDebugLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    
+    UUDebugLog(@"Handle Response\n\nMethod: %@\nURL: %@\nMIMEType: %@\nRaw Response:\n\n%@\n\n", request.httpRequest.HTTPMethod, request.httpRequest.URL, mimeType, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     
     NSObject<UUHttpResponseHandler>* handler = [self.responseHandlers objectForKey:mimeType];
     if (handler)
