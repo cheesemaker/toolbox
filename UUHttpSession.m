@@ -360,9 +360,11 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     if (request.objectFactoryClass && [request.objectFactoryClass conformsToProtocol:@protocol(UUObjectFactory)])
     {
+        id context = request.objectFactoryContext;
+        
         if ([parsedResponse isKindOfClass:[NSDictionary class]])
         {
-            id singleResponse = [request.objectFactoryClass uuObjectFromDictionary:parsedResponse];
+            id singleResponse = [request.objectFactoryClass uuObjectFromDictionary:parsedResponse withContext:context];
             parsedResponse = singleResponse;
         }
         else if ([parsedResponse isKindOfClass:[NSArray class]])
@@ -373,7 +375,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
             {
                 if ([node isKindOfClass:[NSDictionary class]])
                 {
-                    id nodeObj = [request.objectFactoryClass uuObjectFromDictionary:node];
+                    id nodeObj = [request.objectFactoryClass uuObjectFromDictionary:node withContext:context];
                     if (nodeObj)
                     {
                         [list addObject:nodeObj];

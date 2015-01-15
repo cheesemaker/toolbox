@@ -77,7 +77,7 @@ extern NSString * const kUUHttpMethodHead;
 // Object Factory
 @protocol UUObjectFactory <NSObject>
 
-+ (id) uuObjectFromDictionary:(NSDictionary*)dictionary;
++ (id) uuObjectFromDictionary:(NSDictionary*)dictionary withContext:(id)context;
 
 @end
 
