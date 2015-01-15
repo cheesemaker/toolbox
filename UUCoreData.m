@@ -144,6 +144,61 @@
     return YES;
 }
 
++ (NSArray*) uuConvertObjects:(NSArray*)objects toContext:(NSManagedObjectContext*)context
+{
+    NSMutableArray* convertedObjects = nil;
+    
+    if (objects)
+    {
+        convertedObjects = [NSMutableArray arrayWithCapacity:objects.count];
+        
+        for (NSManagedObject* obj in objects)
+        {
+            NSManagedObject* converted = [self uuConvertObject:obj toContext:context];
+            [convertedObjects addObject:converted];
+        }
+    }
+    
+    return [convertedObjects copy];
+}
+
++ (id) uuConvertObject:(id)object toContext:(NSManagedObjectContext*)context
+{
+    id converted = object;
+    
+    if (object)
+    {
+        if ([object isKindOfClass:[NSManagedObject class]])
+        {
+            NSManagedObject* managedObj = (NSManagedObject*)object;
+            converted = [context objectWithID:managedObj.objectID];
+        }
+        else if ([object isKindOfClass:[NSArray class]])
+        {
+            NSMutableArray* convertedObjects = [NSMutableArray array];
+            
+            NSArray* arrayOfObjects = (NSArray*)object;
+            
+            for (id obj in arrayOfObjects)
+            {
+                if ([obj isKindOfClass:[NSManagedObject class]])
+                {
+                    NSManagedObject* managedObj = (NSManagedObject*)obj;
+                    NSManagedObject* converted = [context objectWithID:managedObj.objectID];
+                    if (converted)
+                    {
+                        [convertedObjects addObject:converted];
+                    }
+                }
+            }
+            
+            converted = [convertedObjects copy];
+        }
+    }
+    
+    return converted;
+}
+
 @end
 
 #pragma mark - NSManagedObject Extensions

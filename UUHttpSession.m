@@ -350,44 +350,10 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     if (handler)
     {
         id parsedResponse = [handler parseResponse:data response:httpResponse forRequest:httpRequest];
-        return [self postProcessResponse:request parsedResponse:parsedResponse];
+        return parsedResponse;
     }
     
 	return nil;
-}
-
-- (id) postProcessResponse:(UUHttpRequest*)request parsedResponse:(id)parsedResponse
-{
-    if (request.objectFactoryClass && [request.objectFactoryClass conformsToProtocol:@protocol(UUObjectFactory)])
-    {
-        id context = request.objectFactoryContext;
-        
-        if ([parsedResponse isKindOfClass:[NSDictionary class]])
-        {
-            id singleResponse = [request.objectFactoryClass uuObjectFromDictionary:parsedResponse withContext:context];
-            parsedResponse = singleResponse;
-        }
-        else if ([parsedResponse isKindOfClass:[NSArray class]])
-        {
-            NSMutableArray* list = [NSMutableArray array];
-            
-            for (id node in parsedResponse)
-            {
-                if ([node isKindOfClass:[NSDictionary class]])
-                {
-                    id nodeObj = [request.objectFactoryClass uuObjectFromDictionary:node withContext:context];
-                    if (nodeObj)
-                    {
-                        [list addObject:nodeObj];
-                    }
-                }
-            }
-            
-            parsedResponse = list;
-        }
-    }
-    
-    return parsedResponse;
 }
 
 + (void) setRequestTimeout:(NSTimeInterval)requestTimeout

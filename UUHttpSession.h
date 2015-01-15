@@ -31,8 +31,6 @@ typedef void (^UUHttpSessionResponseHandler)(UUHttpResponse* response);
 @property (atomic, assign) NSTimeInterval	timeout;
 @property (atomic, strong) NSURLCredential* credentials;
 @property (atomic, assign) BOOL				processMimeTypes;
-@property (atomic, assign) Class            objectFactoryClass;
-@property (atomic, strong) id               objectFactoryContext;
 
 @property (atomic, strong, readonly) NSURLRequest*    httpRequest;
 
