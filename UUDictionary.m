@@ -8,6 +8,7 @@
 
 #import "UUDictionary.h"
 #import "UUDate.h"
+#import "UUString.h"
 
 @implementation NSDictionary (UUDictionary)
 
@@ -99,3 +100,56 @@
 }
 
 @end
+
+@implementation NSDictionary (UUHttpDictionary)
+
+- (NSString*) uuBuildQueryString
+{
+    NSDictionary* dictionary = self;
+    
+    NSMutableString* queryStringArgs = [NSMutableString string];
+    
+    if (dictionary && dictionary.count > 0)
+    {
+        [queryStringArgs appendString:@"?"];
+        
+        // Append query string args
+        int count = 0;
+        NSArray* keys = [dictionary allKeys];
+        for (int i = 0; i < dictionary.count; i++)
+        {
+            NSString* key = [keys objectAtIndex:i];
+            id rawVal = [dictionary objectForKey:key];
+            
+            NSString* val = nil;
+            if ([rawVal isKindOfClass:[NSString class]])
+            {
+                val = (NSString*)rawVal;
+            }
+            else if ([rawVal isKindOfClass:[NSNumber class]])
+            {
+                val = [rawVal stringValue];
+            }
+            
+            if (val != nil)
+            {
+                if (count > 0)
+                {
+                    [queryStringArgs appendString:@"&"];
+                }
+                
+				NSString* formattedKey = [key uuUrlEncoded];
+				NSString* formattedValue = [val uuUrlEncoded];
+                
+                [queryStringArgs appendFormat:@"%@=%@", formattedKey, formattedValue];
+                ++count;
+            }
+        }
+    }
+    
+    return queryStringArgs;
+}
+
+@end
+
+

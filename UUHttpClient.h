@@ -43,21 +43,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UUHttpResponseHandler.h"
 
-@protocol UUHttpResponseHandler;
 @protocol UUHttpProgressDelegate;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Currently supported HTTP verbs
-typedef enum
-{
-    UUHttpMethodGet,
-    UUHttpMethodPut,
-    UUHttpMethodPost,
-    UUHttpMethodDelete,
-    UUHttpMethodHead,
-} UUHttpMethod;
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Construct a UUHttpClientRequest to pass to UUHttpClient
@@ -89,7 +77,6 @@ typedef enum
 @end
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // UUHttpClientResponse encapsulates the relevant info for an app to query after a UUHttpClientRequest has completed
 @interface UUHttpClientResponse : NSObject
@@ -102,7 +89,6 @@ typedef enum
 @property (atomic, strong) NSString*			rawResponsePath;
 
 @end
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +104,6 @@ typedef enum
 - (UUHttpClientResponse*) synchronousExecute;
 
 @property (atomic, assign) NSObject<UUHttpProgressDelegate>* progressDelegate;
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,17 +142,6 @@ typedef enum
 
 @end
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Register response handlers to construct objects from mime types
-@protocol UUHttpResponseHandler <NSObject>
-@required
-    - (NSArray*) supportedMimeTypes;
-	- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request;
-@end
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Delegate to update progress of downloads for things like progress bars, etc.
 @protocol UUHttpProgressDelegate <NSObject>
@@ -188,7 +162,6 @@ typedef enum
     UUHttpClientErrorHttpError      = 2,
     UUHttpClientErrorHttpFailure    = 3,
     UUHttpClientErrorNoResponse     = 4,
-    UUHttpClientErrorEmptyResponse  = 5,
     
 } UUHttpClientError;
 
@@ -196,11 +169,3 @@ extern NSString * const kUUHttpClientErrorDomain;
 extern NSString * const kUUHttpClientHttpErrorCodeKey;
 extern NSString * const kUUHttpClientHttpErrorMessageKey;
 extern NSString * const kUUHttpClientAppResponseKey;
-
-extern NSString * const kUUContentTypeApplicationJson;
-extern NSString * const kUUContentTypeTextJson;
-extern NSString * const kUUContentTypeTextHtml;
-extern NSString * const kUUContentTypeTextPlain;
-extern NSString * const kUUContentTypeBinary;
-extern NSString * const kUUContentTypeImagePng;
-extern NSString * const kUUContentTypeImageJpeg;

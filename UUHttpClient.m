@@ -29,48 +29,18 @@
 #endif
 
 #import "UUHttpClient.h"
-
-NSString * const kUUContentTypeApplicationJson  = @"application/json";
-NSString * const kUUContentTypeTextJson         = @"text/json";
-NSString * const kUUContentTypeTextHtml         = @"text/html";
-NSString * const kUUContentTypeTextPlain        = @"text/plain";
-NSString * const kUUContentTypeBinary           = @"application/octet-stream";
-NSString * const kUUContentTypeImagePng         = @"image/png";
-NSString * const kUUContentTypeImageJpeg        = @"image/jpeg";
+#import "UUDictionary.h"
 
 NSString * const kUUHttpClientErrorDomain           = @"kUUHttpClientErrorDomain";
 NSString * const kUUHttpClientHttpErrorCodeKey      = @"kUUHttpClientHttpErrorCodeKey";
 NSString * const kUUHttpClientHttpErrorMessageKey   = @"kUUHttpClientHttpErrorMessageKey";
 NSString * const kUUHttpClientAppResponseKey        = @"kUUHttpClientAppResponseKey";
 
-NSString * const kUUContentLengthHeader  = @"Content-Length";
-NSString * const kUUContentTypeHeader    = @"Content-Type";
-NSString * const kUUAcceptHeader         = @"Accept";
-NSString * const kUUHttpMethodGet        = @"GET";
-NSString * const kUUHttpMethodPut        = @"PUT";
-NSString * const kUUHttpMethodPost       = @"POST";
-NSString * const kUUHttpMethodDelete     = @"DELETE";
-NSString * const kUUHttpMethodHead       = @"HEAD";
-
 const NSTimeInterval kUUDefaultHttpTimeout  = 60.0f;
 
 static NSMutableArray* theSharedRequestQueue;
 static NSMutableDictionary* theResponseHandlers;
 static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Declare the built-in response handlers
-@interface UUTextResponseHandler : NSObject<UUHttpResponseHandler>
-@end
-
-@interface UUBinaryResponseHandler : NSObject<UUHttpResponseHandler>
-@end
-
-@interface UUJsonResponseHandler : NSObject<UUHttpResponseHandler>
-@end
-
-@interface UUImageResponseHandler : NSObject<UUHttpResponseHandler>
-@end
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -541,7 +511,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
 	if (response != nil && [response isKindOfClass:[NSHTTPURLResponse class]])
 	{
 		self.response = (NSHTTPURLResponse*)response;
-		self.expectedResponseLength = [self.response expectedContentLength];
+		self.expectedResponseLength = (NSUInteger)[self.response expectedContentLength];
 	}
 	
 	if (self.progressDelegate && [self.progressDelegate respondsToSelector:@selector(downloadResponseReceived:expectedResponseSize:)])
@@ -573,10 +543,6 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     if (self.response == nil)
     {
         err = [NSError errorWithDomain:kUUHttpClientErrorDomain code:UUHttpClientErrorNoResponse userInfo:nil];
-    }
-    else if (!self.rxBuffer || self.rxBuffer.length == 0)
-    {
-        err = [NSError errorWithDomain:kUUHttpClientErrorDomain code:UUHttpClientErrorEmptyResponse userInfo:nil];
     }
     else
     {
@@ -668,7 +634,7 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     NSString* fullUrl = request.url;
     if (request.queryArguments != nil && request.queryArguments.count > 0)
     {
-        fullUrl = [request.url stringByAppendingString:[self buildQueryString:request.queryArguments]];
+        fullUrl = [request.url stringByAppendingString:[request.queryArguments uuBuildQueryString]];
     }
     
     NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:fullUrl]];
@@ -690,82 +656,11 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     
     if (request.body)
     {
-        [req setValue:[NSString stringWithFormat:@"%d", (int)request.body.length] forHTTPHeaderField:kUUContentLengthHeader];
+        [req setValue:[NSString stringWithFormat:@"%lu", (unsigned long)request.body.length] forHTTPHeaderField:kUUContentLengthHeader];
         [req setHTTPBody:request.body];
     }
     
     return req;
-}
-
-
-+ (NSString *)urlEncode:(NSString*)string
-{
-    NSMutableString *output = [NSMutableString string];
-    const unsigned char *source = (const unsigned char *)[string UTF8String];
-    for (int i = 0; i < string.length; ++i)
-	{
-        const unsigned char thisChar = source[i];
-        if (thisChar == ' ')
-		{
-            [output appendString:@"+"];
-        }
-		else if (thisChar == '.' || thisChar == '-' || thisChar == '_' || thisChar == '~' ||
-                   (thisChar >= 'a' && thisChar <= 'z') ||
-                   (thisChar >= 'A' && thisChar <= 'Z') ||
-                   (thisChar >= '0' && thisChar <= '9')) {
-            [output appendFormat:@"%c", thisChar];
-        }
-		else
-		{
-            [output appendFormat:@"%%%02X", thisChar];
-        }
-    }
-    return output;
-}
-
-+ (NSString*) buildQueryString:(NSDictionary*)dictionary
-{
-    NSMutableString* queryStringArgs = [NSMutableString string];
-    
-    if (dictionary && dictionary.count > 0)
-    {
-        [queryStringArgs appendString:@"?"];
-        
-        // Append query string args
-        int count = 0;
-        NSArray* keys = [dictionary allKeys];
-        for (int i = 0; i < dictionary.count; i++)
-        {
-            NSString* key = [keys objectAtIndex:i];
-            id rawVal = [dictionary objectForKey:key];
-            
-            NSString* val = nil;
-            if ([rawVal isKindOfClass:[NSString class]])
-            {
-                val = (NSString*)rawVal;
-            }
-            else if ([rawVal isKindOfClass:[NSNumber class]])
-            {
-                val = [rawVal stringValue];
-            }
-            
-            if (val != nil)
-            {
-                if (count > 0)
-                {
-                    [queryStringArgs appendString:@"&"];
-                }
-                
-				NSString* formattedKey = [self urlEncode:key];
-				NSString* formattedValue = [self urlEncode:val];
-
-                [queryStringArgs appendFormat:@"%@=%@", formattedKey, formattedValue];
-                ++count;
-            }
-        }
-    }
-    
-    return queryStringArgs;
 }
 
 #pragma mark - Request Queue
@@ -785,8 +680,8 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     NSMutableArray* queue = [self sharedRequestQueue];
     @synchronized(queue)
     {
-        NSUInteger count = queue.count;
-        for (NSUInteger i = 0; i < count; i++)
+        NSInteger count = queue.count;
+        for (int i = 0; i < count; i++)
         {
             [[queue objectAtIndex:i] cancel];
         }
@@ -847,95 +742,6 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
     }
     
     return theResponseHandlers;
-}
-
-@end
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark- Response Handlers
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#pragma mark - Text Response Handler
-@implementation UUTextResponseHandler
-
-- (NSArray*) supportedMimeTypes
-{
-    return @[kUUContentTypeTextHtml, kUUContentTypeTextPlain];
-}
-
-- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
-{
-    NSStringEncoding responseEncoding = NSUTF8StringEncoding;
-    
-    if ([response textEncodingName])
-    {
-        CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) [response textEncodingName]);
-        responseEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
-    }
-    
-    return UU_AUTORELEASE([[NSString alloc] initWithData:rxBuffer encoding:responseEncoding]);
-}
-
-@end
-
-#pragma mark - Binary Response Handler
-@implementation UUBinaryResponseHandler
-
-- (NSArray*) supportedMimeTypes
-{
-    return @[kUUContentTypeBinary];
-}
-
-
-- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
-{
-    return rxBuffer;
-}
-
-@end
-
-#pragma mark - JSON Response Handler
-
-@implementation UUJsonResponseHandler
-
-- (NSArray*) supportedMimeTypes
-{
-    return @[kUUContentTypeApplicationJson, kUUContentTypeTextJson];
-}
-
-- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
-{
-    NSError* err = nil;
-    id obj = [NSJSONSerialization JSONObjectWithData:rxBuffer options:0 error:&err];
-    if (err != nil)
-    {
-        UUDebugLog(@"Error derializing JSON: %@", err);
-        return nil;
-    }
-    
-    if (obj == nil)
-    {
-        UUDebugLog(@"JSON deserialization returned success but a nil object!");
-    }
-    
-    return obj;
-}
-
-@end
-
-#pragma mark - Image Response Handler
-
-@implementation UUImageResponseHandler
-
-- (NSArray*) supportedMimeTypes
-{
-    return @[kUUContentTypeImagePng, kUUContentTypeImageJpeg];
-}
-
-- (id) parseResponse:(NSData*)rxBuffer response:(NSHTTPURLResponse*)response forRequest:(NSURLRequest*)request
-{
-    return [UIImage imageWithData:rxBuffer];
 }
 
 @end
