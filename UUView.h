@@ -6,9 +6,16 @@
 //	License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
-//  Contact: @cheesemaker or jon@threejacks.com
+//  Contact: @cheesemaker or jon@silverpine.com
 
 #import <UIKit/UIKit.h>
+
+// These extensions allow you to set commonly set layer properties directly in Interface Builder
+// Have suggestions for others? Let me know or submit a pull request!
+IB_DESIGNABLE @interface UIView (UUInterfaceBuilder)
+	@property (nonatomic) IBInspectable CGFloat cornerRadius;
+	@property (nonatomic) IBInspectable BOOL	circular;
+@end
 
 @interface UIView (UUFramework)
 

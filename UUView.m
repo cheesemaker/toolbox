@@ -11,6 +11,32 @@
 #import "UUView.h"
 #import <objc/runtime.h>
 
+@implementation UIView (UUInterfaceBuilder)
+
+	- (BOOL) circular
+	{
+		return (self.layer.cornerRadius == self.frame.size.height / 2.0);
+	}
+
+	- (void) setCircular:(BOOL)circular
+	{
+		self.layer.cornerRadius = (self.frame.size.height / 2.0);
+		self.clipsToBounds = YES;
+	}
+
+	- (CGFloat) cornerRadius
+	{
+		return self.layer.cornerRadius;
+	}
+
+	- (void) setCornerRadius:(CGFloat)cornerRadius
+	{
+		self.layer.cornerRadius = cornerRadius;
+		self.clipsToBounds = YES;
+	}
+
+@end
+
 @implementation UIView (UUFramework)
 
 - (void) uuAnimateAppearFromTop:(BOOL)bounce
