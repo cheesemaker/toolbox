@@ -14,13 +14,20 @@
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+extern NSString * const kUUReachabilityChangedNotification;
+
 @interface UUReachabilityResult : NSObject
 
 // Raw reachability flags
 @property (assign) SCNetworkReachabilityFlags reachabilityFlags;
+
+// Convenience methods to check reachability bit flags
 @property (assign) BOOL isReachableWithWiFi;
 @property (assign) BOOL isReachableWithCell;
 @property (assign) BOOL isReachable; // Cell or WiFi
+
+// For inspection of bit values
+- (NSDictionary*) reachabilityFlagsAsDictionary;
 
 @end
 
@@ -30,5 +37,9 @@
 + (instancetype) reachabilityForHostName:(NSString*)hostName;
 
 - (UUReachabilityResult*) currentReachability;
+
+// Delay (in seconds) before firing a kUUReachabilityChangedNotification. Default is 1.0
+// This delay is to buffer against rapid changes in reachability
+@property (assign) NSTimeInterval reachabilityChangedDelay;
 
 @end

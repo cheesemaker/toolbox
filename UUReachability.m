@@ -1,3 +1,4 @@
+
 //
 //  UUReachability.m
 //  Useful Utilities - Simple block based reachibilty wrapper
@@ -12,11 +13,35 @@
 
 #import "UUReachability.h"
 
+#define UUIsBitSet(a,b) ((a & b) == b)
+
+NSString * const kUUReachabilityChangedNotification      = @"UUReachabilityChangedNotification";
+
 @interface UUReachabilityResult ()
 
 + (instancetype) reachabilityResultWithFlags:(SCNetworkReachabilityFlags)reachabilityFlags;
 
 @end
+
+@interface UUReachability ()
+
+@property (nonatomic, strong) NSTimer* reachabilityChangedTimer;
+
+- (void) kickReachabilityChanged:(UUReachabilityResult*)result;
+
+@end
+
+static void UUReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info)
+{
+    #pragma unused (target, flags)
+    NSCAssert(info != NULL, @"info was NULL in ReachabilityCallback");
+    NSCAssert([(__bridge NSObject*) info isKindOfClass: [UUReachability class]], @"info was wrong class in UUReachabilityCallback");
+    
+    UUReachability* reachability = (__bridge UUReachability*)info;
+    
+    UUReachabilityResult* result = [UUReachabilityResult reachabilityResultWithFlags:flags];
+    [reachability kickReachabilityChanged:result];
+}
 
 @implementation UUReachability
 {
@@ -48,7 +73,9 @@
     
     if (self)
     {
+        self.reachabilityChangedDelay = 1.0f;
         _reachabilityRef = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
+        [self startNotifier];
     }
     
     return self;
@@ -56,6 +83,8 @@
 
 - (void) dealloc
 {
+    [self stopNotifier];
+    
     if (_reachabilityRef)
     {
         CFRelease(_reachabilityRef);
@@ -78,6 +107,42 @@
     return result;
 }
 
+- (BOOL) startNotifier
+{
+    BOOL returnValue = NO;
+    SCNetworkReachabilityContext context = {0, (__bridge void *)(self), NULL, NULL, NULL};
+    
+    if (SCNetworkReachabilitySetCallback(_reachabilityRef, UUReachabilityCallback, &context))
+    {
+        if (SCNetworkReachabilityScheduleWithRunLoop(_reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode))
+        {
+            returnValue = YES;
+        }
+    }
+    
+    return returnValue;
+}
+
+- (void) stopNotifier
+{
+    if (_reachabilityRef != NULL)
+    {
+        SCNetworkReachabilityUnscheduleFromRunLoop(_reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    }
+}
+
+- (void) kickReachabilityChanged:(UUReachabilityResult*)result
+{
+    [self.reachabilityChangedTimer invalidate];
+    self.reachabilityChangedTimer = [NSTimer scheduledTimerWithTimeInterval:self.reachabilityChangedDelay target:self selector:@selector(delayHandleReachabilityChanged:) userInfo:result repeats:NO];
+}
+
+- (void) delayHandleReachabilityChanged:(NSTimer*)timer
+{
+    UUReachabilityResult* result = timer.userInfo;
+    [[NSNotificationCenter defaultCenter] postNotificationName:kUUReachabilityChangedNotification object:result];
+}
+
 @end
 
 @implementation UUReachabilityResult
@@ -87,6 +152,27 @@
     UUReachabilityResult* result = [UUReachabilityResult new];
     [result updateReachability:reachabilityFlags];
     return result;
+}
+
++ (NSDictionary*) reachabilityFlagsToDictionary:(SCNetworkReachabilityFlags)flags
+{
+    NSMutableDictionary* md = [NSMutableDictionary dictionary];
+    [md setValue:@(flags) forKey:@"RawFlags"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsTransientConnection)) forKey:@"TransientConnection"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsReachable)) forKey:@"Reachable"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsConnectionRequired)) forKey:@"ConnectionRequired"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsConnectionOnTraffic)) forKey:@"ConnectionOnTraffic"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsInterventionRequired)) forKey:@"InterventionRequired"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsConnectionOnDemand)) forKey:@"ConnectionOnDemand"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsIsLocalAddress)) forKey:@"IsLocalAddress"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsIsDirect)) forKey:@"IsDirect"];
+    [md setValue:@(UUIsBitSet(flags, kSCNetworkReachabilityFlagsIsWWAN)) forKey:@"IsWWAN"];
+    return md.copy;
+}
+
+- (NSDictionary*) reachabilityFlagsAsDictionary
+{
+    return [[self class] reachabilityFlagsToDictionary:self.reachabilityFlags];
 }
 
 - (void) updateReachability:(SCNetworkReachabilityFlags)reachabilityFlags
