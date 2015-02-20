@@ -11,7 +11,6 @@
 //  and CGSize in the UURemoteData meta data cache.
 
 @import UIKit;
-#import "UURemoteData.h"
 
 @interface UUImageCache  : NSObject
 
