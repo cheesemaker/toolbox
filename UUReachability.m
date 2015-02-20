@@ -40,6 +40,8 @@ static void UUReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     UUReachability* reachability = (__bridge UUReachability*)info;
     
     UUReachabilityResult* result = [UUReachabilityResult reachabilityResultWithFlags:flags];
+    reachability.currentReachability = result;
+
     [reachability kickReachabilityChanged:result];
 }
 
@@ -91,7 +93,24 @@ static void UUReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     }
 }
 
-- (UUReachabilityResult*) currentReachability
+- (void) checkReachability:(void (^)(UUReachabilityResult* result))completion
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    {
+        UUReachabilityResult* result = [self syncrhonousCheckReachability];
+        
+        if (completion)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^
+            {
+                completion(result);
+            });
+        }
+        
+    });
+}
+
+- (UUReachabilityResult*) syncrhonousCheckReachability
 {
     UUReachabilityResult* result = nil;
     
@@ -104,6 +123,8 @@ static void UUReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
         }
     }
     
+    self.currentReachability = result;
+    [self kickReachabilityChanged:result];
     return result;
 }
 
@@ -140,7 +161,21 @@ static void UUReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 - (void) delayHandleReachabilityChanged:(NSTimer*)timer
 {
     UUReachabilityResult* result = timer.userInfo;
-    [[NSNotificationCenter defaultCenter] postNotificationName:kUUReachabilityChangedNotification object:result];
+    
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kUUReachabilityChangedNotification object:result];
+    });
+}
+
+- (BOOL) isReachable
+{
+    if (!self.currentReachability)
+    {
+        return YES;
+    }
+    
+    return [self.currentReachability isReachable];
 }
 
 @end

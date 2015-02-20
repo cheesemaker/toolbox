@@ -36,10 +36,23 @@ extern NSString * const kUUReachabilityChangedNotification;
 + (instancetype) sharedInstance; // uses www.apple.com
 + (instancetype) reachabilityForHostName:(NSString*)hostName;
 
-- (UUReachabilityResult*) currentReachability;
+// Cached reachability value.  If nil it means the current reachability
+// has not been determined yet.
+@property (nonatomic, strong) UUReachabilityResult* currentReachability;
+
+// Convenience helper to check if the host is currently reachable.  This
+// will return YES if currentReachability is nil, so as to avoid false posivites
+// when the reachability status is still being determined.
+- (BOOL) isReachable;
 
 // Delay (in seconds) before firing a kUUReachabilityChangedNotification. Default is 1.0
 // This delay is to buffer against rapid changes in reachability
 @property (assign) NSTimeInterval reachabilityChangedDelay;
+
+// Asyncrhonously checks the current reachability
+// NOTE: the very first time this is called it sometimes returns a flags value
+// of 0, for this reason it is recommended to respond to kUUReachabilityChangedNotification
+// instead.
+- (void) checkReachability:(void (^)(UUReachabilityResult* result))completion;
 
 @end
