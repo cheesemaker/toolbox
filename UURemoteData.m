@@ -26,9 +26,14 @@ NSString * const kUUDataRemotePathKey               = @"UUDataRemotePathKey";
 NSString * const kUUDataKey                         = @"UUDataKey";
 NSString * const kUUErrorKey                        = @"UUErrorKey";
 
+NSString * const kUUMetaDataMimeTypeKey             = @"UUMetaDataMimeType";
+NSString * const kUUMetaDataDownloadTimestampKey    = @"UUMetaDataDownloadTimestamp";
+
 @interface UURemoteData ()
 
 @property (nonatomic, strong) NSMutableDictionary* pendingDownloads;
+@property (nonatomic, strong) NSCache* metaDataCache;
+@property (nonatomic, strong) NSMutableDictionary* responseHandlers;
 
 @end
 
@@ -54,6 +59,9 @@ NSString * const kUUErrorKey                        = @"UUErrorKey";
     if (self)
     {
         self.pendingDownloads = [NSMutableDictionary dictionary];
+        
+        self.metaDataCache = [[NSCache alloc] init];
+        self.metaDataCache.name = [NSString stringWithFormat:@"%@-MetaData", NSStringFromClass([self class])];
     }
     
     return self;
@@ -101,6 +109,7 @@ NSString * const kUUErrorKey                        = @"UUErrorKey";
     if (response.rawResponse)
     {
         [[UUDataCache sharedCache] setObject:response.rawResponse forKey:path];
+        [self updateMetaDataFromResponse:response forPath:path];
         
         [md setValue:response.rawResponse forKeyPath:kUUDataKey];
         
@@ -163,6 +172,37 @@ NSString * const kUUErrorKey                        = @"UUErrorKey";
         
         [self.pendingDownloads setValue:client forKey:path];
     }
+}
+
+- (BOOL) hasPendingDownloadForPath:(NSString*)path
+{
+    return ([self.pendingDownloads objectForKey:path] != nil);
+}
+
+- (void) updateMetaDataFromResponse:(UUHttpResponse*)response forPath:(NSString*)path
+{
+    NSMutableDictionary* md = [NSMutableDictionary dictionary];
+    [md setValue:response.httpResponse.MIMEType forKey:kUUMetaDataMimeTypeKey];
+    [md setValue:[NSDate date] forKey:kUUMetaDataDownloadTimestampKey];
+    [self updateMetaData:md.copy forPath:path];
+}
+
+- (NSDictionary*) metaDataForPath:(NSString*)path
+{
+    NSDictionary* metaData = nil;
+    
+    id obj = [self.metaDataCache objectForKey:path];
+    if (obj && [obj isKindOfClass:[NSDictionary class]])
+    {
+        metaData = obj;
+    }
+    
+    return metaData;
+}
+
+- (void) updateMetaData:(NSDictionary*)metaData forPath:(NSString*)path
+{
+    [self.metaDataCache setObject:metaData forKey:path];
 }
 
 @end

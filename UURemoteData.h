@@ -37,6 +37,10 @@ extern NSString * const kUUDataRemotePathKey;
 extern NSString * const kUUDataKey;
 extern NSString * const kUUErrorKey;
 
+// Meta Data keys
+extern NSString * const kUUMetaDataMimeTypeKey;
+extern NSString * const kUUMetaDataDownloadTimestampKey;
+
 @interface UURemoteData : NSObject
 
 + (instancetype) sharedInstance;
@@ -45,6 +49,14 @@ extern NSString * const kUUErrorKey;
 // immediately.  If nil is returned, there is no local copy of the resource, and it indicates
 // a remote request has either been started or is already in progress.
 - (NSData*) dataForPath:(NSString*)path;
+
+// Returns true if there is an active or queue'd download request for the remote resource
+- (BOOL) hasPendingDownloadForPath:(NSString*)path;
+
+// UURemoteData maintains an NSCache of NSDictionary's per remote object.
+// UURemoteData will store the MIME type and download time of the object.
+- (NSDictionary*) metaDataForPath:(NSString*)path;
+- (void) updateMetaData:(NSDictionary*)metaData forPath:(NSString*)path;
 
 // Fetches multiple remote data objects and calls the completion block only when all
 // have completed.  The completion block is an NSDictionary of NSString->NSError objects. If
