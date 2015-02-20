@@ -11,6 +11,7 @@
 #import "UUImageCache.h"
 #import "UUDataCache.h"
 #import "UUDictionary.h"
+#import "UURemoteData.h"
 
 NSString * const kUUImageCacheMetaDataSizeKey = @"UUImageCacheMetaDataSize";
 NSString * const kUUImageCacheMetaDataImageKey = @"UUImageCacheMetaDataImage";
