@@ -9,15 +9,6 @@
 #import <XCTest/XCTest.h>
 #import <Foundation/Foundation.h>
 
-
-
-//#define UUAsertFloatWithPrecision(left, right, ...) \
-
-// _XCTPrimitiveAssertTrue(self, expression, @#expression, __VA_ARGS__)
-
 @interface XCTestCase (UUTestExtensions)
-
-
-- (void) compareFloatWithPrecision:(float)left other:(float)other precision:(int)precision;
 
 @end

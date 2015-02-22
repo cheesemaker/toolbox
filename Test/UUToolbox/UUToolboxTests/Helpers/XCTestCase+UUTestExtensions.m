@@ -10,14 +10,4 @@
 
 @implementation XCTestCase (UUTestExtensions)
 
-- (void) compareFloatWithPrecision:(float)left other:(float)other precision:(int)precision
-{
-    int precisionFactor = pow(10, precision);
-    float leftAdjust = left / precisionFactor;
-    float rightAdjust = other / precisionFactor;
-    //XCTAssert(<#expression, ...#>)
-    
-    
-}
-
 @end
