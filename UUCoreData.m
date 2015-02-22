@@ -241,15 +241,20 @@
                                    limit:(NSNumber*)limit
                                  context:(NSManagedObjectContext*)context
 {
-    NSError* err = nil;
-    
     NSFetchRequest* fetchRequest = [self uuFetchRequestInContext:context predicate:predicate sortDescriptors:sortDescriptors limit:limit];
     
-    NSArray* fetchResults = [context executeFetchRequest:fetchRequest error:&err];
-    if (err)
+    __block NSArray* fetchResults = nil;
+    
+    [context performBlockAndWait:^
     {
-        [err uuLogDetailedErrors];
-    }
+        NSError* err = nil;
+        fetchResults = [context executeFetchRequest:fetchRequest error:&err];
+        if (err)
+        {
+            [err uuLogDetailedErrors];
+        }
+    }];
+    
     
     return fetchResults;
 }
@@ -285,6 +290,35 @@
     }
     
     return obj;
+}
+
++ (void) uuDeleteObjectsWithPredicate:(NSPredicate*)predicate
+                              context:(NSManagedObjectContext*)context
+{
+    NSArray* list = [self uuFetchObjectsWithPredicate:predicate context:context];
+    for (NSManagedObject* obj in list)
+    {
+        [context deleteObject:obj];
+    }
+}
+
++ (NSUInteger) uuCountObjectsWithPredicate:(NSPredicate*)predicate
+                                   context:(NSManagedObjectContext*)context
+{
+    NSFetchRequest* fetchRequest = [self uuFetchRequestInContext:context predicate:predicate sortDescriptors:nil limit:nil];
+    __block NSUInteger count = 0;
+    
+    [context performBlockAndWait:^
+    {
+        NSError* err = nil;
+        count = [context countForFetchRequest:fetchRequest error:&err];
+        if (err)
+        {
+            [err uuLogDetailedErrors];
+        }
+    }];
+    
+    return count;
 }
 
 @end

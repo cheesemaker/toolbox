@@ -68,4 +68,10 @@
 + (instancetype) uuFetchOrCreateSingleEntityWithPredicate:(NSPredicate *)predicate
                                                   context:(NSManagedObjectContext *)context;
 
++ (void) uuDeleteObjectsWithPredicate:(NSPredicate*)predicate
+                              context:(NSManagedObjectContext*)context;
+
++ (NSUInteger) uuCountObjectsWithPredicate:(NSPredicate*)predicate
+                                   context:(NSManagedObjectContext*)context;
+
 @end
