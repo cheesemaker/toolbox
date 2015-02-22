@@ -109,6 +109,7 @@
     NSDictionary* d = @{ @"rfc3339" : @"1978-04-26T09:52:57-800", @"iso8601" : @"1978-04-26 09:52:57", @"foo" : @"bar"  };
     
     NSCalendar* cal = [NSCalendar currentCalendar];
+    cal.timeZone = [NSTimeZone timeZoneWithName:@"PST"];
     NSCalendarUnit calUnits = (NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond);
     
     id val = [d uuSafeGetDate:@"rfc3339" formatter:[NSDateFormatter uuCachedDateFormatter:kUURFC3339DateTimeFormatter]];
