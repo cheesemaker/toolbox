@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		083AF9471A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 083AF9441A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodeld */; };
+		083AF9481A9A937A0008B01A /* UUCoreDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 083AF9461A9A937A0008B01A /* UUCoreDataTests.m */; };
+		083AF9501A9A95CC0008B01A /* UUPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 083AF94F1A9A95CC0008B01A /* UUPlayer.m */; };
+		083AF9531A9A95FD0008B01A /* UUPlayer+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 083AF9521A9A95FD0008B01A /* UUPlayer+Extensions.m */; };
 		0881FD151A9A857D0096AEC8 /* UUToolbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0881FD141A9A857D0096AEC8 /* UUToolbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0881FD1B1A9A857D0096AEC8 /* UUToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0881FD0F1A9A857C0096AEC8 /* UUToolbox.framework */; };
 		0881FD221A9A857D0096AEC8 /* UUToolboxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881FD211A9A857D0096AEC8 /* UUToolboxTests.m */; };
@@ -59,6 +63,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		083AF9451A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UUCoreDataTestModels.xcdatamodel; sourceTree = "<group>"; };
+		083AF9461A9A937A0008B01A /* UUCoreDataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UUCoreDataTests.m; sourceTree = "<group>"; };
+		083AF94E1A9A95CC0008B01A /* UUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUPlayer.h; sourceTree = "<group>"; };
+		083AF94F1A9A95CC0008B01A /* UUPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UUPlayer.m; sourceTree = "<group>"; };
+		083AF9511A9A95FD0008B01A /* UUPlayer+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UUPlayer+Extensions.h"; sourceTree = "<group>"; };
+		083AF9521A9A95FD0008B01A /* UUPlayer+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UUPlayer+Extensions.m"; sourceTree = "<group>"; };
 		0881FD0F1A9A857C0096AEC8 /* UUToolbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UUToolbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0881FD131A9A857D0096AEC8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0881FD141A9A857D0096AEC8 /* UUToolbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UUToolbox.h; sourceTree = "<group>"; };
@@ -123,6 +133,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		083AF9411A9A937A0008B01A /* UUCoreData */ = {
+			isa = PBXGroup;
+			children = (
+				083AF9421A9A937A0008B01A /* ModelExtensions */,
+				083AF9431A9A937A0008B01A /* Models */,
+				083AF9441A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodeld */,
+				083AF9461A9A937A0008B01A /* UUCoreDataTests.m */,
+			);
+			path = UUCoreData;
+			sourceTree = "<group>";
+		};
+		083AF9421A9A937A0008B01A /* ModelExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				083AF9511A9A95FD0008B01A /* UUPlayer+Extensions.h */,
+				083AF9521A9A95FD0008B01A /* UUPlayer+Extensions.m */,
+			);
+			path = ModelExtensions;
+			sourceTree = "<group>";
+		};
+		083AF9431A9A937A0008B01A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				083AF94E1A9A95CC0008B01A /* UUPlayer.h */,
+				083AF94F1A9A95CC0008B01A /* UUPlayer.m */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		0881FD051A9A857C0096AEC8 = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +230,7 @@
 		0881FD1E1A9A857D0096AEC8 /* UUToolboxTests */ = {
 			isa = PBXGroup;
 			children = (
+				083AF9411A9A937A0008B01A /* UUCoreData */,
 				0881FD631A9A86850096AEC8 /* UUColorTests.m */,
 				0881FD641A9A86850096AEC8 /* UUDateTests.m */,
 				0881FD651A9A86850096AEC8 /* UUDictionaryTests.m */,
@@ -356,13 +396,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				083AF9501A9A95CC0008B01A /* UUPlayer.m in Sources */,
 				0881FD221A9A857D0096AEC8 /* UUToolboxTests.m in Sources */,
 				0881FD6B1A9A86850096AEC8 /* UUDictionaryTests.m in Sources */,
+				083AF9531A9A95FD0008B01A /* UUPlayer+Extensions.m in Sources */,
 				0881FD6E1A9A86850096AEC8 /* UUStringTests.m in Sources */,
 				0881FD691A9A86850096AEC8 /* UUColorTests.m in Sources */,
 				0881FD751A9A88BD0096AEC8 /* XCTestCase+UUTestExtensions.m in Sources */,
 				0881FD6A1A9A86850096AEC8 /* UUDateTests.m in Sources */,
+				083AF9471A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodeld in Sources */,
 				0881FD6C1A9A86850096AEC8 /* UURandomTests.m in Sources */,
+				083AF9481A9A937A0008B01A /* UUCoreDataTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +584,7 @@
 				0881FD271A9A857D0096AEC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0881FD281A9A857D0096AEC8 /* Build configuration list for PBXNativeTarget "UUToolboxTests" */ = {
 			isa = XCConfigurationList;
@@ -548,8 +593,22 @@
 				0881FD2A1A9A857D0096AEC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		083AF9441A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				083AF9451A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodel */,
+			);
+			currentVersion = 083AF9451A9A937A0008B01A /* UUCoreDataTestModels.xcdatamodel */;
+			path = UUCoreDataTestModels.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 0881FD061A9A857C0096AEC8 /* Project object */;
 }
