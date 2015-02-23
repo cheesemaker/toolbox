@@ -25,10 +25,20 @@
     return path;
 }
 
-- (void)setUp
+- (void) deleteDatabase
 {
-    [super setUp];
-    
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSString* path = [self databasePath];
+    NSError* err = nil;
+    [fm removeItemAtPath:path error:&err];
+    if (err)
+    {
+        NSLog(@"Error deleting test database! Err: %@", err);
+    }
+}
+
+- (void) setupDatabase
+{
     NSBundle* modelBundle = [NSBundle bundleForClass:[self class]];
     NSString* path = [self databasePath];
     NSURL* storeURL = [NSURL fileURLWithPath:path];
@@ -41,17 +51,17 @@
     [context uuSubmitChanges];
 }
 
+- (void)setUp
+{
+    [super setUp];
+    
+    [self deleteDatabase];
+    [self setupDatabase];
+}
+
 - (void)tearDown
 {
-    NSFileManager* fm = [NSFileManager defaultManager];
-    NSString* path = [self databasePath];
-    NSError* err = nil;
-    [fm removeItemAtPath:path error:&err];
-    if (err)
-    {
-        NSLog(@"Error deleting test database! Err: %@", err);
-    }
-        
+    [self deleteDatabase];
     
     [super tearDown];
 }
@@ -79,6 +89,28 @@
     });
     
     UUWaitForAsyncTest();
+}
+
+- (void) testCrossThreadInsert
+{
+    NSManagedObjectContext* context = [UUCoreData mainThreadContext];
+    [UUPlayer addPlayer:@"Tony" last:@"Romo" team:@"Dallas Cowboys" position:@"QB" number:@(9) context:context];
+    
+    UUBeginAsyncTest();
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    //dispatch_async(dispatch_get_main_queue(), ^
+    {
+        [context uuSubmitChanges];
+       
+       UUEndAsyncTest();
+    });
+    
+    UUWaitForAsyncTest();
+    
+    NSArray* results = [UUPlayer uuFetchObjectsWithPredicate:nil context:context];
+    XCTAssertEqual(results.count, 4, "Expect 4 objects in players table");
+    
 }
 
 /*
