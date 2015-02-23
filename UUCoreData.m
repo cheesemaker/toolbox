@@ -129,19 +129,23 @@
 
 - (BOOL) uuSubmitChanges
 {
-    NSError* error = nil;
+    __block BOOL result = NO;
+    
     if ([self hasChanges])
     {
-        BOOL result = [self save:&error];
-        
-        if (!result)
+        [self performBlockAndWait:^
         {
-            [error uuLogDetailedErrors];
-            return NO;
-        }
+            NSError* error = nil;
+            result = [self save:&error];
+            
+            if (!result)
+            {
+                [error uuLogDetailedErrors];
+            }
+        }];
     }
     
-    return YES;
+    return result;
 }
 
 + (NSArray*) uuConvertObjects:(NSArray*)objects toContext:(NSManagedObjectContext*)context
