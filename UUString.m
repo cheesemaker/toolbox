@@ -432,7 +432,9 @@
 	
 	if (cryptStatus == kCCSuccess)
 	{
-		return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+        NSData* data = [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+        NSString* str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        return str;
 	}
 	
 	//If we got here there was a problem. Clean up and bail.

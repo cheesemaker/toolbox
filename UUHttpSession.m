@@ -1,9 +1,9 @@
 //
 //  UUHttpSession.m
-//  UUToolboxTestBed
+//  Useful Utilities - Lightweight Objective C HTTP Client
 //
-//  Created by Ryan DeVore on 8/28/14.
-//  Copyright (c) 2014 Ryan DeVore. All rights reserved.
+//	License:
+//  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
 
 #import "UUHttpSession.h"
@@ -327,15 +327,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 
 - (BOOL) isHttpSuccessResponseCode:(NSInteger)responseCode
 {
-    switch (responseCode)
-    {
-        case UUHttpResponseCodeOK:
-        case UUHttpResponseCodeCreated:
-            return YES;
-            
-        default:
-            return NO;
-    }
+    return (responseCode >= 200 && responseCode < 300);
 }
 
 - (id) parseResponse:(UUHttpRequest*)request httpResponse:(NSHTTPURLResponse*)httpResponse data:(NSData*)data
