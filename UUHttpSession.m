@@ -99,7 +99,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     UUHttpRequest* cr = [self getRequest:url queryArguments:queryArguments];
     cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
-    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    cr.headerFields = [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
     
     return cr;
 }
@@ -108,7 +108,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     UUHttpRequest* cr = [self deleteRequest:url queryArguments:queryArguments];
     cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
-    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    cr.headerFields = [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
     
     return cr;
 }
@@ -117,7 +117,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     UUHttpRequest* cr = [self putRequest:url queryArguments:queryArguments body:body contentType:contentType];
     cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
-    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    cr.headerFields = [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
     
     return cr;
 }
@@ -126,7 +126,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     UUHttpRequest* cr = [self postRequest:url queryArguments:queryArguments body:body contentType:contentType];
     cr.credentials = [NSURLCredential credentialWithUser:user password:password persistence:NSURLCredentialPersistenceForSession];
-    [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
+    cr.headerFields = [self addBasicAuthToHeaders:cr.headerFields user:user password:password];
     
     return cr;
 }
@@ -136,7 +136,8 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     NSMutableDictionary* newDictionary = [NSMutableDictionary dictionaryWithDictionary:headers];
     NSData* authorizationData = [[NSString stringWithFormat:@"%@:%@", user, password] dataUsingEncoding:NSASCIIStringEncoding];
     NSString* authorizationString = [authorizationData base64EncodedStringWithOptions:0];
-    [newDictionary setValue:authorizationString forKey:@"Authorization"];
+    NSString* basicAuthString = [NSString stringWithFormat:@"Basic %@", authorizationString];
+    [newDictionary setValue:basicAuthString forKey:@"Authorization"];
     
     return newDictionary;
 }
@@ -248,7 +249,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 {
     request.httpRequest = [[self class] buildRequest:request];
     
-    UUDebugLog(@"Begin Request\n\nMethod: %@\nURL: %@\n\n", request.httpRequest.HTTPMethod, request.httpRequest.URL);
+    UUDebugLog(@"Begin Request\n\nMethod: %@\nURL: %@\nHeaders:\n%@\n\n", request.httpRequest.HTTPMethod, request.httpRequest.URL, request.httpRequest.allHTTPHeaderFields);
     
     NSURLSessionTask* task = [self.urlSession dataTaskWithRequest:request.httpRequest
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
@@ -284,14 +285,6 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     {
         NSDictionary* userInfo = @{ NSUnderlyingErrorKey : error };
         err = [NSError errorWithDomain:kUUHttpSessionErrorDomain code:UUHttpSessionErrorHttpFailure userInfo:userInfo];
-    }
-    else if (response == nil)
-    {
-        err = [NSError errorWithDomain:kUUHttpSessionErrorDomain code:UUHttpSessionErrorNoResponse userInfo:nil];
-    }
-    else if (!data || data.length == 0)
-    {
-        err = [NSError errorWithDomain:kUUHttpSessionErrorDomain code:UUHttpSessionErrorEmptyResponse userInfo:nil];
     }
     else
     {

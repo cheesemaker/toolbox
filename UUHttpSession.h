@@ -86,19 +86,11 @@ typedef enum
     UUHttpSessionErrorHttpFailure      = -1,
     
     // Returned when the NSURLSession completion block returns with a nil NSError
-    // AND a nil data value.
-    UUHttpSessionErrorNoResponse     = -2,
-    
-    // Returned when the NSURLSession completion block returns with a nil NSError
-    // and a zero length data value.
-    UUHttpSessionErrorEmptyResponse  = -3,
-    
-    // Returned when the NSURLSession completion block returns with a nil NSError
-    // and an HTTP return code that is not 200 or 201
-    UUHttpSessionErrorHttpError      = -4,
+    // and an HTTP return code that is not 2xx
+    UUHttpSessionErrorHttpError      = -2,
     
     // Returned when a user cancels an operation
-    UUHttpSessionErrorUserCancelled  = -5,
+    UUHttpSessionErrorUserCancelled  = -3,
     
 } UUHttpSessionError;
 
