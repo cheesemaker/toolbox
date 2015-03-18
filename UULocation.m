@@ -112,7 +112,7 @@
 
 + (BOOL) isAuthorizedToTrack
 {
-	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized));
+	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways));
 }
 
 + (void) requestStartTracking:(void(^)(BOOL authorized))callback
@@ -321,7 +321,7 @@
 	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
 	{
 		[self startTracking];
-		self.authorizationCallback(status == kCLAuthorizationStatusAuthorized);
+		self.authorizationCallback(status == kCLAuthorizationStatusAuthorizedAlways);
 	}
 }
 
