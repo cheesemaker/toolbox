@@ -95,6 +95,7 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 	
 	//Zero out the last date...
 	[[NSUserDefaults standardUserDefaults] setObject:nil forKey:path];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 + (void) uuPurgeContentAboveSize:(unsigned long long)purgeFileSize
@@ -185,6 +186,8 @@ NSTimeInterval uuDataCacheExpirationLength = (60 * 60 * 24 * 30); //30 days
 	//Store the date
 	NSDate* now = [NSDate date];
 	[[NSUserDefaults standardUserDefaults] setObject:now forKey:path];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
 }
 
 + (NSString*) uuCachePathForURL:(NSURL*)url
