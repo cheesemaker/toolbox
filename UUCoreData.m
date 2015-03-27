@@ -101,7 +101,7 @@
     NSManagedObjectContext* context = (NSManagedObjectContext *)didSaveNotification.object;
     
     NSManagedObjectContext* destContext = self.mainThreadContext;
-    if (context != destContext)
+    if (context != destContext && context.persistentStoreCoordinator == self.mainThreadContext.persistentStoreCoordinator)
     {
         [destContext performBlock:^
          {
