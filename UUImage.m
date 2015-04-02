@@ -20,6 +20,82 @@
 
 @implementation UIImage (UUFramework)
 
+- (UIImage*) uuRemoveOrientation
+{
+	//If it's already oriented correctly, just do it...
+    if (self.imageOrientation == UIImageOrientationUp)
+		return self;
+	
+    CGAffineTransform transform = CGAffineTransformIdentity;
+
+    switch (self.imageOrientation)
+	{
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, self.size.width, self.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, self.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, self.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationUpMirrored:
+            break;
+    }
+
+    switch (self.imageOrientation)
+	{
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, self.size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, self.size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationDown:
+        case UIImageOrientationLeft:
+        case UIImageOrientationRight:
+            break;
+    }
+
+	CGImageRef cgImageRef = self.CGImage;
+    CGContextRef contextRef = CGBitmapContextCreate(NULL, self.size.width, self.size.height, CGImageGetBitsPerComponent(cgImageRef), 0, CGImageGetColorSpace(cgImageRef), CGImageGetBitmapInfo(cgImageRef));
+    CGContextConcatCTM(contextRef, transform);
+    switch (self.imageOrientation)
+	{
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            CGContextDrawImage(contextRef, CGRectMake(0,0,self.size.height,self.size.width), cgImageRef);
+            break;
+
+        default:
+            CGContextDrawImage(contextRef, CGRectMake(0,0,self.size.width,self.size.height), cgImageRef);
+            break;
+    }
+
+    cgImageRef = CGBitmapContextCreateImage(contextRef);
+    UIImage* image = [UIImage imageWithCGImage:cgImageRef];
+    CGContextRelease(contextRef);
+    CGImageRelease(cgImageRef);
+    return image;
+}
+
 - (UIImage*) uuCropToSize:(CGSize)targetSize
 {
     UIGraphicsBeginImageContext(targetSize); // this will crop
