@@ -145,7 +145,19 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 @end
 
 @implementation UUHttpResponse
-//Nothing to see here.  Move along...
+
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"UUHTTP Response:\r%@\r\rError:\r%@", self.httpResponse, self.httpError];
+}
+
+- (NSString *)debugDescription
+{
+	return [NSString stringWithFormat:@"*****UUHTTP Response*****\r%@\r\r*****Error*****\r%@\r\r*****Original Request*****\r%@", self.httpResponse, self.httpError, self.httpRequest];
+}
+
+
+
 @end
 
 

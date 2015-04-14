@@ -59,6 +59,9 @@ typedef void (^UUHttpSessionResponseHandler)(UUHttpResponse* response);
 @property (atomic, strong) NSData*				rawResponse;
 @property (atomic, strong) NSString*			rawResponsePath;
 
+- (NSString *)description;
+- (NSString *)debugDescription;
+
 @end
 
 
