@@ -147,12 +147,24 @@
 
 - (void) show:(BOOL)animated
 {
-    [self showProgressViewWithBounceAnimation];
+	if (animated) {
+		[self showProgressViewWithBounceAnimation];
+	}
+	else {
+		[self.layer removeAllAnimations];
+		self.transform = CGAffineTransformIdentity;
+		self.hidden = NO;
+	}
 }
 
 - (void) hide:(BOOL)animated
 {
-	[self hideProgressViewWithBounceAnimation];
+	if (animated) {
+		[self hideProgressViewWithBounceAnimation];
+	}
+	else {
+		self.hidden = YES;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
