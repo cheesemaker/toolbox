@@ -117,15 +117,28 @@
 
 + (void) requestStartTracking:(void(^)(BOOL authorized))callback
 {
+	[self requestTrackingWithSelector:@selector(requestAlwaysAuthorization) callback:callback];
+}
+
++ (void)requestStartWhenInUseTracking:(void (^)(BOOL))callback
+{
+	[self requestTrackingWithSelector:@selector(requestWhenInUseAuthorization) callback:callback];
+}
+
++ (void)requestTrackingWithSelector:(SEL)selector callback:(void (^)(BOOL))callback
+{
 	[UUSystemLocation sharedLocation].authorizationCallback = callback;
 	
 	CLLocationManager* locationManager = [UUSystemLocation sharedLocation].clLocationManager;
-	if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
+	if ([locationManager respondsToSelector:selector])
 	{
 		NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
 		NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationAlwaysUsageDescription");
 		
-		[locationManager performSelector:@selector(requestAlwaysAuthorization)];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+		[locationManager performSelector:selector];
+#pragma clang diagnostic pop
 	}
 	else
 	{
