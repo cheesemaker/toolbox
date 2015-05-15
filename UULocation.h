@@ -43,6 +43,7 @@
 	//Global settings interface.
 	+ (BOOL) isAuthorizedToTrack;
 	+ (BOOL) isTrackingDenied;
+	+ (BOOL) canRequestTracking; // Returns NO if status is anything but kCLAuthorizationStatusNotDetermined, which will result in nothing happening when tracking is requested
 
 	+ (void) requestStartTracking:(void(^)(BOOL authorized))callback;
 	+ (void)requestStartWhenInUseTracking:(void (^)(BOOL))callback;
