@@ -151,6 +151,11 @@
 	}
 }
 
++ (void) startTracking
+{
+	[[UUSystemLocation sharedLocation] startTracking];
+}
+
 + (void) requestStopTracking
 {
 	[[UUSystemLocation sharedLocation] stopTracking];
@@ -262,11 +267,14 @@
 
 - (void) startTracking
 {
-	[self.clLocationManager startUpdatingLocation];
-	
-	if (self.clLocationManager.location)
+	if ([UULocationMonitoringConfiguration isAuthorizedToTrack])
 	{
-		[self checkForNewLocation:self.clLocationManager.location];
+		[self.clLocationManager startUpdatingLocation];
+		
+		if (self.clLocationManager.location)
+		{
+			[self checkForNewLocation:self.clLocationManager.location];
+		}
 	}
 }
 
@@ -277,7 +285,10 @@
 
 - (void) startTrackingSignificantLocationChanges
 {
-	[self.clLocationManager startMonitoringSignificantLocationChanges];
+	if ([UULocationMonitoringConfiguration isAuthorizedToTrack])
+	{
+		[self.clLocationManager startMonitoringSignificantLocationChanges];
+	}
 }
 
 - (void) stopTrackingSignificantLocationChanges
@@ -336,12 +347,9 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-	if (status != kCLAuthorizationStatusNotDetermined && status != kCLAuthorizationStatusDenied)
-	{
-		[self startTracking];
-	}
 	if (self.authorizationCallback != nil) {
 		self.authorizationCallback(status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse);
+		self.authorizationCallback = nil;
 	}
 }
 
@@ -350,7 +358,7 @@
     if (!self.lastReportedLocation ||
 		//!CLLocationCoordinate2DIsValid(self.clLocation.coordinate) ||
         [self.lastReportedLocation.clLocation distanceFromLocation:reportedLocation] > self.distanceThreshold ||
-        [self.lastReportedLocation.clLocation.timestamp timeIntervalSinceDate:reportedLocation.timestamp] > self.timeThreshold ||
+        [self.lastReportedLocation.clLocation.timestamp timeIntervalSinceDate:reportedLocation.timestamp] * -1.0 > self.timeThreshold ||
         reportedLocation.horizontalAccuracy < self.lastReportedLocation.clLocation.horizontalAccuracy)
 	{
 		return YES;
@@ -359,6 +367,12 @@
 	return NO;
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+	[self checkForNewLocation:[locations lastObject]];
+}
+
+// For iOS 6
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)reportedLocation fromLocation:(CLLocation *)oldLocation;
 {
 	[self checkForNewLocation:reportedLocation];
