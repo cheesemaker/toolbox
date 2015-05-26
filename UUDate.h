@@ -84,6 +84,12 @@
 // Returns day of month plus suffix, ie - 26th
 - (NSString*) uuDayOfMonth;
 
+// Returns the short version of the numeric year, ie - 74
+- (NSString*) uuShortYear;
+
+// Returns the full numeric year, ie - 1974
+- (NSString*) uuLongYear;
+
 // Returns time of day with am/pm, ie - "9:52 am"
 - (NSString*) uuTimeOfDay;
 
