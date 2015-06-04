@@ -27,7 +27,7 @@
 
 - (CGRect) frameForSlider
 {
-	CGRect frame = self.frame;
+	CGRect frame = self.bounds;
 	frame.origin.x += self.minimumSlider.frame.size.width / 2.0;
 	frame.size.width -= self.minimumSlider.frame.size.width / 2.0;
 	frame.size.width -= self.maximumSlider.frame.size.width / 2.0;
@@ -272,7 +272,7 @@
 	if (self.minimumSlider.center.x >= self.maximumSlider.center.x ||CGRectIntersectsRect(self.minimumSlider.frame, self.maximumSlider.frame))
 	{
 		CGRect frame = self.maximumSlider.frame;
-		frame.origin.x = self.minimumSlider.frame.origin.x + self.minimumSlider.frame.size.width + 1;
+		frame.origin.x = self.minimumSlider.frame.origin.x + self.minimumSlider.frame.size.width;
 		self.maximumSlider.frame = frame;
 		current = self.maximumSlider.center;
 	}
