@@ -28,6 +28,8 @@
 - (BOOL) uuIsToday;
 - (BOOL) uuIsTomorrow;
 - (BOOL) uuIsYesterday;
+- (BOOL) uuIsMorning;
+- (BOOL) uuIsEvening;
 
 @end
 
@@ -96,6 +98,10 @@
 
 // Returns time of day with am/pm, ie - "9:52 am"
 - (NSString*) uuTimeOfDay;
+
+// Returns the numerical value of the hour or minute ie - 6, 7 or 10
+- (NSString*) uuHour;
+- (NSString*) uuMinute;
 
 // Returns a relative time, such as "22 minutes ago" or "1 day ago", or "now"
 - (NSString*) uuFormatAsDeltaFromNow; // Passes YES for adjustTimeZone

@@ -21,6 +21,7 @@
 #endif
 #endif
 
+#define kUUAllDateComponents (NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond)
 
 // Localization Keys used by uuFormatAsDeltaFromNow
 
@@ -62,6 +63,8 @@ NSString * const kUUISO8601DateFormatter				= @"yyyy-MM-dd";
 NSString * const kUUISO8601TimeFormatter				= @"HH:mm:ss";
 NSString * const kUUISO8601DateTimeFormatter			= @"yyyy-MM-dd HH:mm:ss";
 NSString * const kUUTimeOfDayDateformatter				= @"h:mm a";
+NSString * const kUUHourFormatter						= @"h";
+NSString * const kUUMinuteFormatter						= @"mm";
 NSString * const kUUDayOfMonthDateFormatter				= @"d";
 NSString * const kUUNumericMonthOfYearDateFormatter		= @"L";
 NSString * const kUUShortMonthOfYearDateFormatter		= @"LLL";
@@ -185,6 +188,16 @@ static NSTimeZone* theDefaultTimeZone = nil;
 - (NSString*) uuTimeOfDay
 {
     return [self uuStringFromDate:kUUTimeOfDayDateformatter timeZone:nil];
+}
+
+- (NSString*) uuHour
+{
+	return [self uuStringFromDate:kUUHourFormatter timeZone:nil];
+}
+
+- (NSString*) uuMinute
+{
+	return [self uuStringFromDate:kUUMinuteFormatter timeZone:nil];
 }
 
 - (NSString*) uuFormatAsDeltaFromNow
@@ -389,12 +402,22 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
     return [self uuIsDatePartEqual:[[NSDate date] uuAddDays:-1]];
 }
 
+- (BOOL) uuIsMorning
+{
+	return ![self uuIsEvening];
+}
+
+- (BOOL) uuIsEvening
+{
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* dc = [cal components:kUUAllDateComponents fromDate:self];
+	return (dc.hour >= 12);
+}
+
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Date Math
-
-#define kUUAllDateComponents (NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond)
 
 @implementation NSDate (UUDateMath)
 
