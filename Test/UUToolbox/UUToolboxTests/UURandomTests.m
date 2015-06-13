@@ -34,13 +34,17 @@
     for (int i = 0; i < runs; i++)
     {
         u_int32_t r = [UURandom uuRandomUInt32];
-        NSLog(@"%u", r);
+        //NSLog(@"%u", r);
         
         BOOL b = [UURandom uuRandomBool];
-        NSLog(@"%@", b ? @"YES" : @"NO");
+        //NSLog(@"%@", b ? @"YES" : @"NO");
         
         NSData* buff = [UURandom uuRandomBytes:[UURandom uuRandomUInt32BetweenLow:0 high:500]];
-        NSLog(@"%@", buff);
+        //NSLog(@"%@", buff);
+        
+#pragma unused(r)
+#pragma unused(b)
+#pragma unused(buff)
     }
 }
 
