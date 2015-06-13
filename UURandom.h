@@ -20,6 +20,8 @@
 
 + (BOOL) uuRandomBool;
 
++ (NSData*) uuRandomBytes:(NSUInteger)length;
+
 @end
 
 @interface NSArray (UURandom)
