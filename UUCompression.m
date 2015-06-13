@@ -91,6 +91,9 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
 
 - (NSData*) uuDecompress:(int)windowBitSize
 {
+    if (self.length == 0)
+        return nil;
+    
     NSMutableData* decompressedResult = nil;
     
     z_stream zs;

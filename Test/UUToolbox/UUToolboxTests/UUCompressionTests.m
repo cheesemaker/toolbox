@@ -234,4 +234,11 @@
     }
 }
 
+- (void) testDecompresssBadInput
+{
+    NSData* input = [NSData data];
+    NSData* decompressed = [input uuDecompress];
+    
+}
+
 @end
