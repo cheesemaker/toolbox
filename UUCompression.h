@@ -16,12 +16,19 @@ typedef NS_ENUM(NSUInteger, UUCompressionAlgorithm)
     UUCompressionAlgorithmGZip,
 };
 
+typedef NS_ENUM(NSUInteger, UUCompressionLevel)
+{
+    UUCompressionLevelNone      = 0,
+    UUCompressionLevelFastest   = 1,
+    UUCompressionLevelBest      = 9,
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Data Compression
 @interface NSData (UUDataCompression)
 
 // Performs an in-memory compression of the data using the algorithm specified.
-- (NSData*) uuCompress:(UUCompressionAlgorithm)algorithm;
+- (NSData*) uuCompress:(UUCompressionAlgorithm)algorithm level:(UUCompressionLevel)level;
 
 // Performs an automatic decompression of the data using automatic algorithm detection.
 - (NSData*) uuDecompress;
