@@ -34,10 +34,13 @@
     for (int i = 0; i < runs; i++)
     {
         u_int32_t r = [UURandom uuRandomUInt32];
-        //NSLog(@"%u", r);
+        NSLog(@"%u", r);
         
         BOOL b = [UURandom uuRandomBool];
-        //NSLog(@"%@", b ? @"YES" : @"NO");
+        NSLog(@"%@", b ? @"YES" : @"NO");
+        
+        NSData* buff = [UURandom uuRandomBytes:[UURandom uuRandomUInt32BetweenLow:0 high:500]];
+        NSLog(@"%@", buff);
     }
 }
 
@@ -69,8 +72,8 @@
         XCTAssertTrue(r <= MAX(min,max), @"Expect val to be less than max");
         XCTAssertTrue(r != not, @"Expect val not to be the not value");
         
-        u_int32_t diff = abs(marker - r);
-        XCTAssertTrue(diff >= dist, @"Expect result to be at least %u away from marker %u", diff, marker);
+        int64_t diff = llabs((int64_t)marker - (int64_t)r);
+        XCTAssertTrue(diff >= dist, @"Expect result to be at least %lld away from marker %u", diff, marker);
     }
 }
 

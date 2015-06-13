@@ -63,6 +63,13 @@
     return (([self uuRandomUInt32] % 2) == 0);
 }
 
++ (NSData*) uuRandomBytes:(NSUInteger)length
+{
+    NSMutableData* data = [NSMutableData dataWithLength:length];
+    SecRandomCopyBytes(kSecRandomDefault, length, [data mutableBytes]);
+    return [data copy];
+}
+
 @end
 
 #pragma mark - NSArray+UURandom
