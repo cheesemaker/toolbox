@@ -20,21 +20,9 @@
 	@property (nonatomic, retain) UIImageView* maximumSlider;
 
 	@property (nonatomic, assign) float heightOfSlider;
-
 @end
 
 @implementation UUDoubleSliderView
-
-- (CGRect) frameForSlider
-{
-	CGRect frame = self.bounds;
-	frame.origin.x += self.minimumSlider.frame.size.width / 2.0;
-	frame.size.width -= self.minimumSlider.frame.size.width / 2.0;
-	frame.size.width -= self.maximumSlider.frame.size.width / 2.0;
-	frame.origin.y += (frame.size.height - self.heightOfSlider) / 2.0;
-	frame.size.height = self.heightOfSlider;
-	return frame;
-}
 
 - (id) initWithFrame:(CGRect)frame sliderColor:(UIColor*)sliderColor
 							   backgroundColor:(UIColor*)backgroundColor
@@ -58,6 +46,7 @@
 		//Setup the background
 		CGRect sliderFrame = [self frameForSlider];
 		self.unselectedBackground = [[UIView alloc] initWithFrame:sliderFrame];
+		self.unselectedBackground.layer.cornerRadius = sliderFrame.size.height / 2.0;
 		self.unselectedBackground.backgroundColor = backgroundColor;
 
 		//Setup the foreground
@@ -98,10 +87,90 @@
 	return self;
 }
 
+- (CGRect) frameForSlider
+{
+	CGRect frame = self.bounds;
+	frame.origin.x += self.minimumSlider.frame.size.width / 2.0;
+	frame.size.width -= self.minimumSlider.frame.size.width / 2.0;
+	frame.size.width -= self.maximumSlider.frame.size.width / 2.0;
+	frame.origin.y += (frame.size.height - self.heightOfSlider) / 2.0;
+	frame.size.height = self.heightOfSlider;
+	return frame;
+}
+
 - (void) layoutSubviews
 {
 	[super layoutSubviews];
 	[self updateSliders];
+}
+
+- (void) setLeftSliderImage:(UIImage *)leftSliderImage
+{
+	if (!self.minimumSlider)
+	{
+		self.minimumSlider = [[UIImageView alloc] initWithImage:leftSliderImage];
+		[self addSubview:self.minimumSlider];
+		
+		//Gestures
+		UILongPressGestureRecognizer* gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(minimumLongPress:)];
+		gestureRecognizer.delaysTouchesBegan = NO;
+		gestureRecognizer.cancelsTouchesInView = YES;
+		gestureRecognizer.minimumPressDuration = 0.0;
+		[self.minimumSlider addGestureRecognizer:gestureRecognizer];
+		self.minimumSlider.userInteractionEnabled = YES;
+		
+		[self updateLayers];		
+	}
+	
+	self.minimumSlider.image = leftSliderImage;
+	
+	CGRect frame = self.minimumSlider.frame;
+	frame.size = leftSliderImage.size;
+	self.minimumSlider.frame = frame;
+	
+	//Give it a chance to layout
+	#if !TARGET_INTERFACE_BUILDER
+		[self updateSliders];
+	#endif
+}
+
+- (void) setRightSliderImage:(UIImage *)rightSliderImage
+{
+	if (!self.maximumSlider)
+	{
+		self.maximumSlider = [[UIImageView alloc] initWithImage:rightSliderImage];
+		[self addSubview:self.maximumSlider];
+
+		UILongPressGestureRecognizer* gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(maximumLongPress:)];
+		gestureRecognizer.delaysTouchesBegan = NO;
+		gestureRecognizer.cancelsTouchesInView = YES;
+		gestureRecognizer.minimumPressDuration = 0.0;
+		[self.maximumSlider addGestureRecognizer:gestureRecognizer];
+		self.maximumSlider.userInteractionEnabled = YES;
+
+		[self updateLayers];
+	}
+	
+	self.maximumSlider.image = rightSliderImage;
+	
+	CGRect frame = self.maximumSlider.frame;
+	frame.size = rightSliderImage.size;
+	self.maximumSlider.frame = frame;
+	
+	//Give it a chance to layout
+	#if !TARGET_INTERFACE_BUILDER
+		[self updateSliders];
+	#endif
+}
+
+- (UIImage*) leftSliderImage
+{
+	return self.minimumSlider.image;
+}
+
+- (UIImage*) rightSliderImage
+{
+	return self.maximumSlider.image;
 }
 
 - (UIColor*) sliderColor
@@ -122,16 +191,71 @@
 - (void) setSliderHeight:(float)sliderHeight
 {
 	self.heightOfSlider = sliderHeight;
-	[self updateSliders];
+	#if !TARGET_INTERFACE_BUILDER
+		[self updateSliders];
+	#endif
+}
+
+- (void) prepareForInterfaceBuilder
+{
+	//Give it some numbers to show off.
+	_minimumSliderValue = 25.0;
+	_maximumSliderValue = 75.0;
+	_minimumValue = 0.0;
+	_maximumValue = 100.0;
+}
+
+- (void) updateLayers
+{
+	if (self.unselectedBackground)
+	{
+		[self bringSubviewToFront:self.unselectedBackground];
+	}
+	if (self.selectedBackground)
+	{
+		[self bringSubviewToFront:self.selectedBackground];
+	}
+	if (self.minimumSlider)
+	{
+		[self bringSubviewToFront:self.minimumSlider];
+	}
+	if (self.maximumSlider)
+	{
+		[self bringSubviewToFront:self.maximumSlider];
+	}
 }
 
 - (void) setSliderColor:(UIColor *)sliderColor
 {
+	if (!self.selectedBackground)
+	{
+		CGRect sliderFrame = [self frameForSlider];
+		//Setup the foreground
+		self.selectedBackground = [[UIView alloc] initWithFrame:sliderFrame];
+		self.selectedBackground.backgroundColor = sliderColor;
+
+		[self addSubview:self.selectedBackground];
+		[self updateLayers];
+	}
+	
 	self.selectedBackground.backgroundColor = sliderColor;
 }
 
 - (void) setSliderBackgroundColor:(UIColor *)sliderBackgroundColor
 {
+	if (!self.unselectedBackground)
+	{
+		CGRect sliderFrame = [self frameForSlider];
+		self.unselectedBackground = [[UIView alloc] initWithFrame:sliderFrame];
+		self.unselectedBackground.backgroundColor = sliderBackgroundColor;
+		
+		self.unselectedBackground.layer.cornerRadius = sliderFrame.size.height / 2.0;
+
+		//Add the views in order
+		[self addSubview:self.unselectedBackground];
+		[self updateLayers];
+	}
+	
 	self.unselectedBackground.backgroundColor = sliderBackgroundColor;
 }
 
@@ -198,6 +322,7 @@
 {
 	CGRect frameForSlider = [self frameForSlider];
 	self.unselectedBackground.frame = frameForSlider;
+	self.unselectedBackground.layer.cornerRadius = frameForSlider.size.height / 2.0;
 	
 	float leftPosition = [self positionForValue:self.minimumSliderValue];
 	float rightPosition = [self positionForValue:self.maximumSliderValue];
