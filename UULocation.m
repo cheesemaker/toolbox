@@ -110,27 +110,50 @@
 	return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied;
 }
 
++ (BOOL) canRequestTracking
+{
+	return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined;
+}
+
 + (BOOL) isAuthorizedToTrack
 {
-	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways));
+	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse));
 }
 
 + (void) requestStartTracking:(void(^)(BOOL authorized))callback
 {
+	[self requestTrackingWithSelector:@selector(requestAlwaysAuthorization) callback:callback];
+}
+
++ (void)requestStartWhenInUseTracking:(void (^)(BOOL))callback
+{
+	[self requestTrackingWithSelector:@selector(requestWhenInUseAuthorization) callback:callback];
+}
+
++ (void)requestTrackingWithSelector:(SEL)selector callback:(void (^)(BOOL))callback
+{
 	[UUSystemLocation sharedLocation].authorizationCallback = callback;
 	
 	CLLocationManager* locationManager = [UUSystemLocation sharedLocation].clLocationManager;
-	if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
+	if ([locationManager respondsToSelector:selector])
 	{
 		NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
 		NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationAlwaysUsageDescription");
 		
-		[locationManager performSelector:@selector(requestAlwaysAuthorization)];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+		[locationManager performSelector:selector];
+#pragma clang diagnostic pop
 	}
 	else
 	{
 		[[UUSystemLocation sharedLocation] startTracking];
 	}
+}
+
++ (void) startTracking
+{
+	[[UUSystemLocation sharedLocation] startTracking];
 }
 
 + (void) requestStopTracking
@@ -244,11 +267,14 @@
 
 - (void) startTracking
 {
-	[self.clLocationManager startUpdatingLocation];
-	
-	if (self.clLocationManager.location)
+	if ([UULocationMonitoringConfiguration isAuthorizedToTrack])
 	{
-		[self checkForNewLocation:self.clLocationManager.location];
+		[self.clLocationManager startUpdatingLocation];
+		
+		if (self.clLocationManager.location)
+		{
+			[self checkForNewLocation:self.clLocationManager.location];
+		}
 	}
 }
 
@@ -259,7 +285,10 @@
 
 - (void) startTrackingSignificantLocationChanges
 {
-	[self.clLocationManager startMonitoringSignificantLocationChanges];
+	if ([UULocationMonitoringConfiguration isAuthorizedToTrack])
+	{
+		[self.clLocationManager startMonitoringSignificantLocationChanges];
+	}
 }
 
 - (void) stopTrackingSignificantLocationChanges
@@ -318,10 +347,9 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
-	{
-		[self startTracking];
-		self.authorizationCallback(status == kCLAuthorizationStatusAuthorizedAlways);
+	if (self.authorizationCallback != nil) {
+		self.authorizationCallback(status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse);
+		self.authorizationCallback = nil;
 	}
 }
 
@@ -330,7 +358,7 @@
     if (!self.lastReportedLocation ||
 		//!CLLocationCoordinate2DIsValid(self.clLocation.coordinate) ||
         [self.lastReportedLocation.clLocation distanceFromLocation:reportedLocation] > self.distanceThreshold ||
-        [self.lastReportedLocation.clLocation.timestamp timeIntervalSinceDate:reportedLocation.timestamp] > self.timeThreshold ||
+        [self.lastReportedLocation.clLocation.timestamp timeIntervalSinceDate:reportedLocation.timestamp] * -1.0 > self.timeThreshold ||
         reportedLocation.horizontalAccuracy < self.lastReportedLocation.clLocation.horizontalAccuracy)
 	{
 		return YES;
@@ -339,6 +367,12 @@
 	return NO;
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+	[self checkForNewLocation:[locations lastObject]];
+}
+
+// For iOS 6
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)reportedLocation fromLocation:(CLLocation *)oldLocation;
 {
 	[self checkForNewLocation:reportedLocation];

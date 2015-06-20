@@ -43,10 +43,13 @@
 	//Global settings interface.
 	+ (BOOL) isAuthorizedToTrack;
 	+ (BOOL) isTrackingDenied;
+	+ (BOOL) canRequestTracking; // Returns NO if status is anything but kCLAuthorizationStatusNotDetermined, which will result in nothing happening when tracking is requested
 
 	+ (void) requestStartTracking:(void(^)(BOOL authorized))callback;
+	+ (void) requestStartWhenInUseTracking:(void (^)(BOOL))callback;
+	+ (void) startTracking; // You should call this in your requestStartTracking handler (or when isAuthorizedToTrack) to turn on full location monitoring (heavy battery use)
 	+ (void) requestStopTracking;
-	+ (void) startTrackingSignificantLocationChanges;
+	+ (void) startTrackingSignificantLocationChanges; // You should call this in your requestStartTracking handler (or when isAuthorizedToTrack) to turn on sporadic location monitoring (light battery use)
 	+ (void) stopTrackingSignficantLocationChanges;
 
 	+ (CLLocationDistance) distanceThreshold;

@@ -29,6 +29,7 @@
 
 @interface UUProgressView ()
 
+@property (nonatomic, retain) UIView* scrimView;
 @property (nonatomic, retain) UIView* backgroundView;
 @property (nonatomic, retain) UILabel* label;
 @property (nonatomic, retain) UIActivityIndicatorView* spinner;
@@ -59,7 +60,7 @@
 	if (theProgressView == nil)
     {
         theProgressView = [[UUProgressView alloc] initWithMessage:@"Loading..."];
-        
+		
         UIView* parent = [[UIApplication sharedApplication] keyWindow];
         theProgressView.center = parent.center;
         [parent addSubview:theProgressView];
@@ -78,6 +79,7 @@
     
     if (self != nil)
     {
+		[self createScrimView];
 		[self createBackgroundView];
 		[self createSpinnerView];
         [self createLabelView];
@@ -101,6 +103,14 @@
 	#else
 		[super dealloc];
 	#endif
+}
+
+- (void) createScrimView
+{
+	UIView* parent = [[UIApplication sharedApplication] keyWindow];
+	self.scrimView = UU_AUTORELEASE([[UIView alloc] initWithFrame:parent.frame]);
+	self.backgroundView.backgroundColor = [UIColor clearColor];
+	[parent addSubview:self.scrimView];
 }
 
 - (void) createBackgroundView
@@ -147,12 +157,26 @@
 
 - (void) show:(BOOL)animated
 {
-    [self showProgressViewWithBounceAnimation];
+	if (animated) {
+		[self showProgressViewWithBounceAnimation];
+	}
+	else {
+		[self.layer removeAllAnimations];
+		self.transform = CGAffineTransformIdentity;
+		self.hidden = NO;
+		self.scrimView.hidden = NO;
+	}
 }
 
 - (void) hide:(BOOL)animated
 {
-	[self hideProgressViewWithBounceAnimation];
+	if (animated) {
+		[self hideProgressViewWithBounceAnimation];
+	}
+	else {
+		self.hidden = YES;
+		self.scrimView.hidden = YES;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +187,7 @@
 {
     self.transform = CGAffineTransformMakeScale(0.001, 0.001);
     self.hidden = NO;
+	self.scrimView.hidden = NO;
 	
 	[UIView animateWithDuration:0.2f delay:0.0 options:UIViewAnimationOptionCurveEaseIn animations:^
 	{
@@ -195,6 +220,7 @@
 	completion:^(BOOL finished)
 	{
 		self.hidden = YES;
+		self.scrimView.hidden = YES;
 	}];
 }
 
