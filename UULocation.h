@@ -44,7 +44,7 @@
 	+ (BOOL) isAuthorizedToTrack;
 	+ (BOOL) isTrackingDenied;
 
-	+ (void) requestStartTracking:(void(^)(BOOL authorized))callback;
+	+ (void) requestStartTracking:(BOOL)trackOnlyWhenInUse completionBlock:(void(^)(BOOL authorized))callback;
 	+ (void) requestStopTracking;
 	+ (void) startTrackingSignificantLocationChanges;
 	+ (void) stopTrackingSignficantLocationChanges;
