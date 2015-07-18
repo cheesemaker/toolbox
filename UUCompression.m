@@ -10,14 +10,10 @@
 #import "UUCompression.h"
 #import <zlib.h>
 
-//If you want to provide your own logging mechanism, define UUDebugLog in your .pch
-#ifndef UUDebugLog
-#ifdef DEBUG
-#define UUDebugLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
-#else
 #define UUDebugLog(fmt, ...)
-#endif
-#endif
+
+// Uncomment to emit debug logging
+//#define UUDebugLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
 
 #define UU_RAW_ENCODING_WINDOW_BITS         (-MAX_WBITS)
 #define UU_ZLIB_ENCODING_WINDOW_BITS        (MAX_WBITS )
@@ -37,7 +33,7 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
 
 @implementation NSData (UUDataCompression)
 
-- (NSData*) uuCompress:(UUCompressionAlgorithm)algorithm
+- (NSData*) uuCompress:(UUCompressionAlgorithm)algorithm level:(UUCompressionLevel)level
 {
     NSMutableData* compressedResult = nil;
     
@@ -51,7 +47,6 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
 
     int returnCode;
     
-    int level = Z_DEFAULT_COMPRESSION;
     int method = Z_DEFLATED;
     int windowBits = [[self class] uuEncodingBitsForAlgorithm:algorithm];
     int memLevel = 8; // default
@@ -96,6 +91,9 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
 
 - (NSData*) uuDecompress:(int)windowBitSize
 {
+    if (self.length == 0)
+        return nil;
+    
     NSMutableData* decompressedResult = nil;
     
     z_stream zs;
@@ -119,6 +117,7 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
         decompressedResult = [NSMutableData dataWithLength:self.length];
         zs.next_out = (Bytef*)[decompressedResult mutableBytes];
         zs.avail_out = (uInt)decompressedResult.length;
+        UULogZlibZStream(zs);
         
         while (returnCode == Z_OK)
         {
@@ -134,7 +133,7 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
             if (returnCode == Z_BUF_ERROR && zs.avail_out == 0)
             {
                 [decompressedResult increaseLengthBy:self.length];
-                zs.avail_out = (uInt)decompressedResult.length;
+                zs.avail_out = (uInt)(decompressedResult.length - zs.total_out);
                 zs.next_out = (Bytef*)[decompressedResult mutableBytes] + zs.total_out;
                 UULogZlibZStream(zs);
                 returnCode = Z_OK; // keep looping
