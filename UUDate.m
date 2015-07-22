@@ -510,18 +510,30 @@ const double kUUSecondsPerDay = (60 * 60 * 24);
 
 + (NSDate*) uuDateFromIso8601String:(NSString*)string
 {
-    return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:nil];
+	NSDate* date = [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:nil];
+	if (!date)
+		date = [self uuDateFromString:string withFormat:kUUISO8601DateFormatter timeZone:nil];
+	
+	return date;
 }
 
 + (NSDate*) uuDateFromIso8601StringUTCTimezone:(NSString*)string
 {
 	NSTimeZone* utcTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-	return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:utcTimeZone];
+	NSDate* date = [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:utcTimeZone];
+	if (!date)
+		date = [self uuDateFromString:string withFormat:kUUISO8601DateFormatter timeZone:utcTimeZone];
+	
+	return date;
 }
 
 + (NSDate*) uuDateFromIso8601String:(NSString*)string timeZone:(NSTimeZone*)timeZone
 {
-	return [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:timeZone];
+	NSDate* date = [self uuDateFromString:string withFormat:kUUISO8601DateTimeFormatter timeZone:timeZone];
+	if (!date)
+		date = [self uuDateFromString:string withFormat:kUUISO8601DateFormatter timeZone:timeZone];
+
+	return date;
 }
 
 + (NSDate*) uuDateFromString:(NSString*)string withFormat:(NSString*)format
