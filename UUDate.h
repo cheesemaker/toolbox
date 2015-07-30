@@ -76,7 +76,16 @@
 - (NSString*) uuDayOfWeekShort;
 
 // Returns a numeric month of year, ie - 1, 2, 3 .. 12
-- (NSString*) uuNumericMonthOfYear;
+- (NSUInteger) uuNumericMonthOfYear;
+
+// Returns 1-52 week of the year
+- (NSUInteger) uuNumericWeekOfYear;
+
+// Returns 1-5 week of the month
+- (NSUInteger) uuNumericWeekOfMonth;
+
+// Returns 1-31 day of the month
+- (NSUInteger) uuNumericDayOfMonth;
 
 // Returns a string month of year, the full month, ie - July or September
 - (NSString*) uuLongMonthOfYear;

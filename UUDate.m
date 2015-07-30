@@ -148,9 +148,28 @@ static NSTimeZone* theDefaultTimeZone = nil;
     return [self uuStringFromDate:kUUDayOfWeekDateFormatter timeZone:nil];
 }
 
-- (NSString*) uuNumericMonthOfYear
+- (NSUInteger) uuNumericMonthOfYear
 {
-    return [self uuStringFromDate:kUUNumericMonthOfYearDateFormatter timeZone:nil];
+	NSCalendar* calendar = [NSCalendar currentCalendar];
+	return [calendar component:NSCalendarUnitMonth fromDate:self];
+}
+
+- (NSUInteger) uuNumericWeekOfYear
+{
+	NSCalendar* calendar = [NSCalendar currentCalendar];
+	return [calendar component:NSCalendarUnitWeekOfYear fromDate:self];
+}
+
+- (NSUInteger) uuNumericWeekOfMonth
+{
+	NSCalendar* calendar = [NSCalendar currentCalendar];
+	return [calendar component:NSCalendarUnitWeekOfMonth fromDate:self];
+}
+
+- (NSUInteger) uuNumericDayOfMonth
+{
+	NSCalendar* calendar = [NSCalendar currentCalendar];
+	return [calendar component:NSCalendarUnitDay fromDate:self];
 }
 
 - (NSString*) uuLongMonthOfYear
