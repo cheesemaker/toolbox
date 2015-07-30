@@ -324,20 +324,23 @@
 	self.unselectedBackground.frame = frameForSlider;
 	self.unselectedBackground.layer.cornerRadius = frameForSlider.size.height / 2.0;
 	
-	float leftPosition = [self positionForValue:self.minimumSliderValue];
-	float rightPosition = [self positionForValue:self.maximumSliderValue];
+	if (self.selectedBackground)
+	{
+		float leftPosition = [self positionForValue:self.minimumSliderValue];
+		float rightPosition = [self positionForValue:self.maximumSliderValue];
 	
-	CGRect frame = frameForSlider;
-	frame.origin.x = leftPosition;
-	frame.size.width = rightPosition - frame.origin.x;
-	self.selectedBackground.frame = frame;
+		CGRect frame = frameForSlider;
+		frame.origin.x = leftPosition;
+		frame.size.width = rightPosition - frame.origin.x;
+		self.selectedBackground.frame = frame;
 	
-	CGPoint center = self.selectedBackground.center;	
-	center.x = leftPosition;
-	self.minimumSlider.center = center;
+		CGPoint center = self.selectedBackground.center;
+		center.x = leftPosition;
+		self.minimumSlider.center = center;
 	
-	center.x = rightPosition;
-	self.maximumSlider.center = center;
+		center.x = rightPosition;
+		self.maximumSlider.center = center;
+	}
 }
 
 - (void) minimumLongPress:(UILongPressGestureRecognizer*)gesture
