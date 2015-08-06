@@ -39,6 +39,7 @@ typedef void (^UUHttpSessionResponseHandler)(UUHttpResponse* response);
 + (instancetype) deleteRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments;
 + (instancetype) putRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 + (instancetype) postRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
++ (instancetype) patchRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments body:(NSData*)body contentType:(NSString*)contentType;
 
 //Basic auth helper functions
 + (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password;
