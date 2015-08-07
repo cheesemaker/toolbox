@@ -95,6 +95,23 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     return cr;
 }
 
++ (instancetype) patchRequest:(NSString *)url queryArguments:(NSDictionary *)queryArguments body:(NSData *)body contentType:(NSString *)contentType
+{
+    UUHttpRequest* cr = [[[self class] alloc] initWithUrl:url];
+    cr.httpMethod = UUHttpMethodPatch;
+    cr.queryArguments = queryArguments;
+    cr.body = body;
+    
+    if (contentType)
+    {
+        cr.headerFields = @{kUUContentTypeHeader:contentType};
+    }
+    
+    return cr;
+}
+
+
+
 + (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password
 {
     UUHttpRequest* cr = [self getRequest:url queryArguments:queryArguments];
