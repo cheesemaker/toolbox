@@ -50,6 +50,7 @@ extern NSString * const kUUHttpMethodPut;
 extern NSString * const kUUHttpMethodPost;
 extern NSString * const kUUHttpMethodDelete;
 extern NSString * const kUUHttpMethodHead;
+extern NSString * const kUUHttpMethodPatch;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Register response handlers to construct objects from mime types
