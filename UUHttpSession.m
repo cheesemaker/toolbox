@@ -420,6 +420,9 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
             
         case UUHttpMethodHead:
             return kUUHttpMethodHead;
+        
+        case UUHttpMethodPatch:
+            return kUUHttpMethodPatch;
             
         default:
             return @"";
