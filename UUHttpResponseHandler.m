@@ -45,6 +45,7 @@ NSString * const kUUHttpMethodPut        = @"PUT";
 NSString * const kUUHttpMethodPost       = @"POST";
 NSString * const kUUHttpMethodDelete     = @"DELETE";
 NSString * const kUUHttpMethodHead       = @"HEAD";
+NSString * const kUUHttpMethodPatch      = @"PATCH";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
