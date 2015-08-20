@@ -120,6 +120,15 @@
 	[UUSystemLocation sharedLocation].authorizationCallback = callback;
 	
 	CLLocationManager* locationManager = [UUSystemLocation sharedLocation].clLocationManager;
+	
+	if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse)
+	{
+		callback(YES);
+		[[UUSystemLocation sharedLocation] startTracking];
+		
+		return;
+	}
+	
 	if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
 	{
 		if (trackOnlyWhenInUse)
