@@ -36,6 +36,8 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
 @property (nonatomic, copy) UUAccessoryReadDataCallback readDataCallback;
 @property (nonatomic, copy) UUAccessoryPushedDataCallback pushDataCallback;
 @property (assign) NSUInteger readDataCount;
+@property (assign) NSTimeInterval readDataTimeout;
+@property (nonatomic, strong) NSTimer* readWatchdogTimer;
 
 
 @end
@@ -66,36 +68,18 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
 
 - (void) connect:(UUAccessoryConnectCallback)completion
 {
+    NSError* error = nil;
     EAAccessory* accessory = [self firstConnectedAccessory];
     if (accessory)
     {
-        NSError* error = [self setupSession:accessory];
-        if (!error)
-        {
-            [self invokeBlock:error completion:completion];
-            return;
-        }
+        error = [self setupSession:accessory];
+    }
+    else
+    {
+        error = [NSError uuAccessorySessionError:UUAccessorySessionErrorCodeNoDeviceFound];
     }
     
-    self.connectCallback = completion;
-    [[EAAccessoryManager sharedAccessoryManager] showBluetoothAccessoryPickerWithNameFilter:nil completion:^(NSError * _Nullable error)
-     {
-         UUDebugLog(@"Picker dialog returned %@", [self pickerCodeToString:error.code]);
-         
-         NSError* err = nil;
-         
-         if (error)
-         {
-             if (error.code != EABluetoothAccessoryPickerAlreadyConnected)
-             {
-                 err = [NSError uuAccessorySessionError:UUAccessorySessionErrorCodeBluetoothPickerError inner:error];
-
-             }
-         }
-         
-         // Wait for connect notification
-     }];
-    
+    [self invokeBlock:error completion:completion];
 }
 
 - (EAAccessory*) firstConnectedAccessory
@@ -122,11 +106,42 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
     }
 }
 
-- (void) readData:(NSUInteger)count completion:(UUAccessoryReadDataCallback)completion
+- (void) readData:(NSUInteger)count timeout:(NSTimeInterval)timeout completion:(UUAccessoryReadDataCallback)completion
 {
     self.readDataCallback = completion;
     self.readDataCount = count;
+    self.readDataTimeout = timeout;
     [self notifyRxData];
+}
+
+- (void) kickReadDataWatchdog
+{
+    [self cancelReadDataWatchdog];
+    
+    UUDebugLog(@"Kicking read data watchdog by %@ seconds", @(self.readDataTimeout));
+    self.readWatchdogTimer = [NSTimer scheduledTimerWithTimeInterval:self.readDataTimeout target:self selector:@selector(handleReadDataTimeout) userInfo:nil repeats:NO];
+}
+
+- (void) cancelReadDataWatchdog
+{
+    [self.readWatchdogTimer invalidate];
+    self.readWatchdogTimer = nil;
+}
+
+- (void) handleReadDataTimeout
+{
+    [self cancelReadDataWatchdog];
+    
+    UUDebugLog(@"Read data timed out");
+    
+    NSError* error = [NSError uuAccessorySessionError:UUAccessorySessionErrorCodeNoDeviceFoundReadDataTimeout];
+    
+    if (self.readDataCallback)
+    {
+        UUAccessoryReadDataCallback callback = self.readDataCallback;
+        self.readDataCallback = nil;
+        callback(error, nil);
+    }
 }
 
 - (void) registerPushedDataCallback:(UUAccessoryPushedDataCallback)callback
@@ -147,6 +162,14 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
 
 - (NSError*) setupSession:(EAAccessory*)accessory
 {
+    if (self.discoveredAccessory == accessory &&
+        self.currentSession &&
+        self.sessionRunLoop)
+    {
+        UUDebugLog(@"Session already active with accessory");
+        return nil;
+    }
+    
     self.discoveredAccessory = accessory;
     
     NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
@@ -223,14 +246,17 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
                     continue;
                 }
                 
-                @synchronized(self.rxBuffer)
+                if (self.readDataCallback)
                 {
-                    [self.rxBuffer appendBytes:buf length:result];
+                    @synchronized(self.rxBuffer)
+                    {
+                        [self.rxBuffer appendBytes:buf length:result];
+                    }
+                    
+                    UUDebugLog(@"RxBuffer Length: %@", @(self.rxBuffer.length));
+                    
+                    [self notifyRxData];
                 }
-                
-                UUDebugLog(@"RxBuffer Length: %@", @(self.rxBuffer.length));
-                
-                [self notifyRxData];
             }
         }
     }
@@ -256,6 +282,8 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
     
     if (self.readDataCallback && self.readDataCount > 0)
     {
+        [self kickReadDataWatchdog];
+        
         NSData* data = nil;
         
         @synchronized(self.rxBuffer)
@@ -276,6 +304,7 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
         if (data != nil)
         {
             UUDebugLog(@"Calling read callback with %@ bytes", @(data.length));
+            [self cancelReadDataWatchdog];
             
             UUAccessoryReadDataCallback callback = self.readDataCallback;
             self.readDataCallback = nil;
@@ -291,6 +320,14 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
         [self.txQueue addObject:data];
     }
     
+    if (self.rxBuffer)
+    {
+        @synchronized (self.rxBuffer)
+        {
+            [self.rxBuffer setLength:0];
+        }
+    }
+
     // If there is space available, send immediately
     if ([[self.currentSession outputStream] hasSpaceAvailable])
     {
@@ -403,27 +440,21 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
     {
         [self logAccessory:accessory];
         
-        if ([accessory.protocolStrings containsObject:self.protocol])
+        if (self.connectCallback)
         {
-            NSError* err = [self setupSession:accessory];
-            UUDebugLog(@"Setup Session returned %@", err);
-            
-            if (self.connectCallback)
+            if ([accessory.protocolStrings containsObject:self.protocol])
             {
+                NSError* err = [self setupSession:accessory];
+                UUDebugLog(@"Setup Session returned %@", err);
+                
                 self.connectCallback(err);
                 self.connectCallback = nil;
             }
         }
-        
-        
-//        if ([accessory lgIsLookingGlassDevice])
-//        {
-//            self.discoveredAccessory = accessory;
-//            
-//            LGDebugLog(@"Connecting to notified accessory");
-//            BOOL result = [self connect];
-//            LGDebugLog(@"Connect returned %d", result);
-//        }
+        else
+        {
+            UUDebugLog(@"Connect callback is nil");
+        }
     }
 }
 
@@ -553,6 +584,12 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
         case UUAccessorySessionErrorCodeUnableToOpenOutputStream:
             return @"Failed to open output stream";
             
+        case UUAccessorySessionErrorCodeNoDeviceFound:
+            return @"No devices found";
+            
+        case UUAccessorySessionErrorCodeNoDeviceFoundReadDataTimeout:
+            return @"Read timeout";
+            
         default:
             return [NSString stringWithFormat:@"UUAccessorySessionErrorCode_%@", @(code)];
     }
@@ -562,12 +599,16 @@ NSString * const kUUAccessorySessionErrorDomain = @"UUAccessorySessionErrorDomai
 {
     switch (code)
     {
+        case UUAccessorySessionErrorCodeNoDeviceFound:
+            return @"Turn on the device and try again";
+            
         case UUAccessorySessionErrorCodeBluetoothPickerError:
         case UUAccessorySessionErrorCodeUnableToCreateAccessory:
         case UUAccessorySessionErrorCodeUnableToAcquireInputStream:
         case UUAccessorySessionErrorCodeUnableToOpenInputStream:
         case UUAccessorySessionErrorCodeUnableToAcquireOutputStream:
         case UUAccessorySessionErrorCodeUnableToOpenOutputStream:
+        case UUAccessorySessionErrorCodeNoDeviceFoundReadDataTimeout:
         default:
             return nil;
     }
