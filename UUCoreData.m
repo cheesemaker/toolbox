@@ -47,6 +47,28 @@
     [[self sharedInstance] configureWithStoreUrl:storeUrl modelDefinitionBundle:bundle];
 }
 
++ (NSError*) destroyStoreAtUrl:(NSURL*)storeUrl
+{
+    NSFileManager* fm = [NSFileManager defaultManager];
+    
+    NSError* err = nil;
+    [fm removeItemAtURL:storeUrl error:&err];
+    
+    if (err)
+    {
+        UUDebugLog(@"Error trying to delete core data store: %@", err);
+        return err;
+    }
+    else
+    {
+        UUCoreData* cd = [UUCoreData sharedInstance];
+        cd.mainThreadContext = nil;
+        cd.storeCoordinator = nil;
+    }
+    
+    return nil;
+}
+
 + (instancetype) sharedInstance
 {
     static id theSharedObject = nil;
@@ -137,7 +159,7 @@
         {
             NSError* error = nil;
             result = [self save:&error];
-            
+             
             if (!result)
             {
                 [error uuLogDetailedErrors];
@@ -203,6 +225,46 @@
     return converted;
 }
 
+- (void) uuDeleteObjects:(NSArray*)list
+{
+    [self performBlockAndWait:^
+     {
+         for (NSManagedObject* obj in list)
+         {
+             [self deleteObject:obj];
+         }
+     }];
+}
+
+- (void) uuDeleteAllObjects:(void(^)(void))completion
+{
+    NSArray* entityList = [self.persistentStoreCoordinator.managedObjectModel.entitiesByName allKeys];
+    
+    [self performBlock:^
+    {
+        for (NSString* entityName in entityList)
+        {
+            NSFetchRequest* fr = [[NSFetchRequest alloc] init];
+            fr. entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
+            fr.predicate = nil;
+            
+            NSError* err = nil;
+            NSArray* objects = [self executeFetchRequest:fr error:&err];
+            for (NSManagedObject* obj in objects)
+            {
+                [self deleteObject:obj];
+            }
+        }
+        
+        [self uuSubmitChanges];
+        
+        if (completion)
+        {
+            dispatch_async(dispatch_get_main_queue(), completion);
+        }
+    }];
+}
+
 @end
 
 #pragma mark - NSManagedObject Extensions
@@ -221,10 +283,24 @@
                             sortDescriptors:(NSArray*)sortDescriptors
                                       limit:(NSNumber*)limit
 {
+    return [self uuFetchRequestInContext:context predicate:predicate sortDescriptors:sortDescriptors offset:nil limit:limit];
+}
+
++ (NSFetchRequest*) uuFetchRequestInContext:(NSManagedObjectContext*)context
+                                  predicate:(NSPredicate*)predicate
+                            sortDescriptors:(NSArray*)sortDescriptors
+                                     offset:(NSNumber*)offset
+                                      limit:(NSNumber*)limit
+{
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
     fetchRequest.entity = [NSEntityDescription entityForName:[self uuEntityName] inManagedObjectContext:context];
     fetchRequest.sortDescriptors = sortDescriptors;
     fetchRequest.predicate = predicate;
+    
+    if (offset != nil)
+    {
+        [fetchRequest setFetchOffset:[offset unsignedIntegerValue]];
+    }
     
     if (limit != nil)
     {
@@ -245,22 +321,59 @@
                                    limit:(NSNumber*)limit
                                  context:(NSManagedObjectContext*)context
 {
-    NSFetchRequest* fetchRequest = [self uuFetchRequestInContext:context predicate:predicate sortDescriptors:sortDescriptors limit:limit];
+    return [self uuFetchObjectsWithPredicate:predicate sortDescriptors:sortDescriptors offset:nil limit:limit context:context];
+}
+
++ (NSArray*) uuFetchObjectsWithPredicate:(NSPredicate*)predicate
+                         sortDescriptors:(NSArray*)sortDescriptors
+                                  offset:(NSNumber*)offset
+                                   limit:(NSNumber*)limit
+                                 context:(NSManagedObjectContext*)context
+{
+    NSFetchRequest* fetchRequest = [self uuFetchRequestInContext:context predicate:predicate sortDescriptors:sortDescriptors offset:offset limit:limit];
     
     __block NSArray* fetchResults = nil;
     
     [context performBlockAndWait:^
+     {
+         NSError* err = nil;
+         fetchResults = [context executeFetchRequest:fetchRequest error:&err];
+         if (err)
+         {
+             [err uuLogDetailedErrors];
+         }
+     }];
+    
+    
+    return fetchResults;
+}
+
++ (NSInteger) uuBatchUpdate:(NSDictionary*)properties predicate:(NSPredicate*)predicate context:(NSManagedObjectContext*)context
+{
+    NSBatchUpdateRequest* req = [NSBatchUpdateRequest batchUpdateRequestWithEntityName:[self uuEntityName]];
+    req.predicate = predicate;
+    req.propertiesToUpdate = properties;
+    req.resultType = NSUpdatedObjectsCountResultType;
+    
+    __block NSNumber* updatedRows = 0;
+
+    [context performBlockAndWait:^
     {
         NSError* err = nil;
-        fetchResults = [context executeFetchRequest:fetchRequest error:&err];
+        NSPersistentStoreResult* result = [context executeRequest:req error:&err];
         if (err)
         {
             [err uuLogDetailedErrors];
         }
+        
+        if ([result isKindOfClass:[NSBatchUpdateResult class]])
+        {
+            NSBatchUpdateResult* batchResult = (NSBatchUpdateResult*)result;
+            updatedRows = batchResult.result;
+        }
     }];
     
-    
-    return fetchResults;
+    return updatedRows.integerValue;
 }
 
 + (instancetype) uuFetchSingleObjectWithPredicate:(NSPredicate*)predicate

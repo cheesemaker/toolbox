@@ -23,7 +23,7 @@ typedef void (^UUAccessoryPushedDataCallback)(NSData* data);
 - (BOOL) isConnected;
 - (void) connect:(UUAccessoryConnectCallback)completion;
 - (void) writeData:(NSData*)data completion:(UUAccessoryWriteDataCallback)completion;
-- (void) readData:(NSUInteger)count completion:(UUAccessoryReadDataCallback)completion;
+- (void) readData:(NSUInteger)count timeout:(NSTimeInterval)timeout completion:(UUAccessoryReadDataCallback)completion;
 
 // Some accessories will just push data to the phone.  This provides a raw data pipe
 // where the accessory data will be passed along.
@@ -47,6 +47,8 @@ typedef NS_ENUM(NSInteger, UUAccessorySessionErrorCode)
     UUAccessorySessionErrorCodeUnableToOpenInputStream,
     UUAccessorySessionErrorCodeUnableToAcquireOutputStream,
     UUAccessorySessionErrorCodeUnableToOpenOutputStream,
+    UUAccessorySessionErrorCodeNoDeviceFound,
+    UUAccessorySessionErrorCodeNoDeviceFoundReadDataTimeout
 };
 
 @interface NSError (UUAccessorySession)

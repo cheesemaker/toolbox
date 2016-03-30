@@ -19,6 +19,10 @@
 // Setup the Core Data store. This MUST be called prior to using any other UUCoreData methods
 + (void) configureWithStoreUrl:(NSURL*)storeUrl modelDefinitionBundle:(NSBundle*)bundle;
 
+// Delete's the store at the given URL and sets the shared persistentStoreCoordinator to nil.  After this users
+// MUST call configureWithStoreUrl again.
++ (NSError*) destroyStoreAtUrl:(NSURL*)storeUrl;
+
 // Singleton managed object context shared by entire application
 + (NSManagedObjectContext*) mainThreadContext;
 
@@ -36,6 +40,9 @@
 
 + (id) uuConvertObject:(id)object toContext:(NSManagedObjectContext*)context;
 
+- (void) uuDeleteObjects:(NSArray*)list;
+- (void) uuDeleteAllObjects:(void(^)(void))completion;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +57,12 @@
                             sortDescriptors:(NSArray*)sortDescriptors
                                       limit:(NSNumber*)limit;
 
++ (NSFetchRequest*) uuFetchRequestInContext:(NSManagedObjectContext*)context
+                                  predicate:(NSPredicate*)predicate
+                            sortDescriptors:(NSArray*)sortDescriptors
+                                     offset:(NSNumber*)offset
+                                      limit:(NSNumber*)limit;
+
 + (NSArray*) uuFetchObjectsWithPredicate:(NSPredicate*)predicate
                                  context:(NSManagedObjectContext*)context;
 
@@ -57,6 +70,14 @@
                          sortDescriptors:(NSArray*)sortDescriptors
                                    limit:(NSNumber*)limit
                                  context:(NSManagedObjectContext*)context;
+
++ (NSArray*) uuFetchObjectsWithPredicate:(NSPredicate*)predicate
+                         sortDescriptors:(NSArray*)sortDescriptors
+                                  offset:(NSNumber*)offset
+                                   limit:(NSNumber*)limit
+                                 context:(NSManagedObjectContext*)context;
+
++ (NSInteger) uuBatchUpdate:(NSDictionary*)properties predicate:(NSPredicate*)predicate context:(NSManagedObjectContext*)context;
 
 + (instancetype) uuFetchSingleObjectWithPredicate:(NSPredicate*)predicate
                                           context:(NSManagedObjectContext*)context;
