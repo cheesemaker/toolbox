@@ -112,20 +112,39 @@
 
 + (BOOL) isAuthorizedToTrack
 {
-	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized));
+	return ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways));
 }
 
-+ (void) requestStartTracking:(void(^)(BOOL authorized))callback
++ (void) requestStartTracking:(BOOL)trackOnlyWhenInUse completionBlock:(void(^)(BOOL authorized))callback
 {
 	[UUSystemLocation sharedLocation].authorizationCallback = callback;
 	
 	CLLocationManager* locationManager = [UUSystemLocation sharedLocation].clLocationManager;
+	
+	if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse)
+	{
+		callback(YES);
+		[[UUSystemLocation sharedLocation] startTracking];
+		
+		return;
+	}
+	
 	if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
 	{
-		NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
-		NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationAlwaysUsageDescription");
+		if (trackOnlyWhenInUse)
+		{
+			NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"];
+			NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationWhenInUseUsageDescription");
 		
-		[locationManager performSelector:@selector(requestAlwaysAuthorization)];
+			[locationManager performSelector:@selector(requestWhenInUseAuthorization)];
+		}
+		else
+		{
+			NSString* usageDescription = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
+			NSAssert(usageDescription != nil, @"You must set a description in your plist for NSLocationAlwaysUsageDescription");
+		
+			[locationManager performSelector:@selector(requestAlwaysAuthorization)];
+		}
 	}
 	else
 	{
@@ -321,7 +340,7 @@
 	if (self.authorizationCallback && (status != kCLAuthorizationStatusNotDetermined))
 	{
 		[self startTracking];
-		self.authorizationCallback(status == kCLAuthorizationStatusAuthorized);
+		self.authorizationCallback(status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse);
 	}
 }
 

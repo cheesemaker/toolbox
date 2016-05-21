@@ -50,6 +50,10 @@
 		0881FD711A9A869E0096AEC8 /* UUDate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0881FD6F1A9A869E0096AEC8 /* UUDate.h */; };
 		0881FD721A9A869E0096AEC8 /* UUDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881FD701A9A869E0096AEC8 /* UUDate.m */; };
 		0881FD751A9A88BD0096AEC8 /* XCTestCase+UUTestExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881FD741A9A88BD0096AEC8 /* XCTestCase+UUTestExtensions.m */; };
+		089CC9B01B2B7C45004B20E6 /* UUCompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 089CC9AE1B2B7C45004B20E6 /* UUCompression.h */; };
+		089CC9B11B2B7C45004B20E6 /* UUCompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 089CC9AF1B2B7C45004B20E6 /* UUCompression.m */; };
+		089CC9B31B2B7CD5004B20E6 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 089CC9B21B2B7CD5004B20E6 /* libz.dylib */; };
+		089CC9B51B2B80E6004B20E6 /* UUCompressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 089CC9B41B2B80E6004B20E6 /* UUCompressionTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +116,10 @@
 		0881FD701A9A869E0096AEC8 /* UUDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUDate.m; path = ../../../UUDate.m; sourceTree = "<group>"; };
 		0881FD731A9A88BD0096AEC8 /* XCTestCase+UUTestExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "XCTestCase+UUTestExtensions.h"; path = "Helpers/XCTestCase+UUTestExtensions.h"; sourceTree = "<group>"; };
 		0881FD741A9A88BD0096AEC8 /* XCTestCase+UUTestExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "XCTestCase+UUTestExtensions.m"; path = "Helpers/XCTestCase+UUTestExtensions.m"; sourceTree = "<group>"; };
+		089CC9AE1B2B7C45004B20E6 /* UUCompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UUCompression.h; path = ../../../UUCompression.h; sourceTree = "<group>"; };
+		089CC9AF1B2B7C45004B20E6 /* UUCompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UUCompression.m; path = ../../../UUCompression.m; sourceTree = "<group>"; };
+		089CC9B21B2B7CD5004B20E6 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		089CC9B41B2B80E6004B20E6 /* UUCompressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UUCompressionTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				089CC9B31B2B7CD5004B20E6 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +174,7 @@
 		0881FD051A9A857C0096AEC8 = {
 			isa = PBXGroup;
 			children = (
+				089CC9B21B2B7CD5004B20E6 /* libz.dylib */,
 				0881FD111A9A857C0096AEC8 /* UUToolbox */,
 				0881FD1E1A9A857D0096AEC8 /* UUToolboxTests */,
 				0881FD101A9A857C0096AEC8 /* Products */,
@@ -190,6 +200,8 @@
 				0881FD2E1A9A85E30096AEC8 /* UUCoreData.m */,
 				0881FD2F1A9A85E30096AEC8 /* UUDataCache.h */,
 				0881FD301A9A85E30096AEC8 /* UUDataCache.m */,
+				089CC9AE1B2B7C45004B20E6 /* UUCompression.h */,
+				089CC9AF1B2B7C45004B20E6 /* UUCompression.m */,
 				0881FD6F1A9A869E0096AEC8 /* UUDate.h */,
 				0881FD701A9A869E0096AEC8 /* UUDate.m */,
 				0881FD311A9A85E30096AEC8 /* UUDevice.h */,
@@ -232,6 +244,7 @@
 			children = (
 				083AF9411A9A937A0008B01A /* UUCoreData */,
 				0881FD631A9A86850096AEC8 /* UUColorTests.m */,
+				089CC9B41B2B80E6004B20E6 /* UUCompressionTests.m */,
 				0881FD641A9A86850096AEC8 /* UUDateTests.m */,
 				0881FD651A9A86850096AEC8 /* UUDictionaryTests.m */,
 				0881FD661A9A86850096AEC8 /* UURandomTests.m */,
@@ -272,6 +285,7 @@
 				0881FD5B1A9A85E30096AEC8 /* UURandom.h in Headers */,
 				0881FD4B1A9A85E30096AEC8 /* UUDataCache.h in Headers */,
 				0881FD5D1A9A85E30096AEC8 /* UUReachability.h in Headers */,
+				089CC9B01B2B7C45004B20E6 /* UUCompression.h in Headers */,
 				0881FD551A9A85E30096AEC8 /* UUImageCache.h in Headers */,
 				0881FD511A9A85E30096AEC8 /* UUHttpResponseHandler.h in Headers */,
 				0881FD591A9A85E30096AEC8 /* UUObjectFactory.h in Headers */,
@@ -381,6 +395,7 @@
 				0881FD561A9A85E30096AEC8 /* UUImageCache.m in Sources */,
 				0881FD721A9A869E0096AEC8 /* UUDate.m in Sources */,
 				0881FD5C1A9A85E30096AEC8 /* UURandom.m in Sources */,
+				089CC9B11B2B7C45004B20E6 /* UUCompression.m in Sources */,
 				0881FD621A9A85E30096AEC8 /* UUString.m in Sources */,
 				0881FD501A9A85E30096AEC8 /* UUDictionary.m in Sources */,
 				0881FD4C1A9A85E30096AEC8 /* UUDataCache.m in Sources */,
@@ -398,6 +413,7 @@
 			files = (
 				083AF9501A9A95CC0008B01A /* UUPlayer.m in Sources */,
 				0881FD221A9A857D0096AEC8 /* UUToolboxTests.m in Sources */,
+				089CC9B51B2B80E6004B20E6 /* UUCompressionTests.m in Sources */,
 				0881FD6B1A9A86850096AEC8 /* UUDictionaryTests.m in Sources */,
 				083AF9531A9A95FD0008B01A /* UUPlayer+Extensions.m in Sources */,
 				0881FD6E1A9A86850096AEC8 /* UUStringTests.m in Sources */,

@@ -11,6 +11,10 @@
 #import "UUView.h"
 #import <objc/runtime.h>
 
+/*
+
+Disabling this until Xcode can stop crashing
+
 @implementation UIView (UUInterfaceBuilder)
 
 	- (BOOL) circular
@@ -36,6 +40,7 @@
 	}
 
 @end
+*/
 
 @implementation UIView (UUFramework)
 

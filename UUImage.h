@@ -13,6 +13,7 @@
 
 @interface UIImage (UUFramework)
 
+- (UIImage*) uuRemoveOrientation;
 - (UIImage*) uuScaleToSize:(CGSize)targetSize;
 - (UIImage*) uuScaleAndCropToSize:(CGSize)targetSize;
 - (UIImage*) uuCropToSize:(CGSize)targetSize;

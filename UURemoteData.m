@@ -106,7 +106,7 @@ NSString * const kUUMetaDataDownloadTimestampKey    = @"UUMetaDataDownloadTimest
     NSMutableDictionary* md = [NSMutableDictionary dictionary];
     [md setValue:path forKeyPath:kUUDataRemotePathKey];
     
-    if (response.rawResponse)
+    if (!response.httpError && response.rawResponse)
     {
         [[UUDataCache sharedCache] setObject:response.rawResponse forKey:path];
         [self updateMetaDataFromResponse:response forPath:path];

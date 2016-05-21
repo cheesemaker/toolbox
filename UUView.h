@@ -10,12 +10,17 @@
 
 #import <UIKit/UIKit.h>
 
+/*
+
+Disabling this until Xcode can be fixed and stop crashing
+
 // These extensions allow you to set commonly set layer properties directly in Interface Builder
 // Have suggestions for others? Let me know or submit a pull request!
 IB_DESIGNABLE @interface UIView (UUInterfaceBuilder)
 	@property (nonatomic) IBInspectable CGFloat cornerRadius;
 	@property (nonatomic) IBInspectable BOOL	circular;
 @end
+*/
 
 @interface UIView (UUFramework)
 

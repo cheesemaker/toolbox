@@ -624,7 +624,10 @@ static NSTimeInterval theDefaultHttpTimeout = kUUDefaultHttpTimeout;
             
         case UUHttpMethodHead:
             return kUUHttpMethodHead;
-            
+        
+        case UUHttpMethodPatch:
+            return kUUHttpMethodPatch;
+        
         default:
             return @"";
     }

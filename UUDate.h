@@ -28,6 +28,8 @@
 - (BOOL) uuIsToday;
 - (BOOL) uuIsTomorrow;
 - (BOOL) uuIsYesterday;
+- (BOOL) uuIsMorning;
+- (BOOL) uuIsEvening;
 
 @end
 
@@ -71,9 +73,19 @@
 
 // Returns a string day of week, ie - 'Monday' thru 'Sunday'
 - (NSString*) uuDayOfWeek;
+- (NSString*) uuDayOfWeekShort;
 
 // Returns a numeric month of year, ie - 1, 2, 3 .. 12
-- (NSString*) uuNumericMonthOfYear;
+- (NSUInteger) uuNumericMonthOfYear;
+
+// Returns 1-52 week of the year
+- (NSUInteger) uuNumericWeekOfYear;
+
+// Returns 1-5 week of the month
+- (NSUInteger) uuNumericWeekOfMonth;
+
+// Returns 1-31 day of the month
+- (NSUInteger) uuNumericDayOfMonth;
 
 // Returns a string month of year, the full month, ie - July or September
 - (NSString*) uuLongMonthOfYear;
@@ -84,8 +96,21 @@
 // Returns day of month plus suffix, ie - 26th
 - (NSString*) uuDayOfMonth;
 
+// Returns just the numeric portion of the day of the month, ie - 26
+- (NSString*) uuDayOfMonthShort;
+
+// Returns the short version of the numeric year, ie - 74
+- (NSString*) uuShortYear;
+
+// Returns the full numeric year, ie - 1974
+- (NSString*) uuLongYear;
+
 // Returns time of day with am/pm, ie - "9:52 am"
 - (NSString*) uuTimeOfDay;
+
+// Returns the numerical value of the hour or minute ie - 6, 7 or 10
+- (NSString*) uuHour;
+- (NSString*) uuMinute;
 
 // Returns a relative time, such as "22 minutes ago" or "1 day ago", or "now"
 - (NSString*) uuFormatAsDeltaFromNow; // Passes YES for adjustTimeZone
@@ -173,4 +198,4 @@ extern NSString * const kUUNumericMonthOfYearDateFormatter;  // @"L"
 extern NSString * const kUUShortMonthOfYearDateFormatter;   // @"LLL"
 extern NSString * const kUULongMonthOfYearDateFormatter;    // @"LLLL"
 extern NSString * const kUUDayOfWeekDateFormatter;          // @"EEEE"
-
+extern NSString * const kUUDayOfWeekShortDateFormatter;		// @"EE"

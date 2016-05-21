@@ -95,6 +95,23 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     return cr;
 }
 
++ (instancetype) patchRequest:(NSString *)url queryArguments:(NSDictionary *)queryArguments body:(NSData *)body contentType:(NSString *)contentType
+{
+    UUHttpRequest* cr = [[[self class] alloc] initWithUrl:url];
+    cr.httpMethod = UUHttpMethodPatch;
+    cr.queryArguments = queryArguments;
+    cr.body = body;
+    
+    if (contentType)
+    {
+        cr.headerFields = @{kUUContentTypeHeader:contentType};
+    }
+    
+    return cr;
+}
+
+
+
 + (instancetype) getRequest:(NSString*)url queryArguments:(NSDictionary*)queryArguments user:(NSString*)user password:(NSString*)password
 {
     UUHttpRequest* cr = [self getRequest:url queryArguments:queryArguments];
@@ -145,7 +162,19 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 @end
 
 @implementation UUHttpResponse
-//Nothing to see here.  Move along...
+
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"UUHTTP Response:\r%@\r\rError:\r%@", self.httpResponse, self.httpError];
+}
+
+- (NSString *)debugDescription
+{
+	return [NSString stringWithFormat:@"*****UUHTTP Response*****\r%@\r\r*****Error*****\r%@\r\r*****Original Request*****\r%@", self.httpResponse, self.httpError, self.httpRequest];
+}
+
+
+
 @end
 
 
@@ -391,6 +420,9 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
             
         case UUHttpMethodHead:
             return kUUHttpMethodHead;
+        
+        case UUHttpMethodPatch:
+            return kUUHttpMethodPatch;
             
         default:
             return @"";
