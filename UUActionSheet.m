@@ -10,137 +10,125 @@
 
 #import "UUActionSheet.h"
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - UIActionSheetDelegateQueue
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-@interface UIActionSheetDelegateQueue : NSObject
-@property (nonatomic, retain) NSMutableArray* queue;
-@end
-
-@implementation UIActionSheetDelegateQueue
-
-- (id) init
-{
-    self = [super init];
-    
-    if (self)
-    {
-        self.queue = [NSMutableArray array];
-    }
-    
-    return self;
-}
-
-+ (instancetype) sharedInstance
-{
-	static id theSharedObject = nil;
-	static dispatch_once_t onceToken;
-    
-    dispatch_once (&onceToken, ^
-    {
-        theSharedObject = [[[self class] alloc] init];
-    });
-	
-	return theSharedObject;
-}
-
-- (void) add:(NSObject<UIActionSheetDelegate>*)client
-{
-    @synchronized(self)
-    {
-        [self.queue addObject:client];
-    }
-}
-
-- (void) remove:(NSObject<UIActionSheetDelegate>*)client
-{
-    @synchronized(self)
-    {
-        [self.queue removeObject:client];
-    }
-}
-
+@interface UUActionSheet()
+	@property (nonatomic, strong) UIAlertController* alertController;
+	@property (nonatomic, strong) UIWindow* displayWindow;
 @end
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - UIActionSheetBlockDelegate
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+@implementation UUActionSheet
 
-@interface UIActionSheetBlockDelegate : NSObject<UIActionSheetDelegate>
-
-- (id) initWithBlock:(void (^)(UIActionSheet* sheet, NSInteger buttonIndex))completionHandler;
-@property (nonatomic, copy) void (^blocksCompletionHandler)(UIActionSheet* sheet, NSInteger buttonIndex);
-
-@end
-
-@implementation UIActionSheetBlockDelegate
-
-- (instancetype) initWithBlock:(void (^)(UIActionSheet* sheet, NSInteger buttonIndex))completionHandler
-{
-    self = [super init];
-    
-    if (self)
-    {
-        if (completionHandler)
-        {
-            self.blocksCompletionHandler = completionHandler;
-        }
-    }
-    
-    [[UIActionSheetDelegateQueue sharedInstance] add:self];
-    return self;
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (self.blocksCompletionHandler)
-    {
-        self.blocksCompletionHandler(actionSheet, buttonIndex);
-    }
-    
-    self.blocksCompletionHandler = nil;
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    [[UIActionSheetDelegateQueue sharedInstance] remove:self];
-}
-
-@end
-
-
-@implementation UIActionSheet (UUFramework)
-
-- (instancetype) initWithTitle:(NSString *)title
+- (instancetype) initWithTitle:(NSString*)title
                     completion:(UUActionSheetDelegateBlock)completion
                   cancelButton:(NSString*)cancelButton
              destructiveButton:(NSString*)destructiveButton
-                  otherButtons:(NSString *)otherButtons, ...
+                  otherButtons:(NSString*)button, ...
 {
-    UIActionSheetBlockDelegate* delegate = [[UIActionSheetBlockDelegate alloc] initWithBlock:completion];
-    
-	self = [self initWithTitle:title delegate:delegate cancelButtonTitle:cancelButton destructiveButtonTitle:destructiveButton otherButtonTitles:nil];
-    
-    va_list args;
-    va_start(args, otherButtons);
-    for (NSString *arg = otherButtons; arg != nil; arg = va_arg(args, NSString*))
-    {
-        [self addButtonWithTitle:arg];
-    }
-    va_end(args);
-    
+	NSMutableArray* argumentArray = [[NSMutableArray alloc] init];
+	
+	if (button)
+	{
+		[argumentArray addObject:[NSString stringWithString:button]];
+		va_list argList;
+		va_start(argList, button);
+		NSString* buttonString = va_arg(argList, NSString*);
+		while (buttonString)
+		{
+			[argumentArray addObject:[NSString stringWithString:buttonString]];
+			buttonString = va_arg(argList, NSString*);
+		}
+		va_end(argList);
+	}
+	
+	UIAlertController* alertController = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+	
+	if (cancelButton)
+	{
+		UIAlertAction* alertAction = [UIAlertAction actionWithTitle:cancelButton style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action)
+		{
+			if (completion)
+			{
+				completion(self, 0);
+			}
+
+			[self hide];			
+		}];
+		[alertController addAction:alertAction];
+	}
+
+	if (destructiveButton)
+	{
+		UIAlertAction* alertAction = [UIAlertAction actionWithTitle:destructiveButton style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action)
+		{
+			NSInteger buttonIndex = 0;
+			if (cancelButton)
+			{
+				buttonIndex++;
+			}
+			
+			if (completion)
+			{
+				completion(self, buttonIndex);
+			}
+
+			[self hide];
+		}];
+		[alertController addAction:alertAction];
+	}
+
+	NSInteger startingButtonOffset = 0;
+	if (cancelButton)
+		startingButtonOffset++;
+	if (destructiveButton)
+		startingButtonOffset++;
+	
+	for (NSInteger i = 0; i < argumentArray.count; i++)
+	{
+		NSString* buttonTitle = [argumentArray objectAtIndex:i];
+
+		UIAlertAction* alertAction = [UIAlertAction actionWithTitle:buttonTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
+		{
+			if (completion)
+			{
+				completion(self, i + startingButtonOffset);
+			}
+			
+			[self hide];
+		}];
+		
+		[alertController addAction:alertAction];
+	}
+	
+	self.alertController = alertController;
+	
 	return self;
 }
 
+// Convenience method
 + (instancetype) uuTwoButtonSheet:(NSString*)title
                      cancelButton:(NSString*)cancelButton
                 destructiveButton:(NSString*)destructiveButton
                        completion:(UUActionSheetDelegateBlock)completion
 {
-    return [[[self class] alloc] initWithTitle:title completion:completion cancelButton:cancelButton destructiveButton:destructiveButton otherButtons:nil];
+	return [[UUActionSheet alloc] initWithTitle:title completion:completion cancelButton:cancelButton destructiveButton:destructiveButton otherButtons:nil];
 }
 
+
+- (void) show
+{
+    UIWindow *topWindow = [UIApplication sharedApplication].windows.lastObject;
+	self.displayWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	self.displayWindow.rootViewController = [UIViewController new];
+	self.displayWindow.tintColor = [UIApplication sharedApplication].keyWindow.tintColor;
+	self.displayWindow.windowLevel = topWindow.windowLevel + 1;
+	[self.displayWindow makeKeyAndVisible];
+	[self.displayWindow.rootViewController presentViewController:self.alertController animated:NO completion:nil];
+}
+
+- (void) hide
+{
+	[self.displayWindow resignKeyWindow];
+	self.displayWindow = nil;
+}
 
 @end

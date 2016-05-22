@@ -10,16 +10,18 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void (^UUActionSheetDelegateBlock)(UIActionSheet* sheet, NSInteger buttonIndex);
+@class UUActionSheet;
 
-@interface UIActionSheet (UUFramework)
+typedef void (^UUActionSheetDelegateBlock)(UUActionSheet* sheet, NSInteger buttonIndex);
+
+@interface UUActionSheet : NSObject
 
 // Variable list custructor for an N button Action Sheet
 - (instancetype) initWithTitle:(NSString*)title
                     completion:(UUActionSheetDelegateBlock)completion
                   cancelButton:(NSString*)cancelButton
              destructiveButton:(NSString*)destructiveButton
-                  otherButtons:(NSString*)otherButtons, ... NS_REQUIRES_NIL_TERMINATION;
+				  otherButtons:(NSString*)button, ...;
 
 // Convenience method
 + (instancetype) uuTwoButtonSheet:(NSString*)title
@@ -27,5 +29,7 @@ typedef void (^UUActionSheetDelegateBlock)(UIActionSheet* sheet, NSInteger butto
                 destructiveButton:(NSString*)destructiveButton
                        completion:(UUActionSheetDelegateBlock)completion;
 
+
+- (void) show;
 
 @end
