@@ -30,6 +30,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 @interface UUHttpRequest ()
 
 @property (atomic, strong, readwrite) NSURLRequest* httpRequest;
+@property (atomic, assign, readwrite) NSTimeInterval startTime;
 
 @end
 
@@ -231,6 +232,11 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     }
 }
 
++ (void) registerResponseHandler:(NSObject<UUHttpResponseHandler>*)handler
+{
+    [[self sharedInstance] registerResponseHandler:handler];
+}
+
 - (id) init
 {
     self = [super init];
@@ -277,6 +283,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
 - (UUHttpRequest*) executeRequest:(UUHttpRequest*)request completionHandler:(UUHttpSessionResponseHandler)completionHandler
 {
     request.httpRequest = [[self class] buildRequest:request];
+    request.startTime = [NSDate timeIntervalSinceReferenceDate];
     
     UUDebugLog(@"Begin Request\n\nMethod: %@\nURL: %@\nHeaders:\n%@\n\n", request.httpRequest.HTTPMethod, request.httpRequest.URL, request.httpRequest.allHTTPHeaderFields);
     
@@ -340,6 +347,7 @@ const NSTimeInterval kUUDefaultHttpRequestTimeout = 60.0f;
     
     uuResponse.httpError = err;
     uuResponse.parsedResponse = parsedResponse;
+    uuResponse.downloadTime = [NSDate timeIntervalSinceReferenceDate] - request.startTime;
     
     if (completion)
     {
