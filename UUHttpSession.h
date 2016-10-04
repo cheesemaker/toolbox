@@ -59,6 +59,7 @@ typedef void (^UUHttpSessionResponseHandler)(UUHttpResponse* response);
 @property (atomic, strong) id					parsedResponse;
 @property (atomic, strong) NSData*				rawResponse;
 @property (atomic, strong) NSString*			rawResponsePath;
+@property (atomic, assign) NSTimeInterval       downloadTime;
 
 - (NSString *)description;
 - (NSString *)debugDescription;
@@ -76,6 +77,8 @@ typedef void (^UUHttpSessionResponseHandler)(UUHttpResponse* response);
 + (UUHttpRequest*) delete:(NSString*)url queryArguments:(NSDictionary*)queryArguments completionHandler:(UUHttpSessionResponseHandler)completionHandler;
 + (UUHttpRequest*) put:(NSString*)url queryArguments:(NSDictionary*)queryArguments putBody:(NSData*)putBody contentType:(NSString*)contentType completionHandler:(UUHttpSessionResponseHandler)completionHandler;
 + (UUHttpRequest*) post:(NSString*)url queryArguments:(NSDictionary*)queryArguments postBody:(NSData*)postBody contentType:(NSString*)contentType completionHandler:(UUHttpSessionResponseHandler)completionHandler;
+
++ (void) registerResponseHandler:(NSObject<UUHttpResponseHandler>*)handler;
 
 @end
 
