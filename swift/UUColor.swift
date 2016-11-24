@@ -27,7 +27,6 @@ extension UIColor
             while (i < len)
             {
                 let subStr = color.uuSubString(from: i, length: 2)
-                print(subStr)
                 
                 let scanner = Scanner(string: subStr)
                 
