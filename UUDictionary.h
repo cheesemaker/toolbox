@@ -43,6 +43,10 @@
 // Convenience wrappers
 - (NSDictionary*) uuSafeGetDictionary:(NSString*)key;
 - (NSArray*) uuSafeGetArray:(NSString*)key;
+- (NSData*) uuSafeGetData:(NSString*)key;
+- (NSData*) uuSafeGetData:(NSString*)key defaultValue:(NSData*)defaultValue;
+
+- (NSData*) uuSafeGetDataFromBase64String:(NSString*)key;
 
 @end
 
@@ -52,5 +56,17 @@
 // Builds a formatted query string from the dictionary arguments.  Only handles
 // value objects that are NSNumber or NSString.
 - (NSString*) uuBuildQueryString;
+
+- (NSString*) uuToJsonString;
+
+- (NSData*) uuToJson;
+
+@end
+
+@interface NSMutableDictionary (UUMutableDictionary)
+
+- (void) uuSafeSetValue:(id)value forKey:(NSString*)key;
+
+- (void) uuSafeRemove:(id)key;
 
 @end

@@ -99,6 +99,29 @@
     return [self uuSafeGet:key forClass:[NSArray class]];
 }
 
+- (NSData*) uuSafeGetData:(NSString*)key
+{
+    return [self uuSafeGetData:key defaultValue:nil];
+}
+
+- (NSData*) uuSafeGetData:(NSString*)key defaultValue:(NSData*)defaultValue
+{
+    return [self uuSafeGet:key forClass:[NSData class] defaultValue:defaultValue];
+}
+
+- (NSData*) uuSafeGetDataFromBase64String:(NSString*)key
+{
+    NSString* base64String = [self uuSafeGetString:key];
+    if (base64String)
+    {
+        return [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+    }
+    else
+    {
+        return nil;
+    }
+}
+
 @end
 
 @implementation NSDictionary (UUHttpDictionary)
@@ -150,6 +173,68 @@
     return queryStringArgs;
 }
 
+- (NSString*) uuToJsonString
+{
+    NSString* str = nil;
+    
+    @try
+    {
+        NSError* err = nil;
+        NSData* data = [NSJSONSerialization dataWithJSONObject:self options:0 error:&err];
+        if (err != nil)
+        {
+            return nil;
+        }
+        
+        str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
+    @catch (NSException *exception)
+    {
+        str = nil;
+    }
+    @finally
+    {
+        return str;
+    }
+}
+
+- (NSData*) uuToJson
+{
+    NSData* data = nil;
+    
+    @try
+    {
+        NSError* err = nil;
+        data = [NSJSONSerialization dataWithJSONObject:self options:0 error:&err];
+    }
+    @catch (NSException *exception)
+    {
+        data = nil;
+    }
+    @finally
+    {
+        return data;
+    }
+}
+
 @end
 
+@implementation NSMutableDictionary (UUMutableDictionary)
 
+- (void) uuSafeSetValue:(nullable id)value forKey:(nonnull NSString*)key
+{
+    if (key)
+    {
+        [self setValue:value forKey:key];
+    }
+}
+
+- (void) uuSafeRemove:(id)key
+{
+    if (key)
+    {
+        [self removeObjectForKey:key];
+    }
+}
+
+@end
