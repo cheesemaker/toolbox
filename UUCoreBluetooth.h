@@ -29,6 +29,7 @@ typedef void (^UUDiscoverIncludedServicesBlock)(CBPeripheral* _Nonnull periphera
 typedef void (^UUDiscoverCharacteristicsBlock)(CBPeripheral* _Nonnull peripheral, CBService* _Nonnull service, NSError* _Nullable error);
 typedef void (^UUDiscoverCharacteristicsForServiceUuidBlock)(CBPeripheral* _Nonnull peripheral, CBService* _Nullable service, NSError* _Nullable error);
 typedef void (^UUUpdateValueForCharacteristicsBlock)(CBPeripheral* _Nonnull peripheral, CBCharacteristic* _Nonnull characteristic, NSError* _Nullable error);
+typedef void (^UUReadValueForCharacteristicsBlock)(CBPeripheral* _Nonnull peripheral, CBCharacteristic* _Nonnull characteristic, NSError* _Nullable error);
 typedef void (^UUWriteValueForCharacteristicsBlock)(CBPeripheral* _Nonnull peripheral, CBCharacteristic* _Nonnull characteristic, NSError* _Nullable error);
 typedef void (^UUSetNotifyValueForCharacteristicsBlock)(CBPeripheral* _Nonnull peripheral, CBCharacteristic* _Nonnull characteristic, NSError* _Nullable error);
 typedef void (^UUDiscoverDescriptorsBlock)(CBPeripheral* _Nonnull peripheral, CBCharacteristic* _Nonnull characteristic, NSError* _Nullable error);
@@ -215,6 +216,13 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
                            timeout:(NSTimeInterval)timeout
                         completion:(nonnull UUDiscoverCharacteristicsBlock)completion;
 
+// Block based wrapper around CBPeripheral discoverIncludedServices:forService,
+// with an optional timeout value.  A negative timeout value will disable the timeout.
+- (void) uuDiscoverIncludedServices:(nullable NSArray<CBUUID*>*)serviceUuidList
+                         forService:(nonnull CBService*)service
+                            timeout:(NSTimeInterval)timeout
+                         completion:(nonnull UUDiscoverIncludedServicesBlock)completion;
+
 // Block based wrapper around CBPeripheral discoverDescriptorsForCharacteristic,
 // with an optional timeout value.  A negative timeout value will disable the timeout.
 - (void) uuDiscoverDescriptorsForCharacteristic:(nonnull CBCharacteristic*)characteristic
@@ -226,7 +234,14 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 - (void) uuSetNotifyValue:(BOOL)enabled
         forCharacteristic:(nonnull CBCharacteristic*)characteristic
                   timeout:(NSTimeInterval)timeout
+            notifyHandler:(nullable UUUpdateValueForCharacteristicsBlock)notifyHandler
                completion:(nonnull UUSetNotifyValueForCharacteristicsBlock)completion;
+
+// Block based wrapper around CBPeripheral readValue:forCharacteristic, with an
+// optional timeout value.  A negative timeout value will disable the timeout.
+- (void) uuReadValueForCharacteristic:(nonnull CBCharacteristic*)characteristic
+                              timeout:(NSTimeInterval)timeout
+                           completion:(nonnull UUReadValueForCharacteristicsBlock)completion;
 
 // Block based wrapper around CBPeripheral readRssi, with an optional
 // timeout value.  A negative timeout value will disable the timeout.
@@ -243,6 +258,17 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 
 @end
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark - NSUUID (UUCoreBluetooth)
+////////////////////////////////////////////////////////////////////////////////
+
+@interface CBUUID (UUCoreBluetooth)
+
+// Some UUID's have a common name, if UUIDString does not match, it is returned,
+// otherwise 'Unknown'.
+- (nonnull NSString*) uuCommonName;
+
+@end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UUCoreBluetooth

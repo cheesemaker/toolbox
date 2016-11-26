@@ -34,10 +34,13 @@ NSTimeInterval const kUUCoreBluetoothTimeoutDisabled = -1;
 NSString * _Nonnull const kUUCoreBluetoothConnectWatchdogBucket = @"UUCoreBluetoothConnectWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothServiceDiscoveryWatchdogBucket = @"UUCoreBluetoothServiceDiscoveryWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothCharacteristicDiscoveryWatchdogBucket = @"UUCoreBluetoothCharacteristicDiscoveryWatchdogBucket";
+NSString * _Nonnull const kUUCoreBluetoothIncludedServicesDiscoveryWatchdogBucket = @"UUCoreBluetoothIncludedServicesDiscoveryWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothDescriptorDiscoveryWatchdogBucket = @"UUCoreBluetoothDescriptorDiscoveryWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothCharacteristicNotifyStateWatchdogBucket = @"UUCoreBluetoothCharacteristicNotifyStateWatchdogBucket";
+NSString * _Nonnull const kUUCoreBluetoothReadCharacteristicValueWatchdogBucket = @"UUCoreBluetoothReadCharacteristicValueWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothReadRssiWatchdogBucket = @"UUCoreBluetoothReadRssiWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothPollRssiBucket = @"UUCoreBluetoothPollRssiBucket";
+
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - NSError (UUCoreBluetooth)
@@ -432,7 +435,8 @@ dispatch_queue_t UUCoreBluetoothQueue()
 @property (nullable, copy, readwrite) UUDiscoverServicesBlock discoverServicesBlock;
 @property (nullable, copy, readwrite) UUDiscoverIncludedServicesBlock discoverIncludedServicesBlock;
 @property (nullable, copy, readwrite) UUDiscoverCharacteristicsBlock discoverCharacteristicsBlock;
-@property (nullable, copy, readwrite) UUUpdateValueForCharacteristicsBlock updateValueForCharacteristicBlock;
+@property (nullable, nonatomic, strong, readwrite) NSMutableDictionary<NSString*, UUUpdateValueForCharacteristicsBlock>* updateValueForCharacteristicBlocks;
+@property (nullable, nonatomic, strong, readwrite) NSMutableDictionary<NSString*, UUUpdateValueForCharacteristicsBlock>* readValueForCharacteristicBlocks;
 @property (nullable, copy, readwrite) UUWriteValueForCharacteristicsBlock writeValueForCharacteristicBlock;
 @property (nullable, copy, readwrite) UUSetNotifyValueForCharacteristicsBlock setNotifyValueForCharacteristicBlock;
 @property (nullable, copy, readwrite) UUDiscoverDescriptorsBlock discoverDescriptorsBlock;
@@ -451,9 +455,35 @@ dispatch_queue_t UUCoreBluetoothQueue()
     {
         self.peripheral = peripheral;
         peripheral.delegate = self;
+        
+        self.updateValueForCharacteristicBlocks = [NSMutableDictionary dictionary];
+        self.readValueForCharacteristicBlocks = [NSMutableDictionary dictionary];
+        
     }
     
     return self;
+}
+
+- (void)registerUpdateHandler:(nullable UUUpdateValueForCharacteristicsBlock)handler
+            forCharacteristic:(nonnull CBCharacteristic*)characteristic
+{
+    [self.updateValueForCharacteristicBlocks uuSafeSetValue:handler forKey:[[characteristic UUID] UUIDString]];
+}
+
+- (void)removeUpdateHandlerForCharacteristic:(nonnull CBCharacteristic*)characteristic
+{
+    [self.updateValueForCharacteristicBlocks uuSafeRemove:[[characteristic UUID] UUIDString]];
+}
+
+- (void)registerReadHandler:(nullable UUReadValueForCharacteristicsBlock)handler
+            forCharacteristic:(nonnull CBCharacteristic*)characteristic
+{
+    [self.readValueForCharacteristicBlocks uuSafeSetValue:handler forKey:[[characteristic UUID] UUIDString]];
+}
+
+- (void)removeReadHandlerForCharacteristic:(nonnull CBCharacteristic*)characteristic
+{
+    [self.readValueForCharacteristicBlocks uuSafeRemove:[[characteristic UUID] UUIDString]];
 }
 
 - (void)peripheralDidUpdateName:(CBPeripheral *)peripheral
@@ -516,9 +546,16 @@ dispatch_queue_t UUCoreBluetoothQueue()
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error
 {
-    if (self.updateValueForCharacteristicBlock)
+    UUUpdateValueForCharacteristicsBlock updateBlock = [self.updateValueForCharacteristicBlocks uuSafeGet:[characteristic.UUID UUIDString]];
+    if (updateBlock)
     {
-        self.updateValueForCharacteristicBlock(peripheral, characteristic, error);
+        updateBlock(peripheral, characteristic, error);
+    }
+    
+    UUReadValueForCharacteristicsBlock readBlock = [self.readValueForCharacteristicBlocks uuSafeGet:[characteristic.UUID UUIDString]];
+    if (readBlock)
+    {
+        readBlock(peripheral, characteristic, error);
     }
 }
 
@@ -567,6 +604,29 @@ dispatch_queue_t UUCoreBluetoothQueue()
     if (block)
     {
         block(peripheral, descriptor, error);
+    }
+}
+
+@end
+
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark - NSUUID (UUCoreBluetooth)
+////////////////////////////////////////////////////////////////////////////////
+
+@implementation CBUUID (UUCoreBluetooth)
+
+- (nonnull NSString*) uuCommonName
+{
+    NSString* name = [NSString stringWithFormat:@"%@", self];
+    NSString* uuid = [self UUIDString];
+    if ([name isEqualToString:uuid])
+    {
+        return @"Unknown";
+    }
+    else
+    {
+        return name;
     }
 }
 
@@ -648,6 +708,11 @@ dispatch_queue_t UUCoreBluetoothQueue()
     return [self formatTimerId:kUUCoreBluetoothCharacteristicDiscoveryWatchdogBucket];
 }
 
+- (nonnull NSString*) uuIncludedServicesDiscoveryWatchdogTimerId
+{
+    return [self formatTimerId:kUUCoreBluetoothIncludedServicesDiscoveryWatchdogBucket];
+}
+
 - (nonnull NSString*) uuDescriptorDiscoveryWatchdogTimerId
 {
     return [self formatTimerId:kUUCoreBluetoothDescriptorDiscoveryWatchdogBucket];
@@ -656,6 +721,11 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (nonnull NSString*) uuCharacteristicNotifyStateWatchdogTimerId
 {
     return [self formatTimerId:kUUCoreBluetoothCharacteristicNotifyStateWatchdogBucket];
+}
+
+- (nonnull NSString*) uuReadCharacteristicValueWatchdogTimerId
+{
+    return [self formatTimerId:kUUCoreBluetoothReadCharacteristicValueWatchdogBucket];
 }
 
 - (nonnull NSString*) uuReadRssiWatchdogTimerId
@@ -773,6 +843,63 @@ dispatch_queue_t UUCoreBluetoothQueue()
     }
 }
 
+- (void) uuDiscoverIncludedServices:(nullable NSArray<CBUUID*>*)serviceUuidList
+                         forService:(nonnull CBService*)service
+                            timeout:(NSTimeInterval)timeout
+                         completion:(nonnull UUDiscoverIncludedServicesBlock)completion
+{
+    UUCoreBluetoothLog(@"Discovering included services for %@ - %@, timeout: %@, service: %@, service list: %@",
+                       self.uuIdentifier, self.name, @(timeout), service, serviceUuidList);
+    
+    NSString* timerId = [self uuIncludedServicesDiscoveryWatchdogTimerId];
+    
+    UUPeripheralDelegate* delegate = [[self class] uuDelegateForPeripheral:self];
+    self.delegate = delegate;
+    delegate.discoverIncludedServicesBlock = ^(CBPeripheral* _Nonnull peripheral, CBService* _Nonnull service, NSError* _Nullable error)
+    {
+        error = [NSError uuOperationCompleteError:error];
+        
+        UUCoreBluetoothLog(@"Included services discovery finished for %@ - %@, service: %@, error: %@, includedServices: %@",
+                           peripheral.uuIdentifier, peripheral.name, service, error, service.includedServices);
+        
+        [UUTimer cancelWatchdogTimer:timerId];
+        completion(peripheral, service, error);
+    };
+    
+    [UUTimer startWatchdogTimer:timerId
+                        timeout:timeout
+                       userInfo:self
+                          block:^(id _Nullable userInfo)
+     {
+         CBPeripheral* peripheral = userInfo;
+         UUCoreBluetoothLog(@"Included services discovery timeout for %@ - %@", peripheral.uuIdentifier, peripheral.name);
+         
+         NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
+         [delegate peripheral:peripheral didDiscoverIncludedServicesForService:service error:err];
+     }];
+    
+    if (self.state != CBPeripheralStateConnected)
+    {
+        dispatch_async(UUCoreBluetoothQueue(), ^
+        {
+            NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeNotConnected];
+            [delegate peripheral:self didDiscoverCharacteristicsForService:service error:err];
+        });
+    }
+    else if (service == nil)
+    {
+        dispatch_async(UUCoreBluetoothQueue(), ^
+        {
+            NSError* err = [NSError uuExpectNonNilParamError:@"service"];
+            [delegate peripheral:self didDiscoverCharacteristicsForService:service error:err];
+        });
+    }
+    else
+    {
+        [self discoverIncludedServices:serviceUuidList forService:service];
+    }
+}
+
 - (void) uuDiscoverDescriptorsForCharacteristic:(nonnull CBCharacteristic*)characteristic
                                         timeout:(NSTimeInterval)timeout
                                      completion:(nonnull UUDiscoverDescriptorsBlock)completion
@@ -832,6 +959,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (void) uuSetNotifyValue:(BOOL)enabled
         forCharacteristic:(nonnull CBCharacteristic*)characteristic
                   timeout:(NSTimeInterval)timeout
+            notifyHandler:(nullable UUUpdateValueForCharacteristicsBlock)notifyHandler
                completion:(nonnull UUSetNotifyValueForCharacteristicsBlock)completion
 {
     UUCoreBluetoothLog(@"Set Notify State for %@ - %@, enabled: %@, timeout: %@, characateristic: %@",
@@ -851,6 +979,15 @@ dispatch_queue_t UUCoreBluetoothQueue()
         [UUTimer cancelWatchdogTimer:timerId];
         completion(peripheral, characteristic, error);
     };
+    
+    if (enabled && notifyHandler)
+    {
+        [delegate registerUpdateHandler:notifyHandler forCharacteristic:characteristic];
+    }
+    else
+    {
+        [delegate removeUpdateHandlerForCharacteristic:characteristic];
+    }
     
     [UUTimer startWatchdogTimer:timerId
                         timeout:timeout
@@ -883,6 +1020,65 @@ dispatch_queue_t UUCoreBluetoothQueue()
     else
     {
         [self setNotifyValue:enabled forCharacteristic:characteristic];
+    }
+}
+
+- (void) uuReadValueForCharacteristic:(nonnull CBCharacteristic*)characteristic
+                              timeout:(NSTimeInterval)timeout
+                           completion:(nonnull UUReadValueForCharacteristicsBlock)completion
+{
+    UUCoreBluetoothLog(@"Read value for %@ - %@, characteristic: %@, timeout: %@",
+                       self.uuIdentifier, self.name, characteristic, @(timeout));
+    
+    NSString* timerId = [self uuReadCharacteristicValueWatchdogTimerId];
+    
+    UUPeripheralDelegate* delegate = [[self class] uuDelegateForPeripheral:self];
+    self.delegate = delegate;
+    
+    [delegate registerReadHandler:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
+    {
+        error = [NSError uuOperationCompleteError:error];
+        
+        UUCoreBluetoothLog(@"Read value finished for %@ - %@, characteristic: %@, error: %@",
+                           peripheral.uuIdentifier, peripheral.name, characteristic, error);
+        
+        [UUTimer cancelWatchdogTimer:timerId];
+        [delegate removeReadHandlerForCharacteristic:characteristic];
+        completion(peripheral, characteristic, error);
+    }
+    forCharacteristic:characteristic];
+    
+    [UUTimer startWatchdogTimer:timerId
+                        timeout:timeout
+                       userInfo:self
+                          block:^(id _Nullable userInfo)
+     {
+         CBPeripheral* peripheral = userInfo;
+         UUCoreBluetoothLog(@"Read value timeout for %@ - %@", peripheral.uuIdentifier, peripheral.name);
+         
+         NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
+         [delegate peripheral:peripheral didUpdateValueForCharacteristic:characteristic error:err];
+     }];
+    
+    if (self.state != CBPeripheralStateConnected)
+    {
+        dispatch_async(UUCoreBluetoothQueue(), ^
+        {
+            NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeNotConnected];
+            [delegate peripheral:self didUpdateValueForCharacteristic:characteristic error:err];
+        });
+    }
+    else if (characteristic == nil)
+    {
+        dispatch_async(UUCoreBluetoothQueue(), ^
+        {
+            NSError* err = [NSError uuExpectNonNilParamError:@"characteristic"];
+            [delegate peripheral:self didUpdateValueForCharacteristic:characteristic error:err];
+        });
+    }
+    else
+    {
+        [self readValueForCharacteristic:characteristic];
     }
 }
 
