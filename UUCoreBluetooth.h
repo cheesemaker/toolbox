@@ -259,6 +259,27 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
+#pragma mark - CBCharacteristic (UUCoreBluetooth)
+////////////////////////////////////////////////////////////////////////////////
+
+@interface CBCharacteristic (UUCoreBluetooth)
+
+// Returns true if properties contains CBCharacteristicPropertyNotify or
+// CBCharacteristicPropertyIndicate
+- (BOOL) uuCanToggleNotify;
+
+// Returns true if properties contains CBCharacteristicPropertyRead
+- (BOOL) uuCanReadData;
+
+// Returns true if properties contains CBCharacteristicPropertyWrite
+- (BOOL) uuCanWriteData;
+
+// Returns true if properties contains CBCharacteristicPropertyWriteWithoutResponse
+- (BOOL) uuCanWriteWithoutResponse;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
 #pragma mark - NSUUID (UUCoreBluetooth)
 ////////////////////////////////////////////////////////////////////////////////
 

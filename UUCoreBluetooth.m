@@ -609,6 +609,34 @@ dispatch_queue_t UUCoreBluetoothQueue()
 
 @end
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark - CBCharacteristic (UUCoreBluetooth)
+////////////////////////////////////////////////////////////////////////////////
+
+@implementation CBCharacteristic (UUCoreBluetooth)
+
+- (BOOL) uuCanToggleNotify
+{
+    return (UUIsCBCharacteristicPropertySet(self.properties, CBCharacteristicPropertyNotify) ||
+            UUIsCBCharacteristicPropertySet(self.properties, CBCharacteristicPropertyIndicate));
+}
+
+- (BOOL) uuCanReadData
+{
+    return UUIsCBCharacteristicPropertySet(self.properties, CBCharacteristicPropertyRead);
+}
+
+- (BOOL) uuCanWriteData
+{
+    return UUIsCBCharacteristicPropertySet(self.properties, CBCharacteristicPropertyWrite);
+}
+
+- (BOOL) uuCanWriteWithoutResponse
+{
+    return UUIsCBCharacteristicPropertySet(self.properties, CBCharacteristicPropertyWriteWithoutResponse);
+}
+
+@end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - NSUUID (UUCoreBluetooth)
