@@ -43,6 +43,9 @@ typedef void (^UUTimerBlock)(UUTimer* _Nonnull timer);
 // Find an active timer by its ID
 + (nullable instancetype) findActiveTimer:(nonnull NSString*)timerId;
 
+// Lists all active timers
++ (nonnull NSArray<UUTimer*>*) listActiveTimers;
+
 @end
 
 
