@@ -19,6 +19,10 @@
 #endif
 #endif
 
+// Force UUTimerLog to be disabled all the time. Comment these two lines to
+// enable debug logging again
+#undef UUTimerLog
+#define UUTimerLog(fmt, ...)
 
 @interface UUTimer ()
 
