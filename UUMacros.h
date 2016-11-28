@@ -27,5 +27,18 @@
 #define UUDispatchSecondsThread(seconds, block) \
     dispatch_after(UUDispatchTimeInSeconds(seconds), UUGCDBackgroundQueue, block)
 
+#define UUCurrentFile [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
+
+#ifndef UULog
+#define UULog(fmt, ...) NSLog((@"%s [%@:%d] - " fmt), __PRETTY_FUNCTION__, UUCurrentFile, __LINE__, ##__VA_ARGS__);
+#endif
+
+#ifndef UUDebugLog
+#ifdef DEBUG
+#define UUDebugLog(fmt, ...) UULog(fmt, ##__VA_ARGS__);
+#else
+#define UUDebugLog(fmt, ...) //don't log anything if this is not running in debug mode
+#endif // DEBUG
+#endif // UUDebugLog
 
 #endif /* UUMacros_h */
