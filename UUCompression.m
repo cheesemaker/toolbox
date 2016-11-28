@@ -7,16 +7,21 @@
 //
 
 #import "UUCompression.h"
+#import "UUMacros.h"
 #import <zlib.h>
 
-//If you want to provide your own logging mechanism, define UUDebugLog in your .pch
 #ifndef UUCompressionLog
 #ifdef DEBUG
-#define UUCompressionLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#define UUCompressionLog(fmt, ...) UUDebugLog(fmt, ##__VA_ARGS__)
 #else
 #define UUCompressionLog(fmt, ...)
 #endif
 #endif
+
+// Force UUCompressionLog to be disabled all the time. Comment these two lines to
+// enable debug logging again
+#undef UUCompressionLog
+#define UUCompressionLog(fmt, ...)
 
 #define UU_RAW_ENCODING_WINDOW_BITS         (-MAX_WBITS)
 #define UU_ZLIB_ENCODING_WINDOW_BITS        (MAX_WBITS )
