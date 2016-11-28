@@ -10,11 +10,12 @@
 #import "UUCoreBluetooth.h"
 #import "UUDictionary.h"
 #import "UUTimer.h"
+#import "UUString.h"
+#import "UUMacros.h"
 
-//If you want to provide your own logging mechanism, define UUDebugLog in your .pch
 #ifndef UUCoreBluetoothLog
 #ifdef DEBUG
-#define UUCoreBluetoothLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#define UUCoreBluetoothLog(fmt, ...) UUDebugLog(fmt, ##__VA_ARGS__)
 #else
 #define UUCoreBluetoothLog(fmt, ...)
 #endif
@@ -764,6 +765,18 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (nonnull NSString*) uuPollRssiTimerId
 {
     return [self formatTimerId:kUUCoreBluetoothPollRssiBucket];
+}
+
+- (void) uuCancelAllTimers
+{
+    NSArray<UUTimer*>* list = [UUTimer listActiveTimers];
+    for (UUTimer* t in list)
+    {
+        if ([t.timerId uuStartsWithSubstring:self.uuIdentifier])
+        {
+            [t cancel];
+        }
+    }
 }
 
 - (void) uuDiscoverServices:(nullable NSArray<CBUUID*>*)serviceUuidList
@@ -1590,6 +1603,9 @@ dispatch_queue_t UUCoreBluetoothQueue()
     {
         UUPeripheral* uuPeripheral = [self updatedPeripheralFromScan:peripheral advertisementData:advertisementData rssi:rssi];
         
+        UUCoreBluetoothLog(@"Updated peripheral after scan. peripheral: %@, rssi: %@, advertisement: %@",
+                           uuPeripheral.peripheral, uuPeripheral.rssi, uuPeripheral.advertisementData);
+        
         if ([self shouldDiscoverPeripheral:uuPeripheral])
         {
             peripheralFoundBlock(uuPeripheral);
@@ -1646,6 +1662,8 @@ dispatch_queue_t UUCoreBluetoothQueue()
     }
     disconnected:^(CBPeripheral * _Nonnull peripheral, NSError * _Nullable error)
     {
+        [peripheral uuCancelAllTimers];
+        
         UUPeripheral* uuPeripheral = [self updatedPeripheralFromCbPeripheral:peripheral];
         disconnected(uuPeripheral, error);
     }];
