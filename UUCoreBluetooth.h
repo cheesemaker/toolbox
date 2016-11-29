@@ -243,6 +243,21 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
                               timeout:(NSTimeInterval)timeout
                            completion:(nonnull UUReadValueForCharacteristicsBlock)completion;
 
+// Block based wrapper around CBPeripheral writeValue:forCharacteristic:type with type
+// CBCharacteristicWriteWithResponse, with an optional timeout value.  A negative
+// timeout value will disable the timeout.
+- (void) uuWriteValue:(nonnull NSData*)data
+    forCharacteristic:(nonnull CBCharacteristic*)characteristic
+              timeout:(NSTimeInterval)timeout
+           completion:(nonnull UUWriteValueForCharacteristicsBlock)completion;
+
+// Block based wrapper around CBPeripheral writeValue:forCharacteristic:type with type
+// CBCharacteristicWriteWithoutResponse.  Block callback is invoked after sending.
+// Per CoreBluetooth documentation, there is no garauntee of delivery.
+- (void) uuWriteValueWithoutResponse:(nonnull NSData*)data
+                   forCharacteristic:(nonnull CBCharacteristic*)characteristic
+                          completion:(nonnull UUWriteValueForCharacteristicsBlock)completion;
+
 // Block based wrapper around CBPeripheral readRssi, with an optional
 // timeout value.  A negative timeout value will disable the timeout.
 - (void) uuReadRssi:(NSTimeInterval)timeout

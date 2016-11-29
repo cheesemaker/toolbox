@@ -12,6 +12,7 @@
 #import "UUTimer.h"
 #import "UUString.h"
 #import "UUMacros.h"
+#import "UUData.h"
 
 #ifndef UUCoreBluetoothLog
 #ifdef DEBUG
@@ -39,6 +40,7 @@ NSString * _Nonnull const kUUCoreBluetoothIncludedServicesDiscoveryWatchdogBucke
 NSString * _Nonnull const kUUCoreBluetoothDescriptorDiscoveryWatchdogBucket = @"UUCoreBluetoothDescriptorDiscoveryWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothCharacteristicNotifyStateWatchdogBucket = @"UUCoreBluetoothCharacteristicNotifyStateWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothReadCharacteristicValueWatchdogBucket = @"UUCoreBluetoothReadCharacteristicValueWatchdogBucket";
+NSString * _Nonnull const kUUCoreBluetoothWriteCharacteristicValueWatchdogBucket = @"UUCoreBluetoothWriteCharacteristicValueWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothReadRssiWatchdogBucket = @"UUCoreBluetoothReadRssiWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothPollRssiBucket = @"UUCoreBluetoothPollRssiBucket";
 
@@ -438,7 +440,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
 @property (nullable, copy, readwrite) UUDiscoverCharacteristicsBlock discoverCharacteristicsBlock;
 @property (nullable, nonatomic, strong, readwrite) NSMutableDictionary<NSString*, UUUpdateValueForCharacteristicsBlock>* updateValueForCharacteristicBlocks;
 @property (nullable, nonatomic, strong, readwrite) NSMutableDictionary<NSString*, UUUpdateValueForCharacteristicsBlock>* readValueForCharacteristicBlocks;
-@property (nullable, copy, readwrite) UUWriteValueForCharacteristicsBlock writeValueForCharacteristicBlock;
+@property (nullable, nonatomic, strong, readwrite) NSMutableDictionary<NSString*, UUWriteValueForCharacteristicsBlock>* writeValueForCharacteristicBlocks;
 @property (nullable, copy, readwrite) UUSetNotifyValueForCharacteristicsBlock setNotifyValueForCharacteristicBlock;
 @property (nullable, copy, readwrite) UUDiscoverDescriptorsBlock discoverDescriptorsBlock;
 @property (nullable, copy, readwrite) UUUpdateValueForDescriptorBlock updateValueForDescriptorBlock;
@@ -459,7 +461,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
         
         self.updateValueForCharacteristicBlocks = [NSMutableDictionary dictionary];
         self.readValueForCharacteristicBlocks = [NSMutableDictionary dictionary];
-        
+        self.writeValueForCharacteristicBlocks = [NSMutableDictionary dictionary];
     }
     
     return self;
@@ -485,6 +487,17 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (void)removeReadHandlerForCharacteristic:(nonnull CBCharacteristic*)characteristic
 {
     [self.readValueForCharacteristicBlocks uuSafeRemove:[[characteristic UUID] UUIDString]];
+}
+
+- (void)registerWriteHandler:(nullable UUWriteValueForCharacteristicsBlock)handler
+          forCharacteristic:(nonnull CBCharacteristic*)characteristic
+{
+    [self.writeValueForCharacteristicBlocks uuSafeSetValue:handler forKey:[[characteristic UUID] UUIDString]];
+}
+
+- (void)removeWriteHandlerForCharacteristic:(nonnull CBCharacteristic*)characteristic
+{
+    [self.writeValueForCharacteristicBlocks uuSafeRemove:[[characteristic UUID] UUIDString]];
 }
 
 - (void)peripheralDidUpdateName:(CBPeripheral *)peripheral
@@ -562,11 +575,10 @@ dispatch_queue_t UUCoreBluetoothQueue()
 
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error
 {
-    UUWriteValueForCharacteristicsBlock block = self.writeValueForCharacteristicBlock;
-    self.writeValueForCharacteristicBlock = nil;
-    if (block)
+    UUWriteValueForCharacteristicsBlock writeBlock = [self.writeValueForCharacteristicBlocks uuSafeGet:[characteristic.UUID UUIDString]];
+    if (writeBlock)
     {
-        block(peripheral, characteristic, error);
+        writeBlock(peripheral, characteristic, error);
     }
 }
 
@@ -755,6 +767,11 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (nonnull NSString*) uuReadCharacteristicValueWatchdogTimerId
 {
     return [self formatTimerId:kUUCoreBluetoothReadCharacteristicValueWatchdogBucket];
+}
+
+- (nonnull NSString*) uuWriteCharacteristicValueWatchdogTimerId
+{
+    return [self formatTimerId:kUUCoreBluetoothWriteCharacteristicValueWatchdogBucket];
 }
 
 - (nonnull NSString*) uuReadRssiWatchdogTimerId
@@ -1121,6 +1138,94 @@ dispatch_queue_t UUCoreBluetoothQueue()
     {
         [self readValueForCharacteristic:characteristic];
     }
+}
+
+- (void) uuWriteValue:(nonnull NSData*)data
+    forCharacteristic:(nonnull CBCharacteristic*)characteristic
+              timeout:(NSTimeInterval)timeout
+           completion:(nonnull UUWriteValueForCharacteristicsBlock)completion
+{
+    UUCoreBluetoothLog(@"Write value %@, for %@ - %@, characteristic: %@, timeout: %@",
+                       [data uuToHexString], self.uuIdentifier, self.name, characteristic, @(timeout));
+    
+    NSString* timerId = [self uuWriteCharacteristicValueWatchdogTimerId];
+    
+    UUPeripheralDelegate* delegate = [[self class] uuDelegateForPeripheral:self];
+    self.delegate = delegate;
+    
+    [delegate registerWriteHandler:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
+     {
+         error = [NSError uuOperationCompleteError:error];
+         
+         UUCoreBluetoothLog(@"Write value finished for %@ - %@, characteristic: %@, error: %@",
+                            peripheral.uuIdentifier, peripheral.name, characteristic, error);
+         
+         [UUTimer cancelWatchdogTimer:timerId];
+         [delegate removeWriteHandlerForCharacteristic:characteristic];
+         completion(peripheral, characteristic, error);
+     }
+    forCharacteristic:characteristic];
+    
+    [UUTimer startWatchdogTimer:timerId
+                        timeout:timeout
+                       userInfo:self
+                          block:^(id _Nullable userInfo)
+     {
+         CBPeripheral* peripheral = userInfo;
+         UUCoreBluetoothLog(@"Write value timeout for %@ - %@", peripheral.uuIdentifier, peripheral.name);
+         
+         NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
+         [delegate peripheral:peripheral didWriteValueForCharacteristic:characteristic error:err];
+     }];
+    
+    if (self.state != CBPeripheralStateConnected)
+    {
+        dispatch_async(UUCoreBluetoothQueue(), ^
+        {
+            NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeNotConnected];
+            [delegate peripheral:self didWriteValueForCharacteristic:characteristic error:err];
+        });
+    }
+    else if (characteristic == nil)
+    {
+        dispatch_async(UUCoreBluetoothQueue(), ^
+        {
+            NSError* err = [NSError uuExpectNonNilParamError:@"characteristic"];
+            [delegate peripheral:self didWriteValueForCharacteristic:characteristic error:err];
+        });
+    }
+    else
+    {
+        [self writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+    }
+}
+
+- (void) uuWriteValueWithoutResponse:(nonnull NSData*)data
+                   forCharacteristic:(nonnull CBCharacteristic*)characteristic
+                          completion:(nonnull UUWriteValueForCharacteristicsBlock)completion
+{
+    UUCoreBluetoothLog(@"Write value without response %@, for %@ - %@, characteristic: %@",
+                       [data uuToHexString], self.uuIdentifier, self.name, characteristic);
+    
+    NSError* err = nil;
+    
+    if (self.state != CBPeripheralStateConnected)
+    {
+        err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeNotConnected];
+    }
+    else if (characteristic == nil)
+    {
+        err = [NSError uuExpectNonNilParamError:@"characteristic"];
+    }
+    else
+    {
+        [self writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
+    }
+    
+    dispatch_async(UUCoreBluetoothQueue(), ^
+    {
+        completion(self, characteristic, err);
+    });
 }
 
 - (void) uuReadRssi:(NSTimeInterval)timeout
