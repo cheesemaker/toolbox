@@ -20,6 +20,10 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *discoverCharacteristicsToolbarButton;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *discoverIncludedServicesToolbarButton;
 
+@property (strong, nonatomic, nullable) UITextView* activeEditView;
+
+@property (assign) BOOL dismissTextViewOnScroll;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *tableBottomConstraint;
 
 @end
 
@@ -34,12 +38,13 @@
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 }
 
-- (void)didReceiveMemoryWarning
+- (void) viewWillDisappear:(BOOL)animated
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
-
 
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -47,64 +52,9 @@
     
     self.title = self.peripheral.name;
     
-    //[self updatePeripheralState];
-    
-//    if (self.peripheral.state != CBPeripheralStateConnected)
-//    {
-        /*
-        [[UUCoreBluetooth sharedInstance] connectPeripheral:self.peripheral
-                                                    timeout:30.0f
-                                                  connected:^(UUPeripheral * _Nonnull peripheral)
-         {
-             [self updatePeripheralState];
-             [self scanForCharacteristics];
-         }
-         disconnected:^(UUPeripheral * _Nonnull peripheral, NSError * _Nullable error)
-         {
-             [self updatePeripheralState];
-             
-         }];*/
-    /*}
-    else
-    {
-        //[self scanForCharacteristics];
-    }*/
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillHideNotification:) name:UIKeyboardWillHideNotification object:nil];
 }
-
-/*
-- (void) scanForCharacteristics
-{
-    [self.peripheral uuDiscoverCharacteristics:nil
-                                    forService:self.service
-                                       timeout:30.0f
-                                    completion:^(CBPeripheral * _Nonnull peripheral, CBService * _Nonnull service, NSError * _Nullable error)
-     {
-         UUDispatchMain(^
-         {
-             self.tableData = service.characteristics;
-             [self.tableView reloadData];
-         });
-     }];
-}*/
-
-/*
-- (void) updatePeripheralState
-{
-    dispatch_async(dispatch_get_main_queue(), ^
-                   {
-                       //self.navigationItem.prompt = UUCBPeripheralStateToString(self.peripheral.peripheralState);
-                   });
-}*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -182,6 +132,29 @@
                 [self readDataForCharacteristic:characteristic indexPath:indexPath];
             };
             
+            cell.writeDataClickedBlock = ^(CBCharacteristic* characteristic, NSData* data)
+            {
+                [self writeDataForCharacteristic:characteristic data:data indexPath:indexPath];
+            };
+            
+            cell.writeDataWithoutResponseClickedBlock = ^(CBCharacteristic* characteristic, NSData* data)
+            {
+                [self writeDataWithoutResponseForCharacteristic:characteristic data:data indexPath:indexPath];
+            };
+            
+            cell.textViewDidBeginEditingBlock = ^(UITextView* textView)
+            {
+                self.dismissTextViewOnScroll = NO;
+                self.activeEditView = textView;
+                [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+            };
+            
+            cell.textViewDidEndEditingBlock = ^(UITextView* textView)
+            {
+                self.dismissTextViewOnScroll = YES;
+                self.activeEditView = nil;
+            };
+            
             return cell;
         }
             
@@ -215,48 +188,6 @@
                peripheral, characteristic, characteristic.descriptors, error);
         }];
     }
-    
-    /*
-    CBCharacteristic* characteristic = self.tableData[indexPath.row];
-    
-    [self.peripheral uuSetNotifyValue:!characteristic.isNotifying
-                               forCharacteristic:characteristic
-                                         timeout:30.0f
-     notifyHandler:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
-    {
-        NSLog(@"Characteristic %@ value updated to %@", characteristic, [characteristic.value uuToHexString]);
-        
-        UUDispatchMain(^
-        {
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        });
-    }
-    completion:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
-    {
-        UUDispatchMain(^
-        {
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        });
-    }];
-    
-    [self.peripheral uuDiscoverDescriptorsForCharacteristic:characteristic
-                                              timeout:30.0f
-                                           completion:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
-    {
-        NSLog(@"Descriptor discovery complete for peripheral: %@, characteristic: %@, descriptors: %@, error: %@",
-              peripheral, characteristic, characteristic.descriptors, error);
-    }];
-    
-    [self.peripheral uuReadValueForCharacteristic:characteristic
-                                          timeout:30.0f
-                                       completion:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
-     {
-         UUDispatchMain(^
-         {
-             [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-         });
-     }];
-    */
 }
 
 - (IBAction)onDiscoverCharacteristics:(id)sender
@@ -289,6 +220,8 @@
                                          timeout:30.0f
                                    notifyHandler:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
      {
+         NSLog(@"NotifyHandler clicked");
+         
          [self reloadRow:indexPath];
          
      }
@@ -304,6 +237,31 @@
     [self.peripheral.peripheral uuReadValueForCharacteristic:characteristic
                                                      timeout:30.0f
                                                   completion:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
+    {
+        [self reloadRow:indexPath];
+    }];
+}
+
+- (void) writeDataForCharacteristic:(CBCharacteristic*)characteristic
+                               data:(NSData*)data
+                         indexPath:(NSIndexPath*)indexPath
+{
+    [self.peripheral.peripheral uuWriteValue:data
+                           forCharacteristic:characteristic
+                                     timeout:30.0f
+                                  completion:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
+    {
+        [self reloadRow:indexPath];
+    }];
+}
+
+- (void) writeDataWithoutResponseForCharacteristic:(CBCharacteristic*)characteristic
+                               data:(NSData*)data
+                          indexPath:(NSIndexPath*)indexPath
+{
+    [self.peripheral.peripheral uuWriteValueWithoutResponse:data
+                                          forCharacteristic:characteristic
+                                                 completion:^(CBPeripheral * _Nonnull peripheral, CBCharacteristic * _Nonnull characteristic, NSError * _Nullable error)
     {
         [self reloadRow:indexPath];
     }];
@@ -340,6 +298,44 @@
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
     });
+}
+
+
+- (void) scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (self.dismissTextViewOnScroll)
+    {
+        [self.activeEditView resignFirstResponder];
+    }
+}
+
+- (void) scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    self.dismissTextViewOnScroll = YES;
+}
+
+- (void) handleKeyboardWillShowNotification:(NSNotification*)notification
+{
+    CGRect keyboardFrame = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    [self.view layoutIfNeeded];
+    
+    [UIView animateWithDuration:0.3f animations:^
+     {
+         self.tableBottomConstraint.constant = keyboardFrame.size.height;
+         [self.view layoutIfNeeded];
+     }];
+}
+
+- (void) handleKeyboardWillHideNotification:(NSNotification*)notification
+{
+    [self.view layoutIfNeeded];
+    
+    [UIView animateWithDuration:0.3f animations:^
+     {
+         self.tableBottomConstraint.constant = 0;
+         [self.view layoutIfNeeded];
+     }];
 }
 
 
