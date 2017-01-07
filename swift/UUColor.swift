@@ -16,7 +16,7 @@ extension UIColor
     //
     // RRGGBB or RRGGBBAA
     //
-    static func uuColorFromHex(color: String) -> UIColor
+    static func uuColorFromHex(_ color: String) -> UIColor
     {
         var rgba : [CGFloat] = [0, 0, 0, 1]
         
