@@ -13,15 +13,34 @@
 
 import UIKit
 
-class UUDate: NSObject
+struct UUDate
 {
-    static let SecondsInOneMinute : TimeInterval = 60
-    static let MinutesInOneHour : TimeInterval = 60
-    static let HoursInOneDay : TimeInterval = 24
-    static let DaysInOneWeek : TimeInterval = 7
-    static let MillisInOneSecond : TimeInterval = 1000
+    struct Constants
+    {
+        static let secondsInOneMinute : TimeInterval = 60
+        static let minutesInOneHour : TimeInterval = 60
+        static let hoursInOneDay : TimeInterval = 24
+        static let daysInOneWeek : TimeInterval = 7
+        static let millisInOneSecond : TimeInterval = 1000
+        
+        static let secondsInOneHour : TimeInterval = secondsInOneMinute * minutesInOneHour
+        static let secondsInOneDay : TimeInterval = secondsInOneHour * hoursInOneDay
+        static let secondsInOneWeek : TimeInterval = secondsInOneDay * daysInOneWeek
+    }
     
-    static let SecondsInOneHour : TimeInterval = SecondsInOneMinute * MinutesInOneHour
-    static let SecondsInOneDay : TimeInterval = SecondsInOneHour * DaysInOneWeek
-    static let SecondsInOneWeek : TimeInterval = SecondsInOneDay * DaysInOneWeek
+    struct Formats
+    {
+        static let rfc3339 : String = "yyyy-MM-dd'T'HH:mm:ssZZ"
+        static let iso8601DateOnly : String = "yyyy-MM-dd"
+        static let iso8601TimeOnly : String = "HH:mm:ss"
+        static let iso8601DateTime : String = "yyyy-MM-dd HH:mm:ss"
+        static let timeOfDay : String = "h:mm a"
+        static let dayOfMonth : String = "d"
+        static let numericMonthOfYear : String = "L"
+        static let shortMonthOfYear : String = "LLL"
+        static let longMonthOfYear : String = "LLLL"
+        static let shortDayOfWeek : String = "EE"
+        static let longDayOfWeek : String = "EEEE"
+    }
+    
 }
