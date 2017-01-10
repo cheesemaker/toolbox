@@ -10,13 +10,15 @@
 //
 //  Contact: @ryandevore or ryan@silverpine.com
 
+import UIKit
+
 extension UIColor
 {
     // Creates a UIColor object from a hex string in the form of
     //
     // RRGGBB or RRGGBBAA
     //
-    static func uuColorFromHex(_ color: String) -> UIColor
+    public static func uuColorFromHex(_ color: String) -> UIColor
     {
         var rgba : [CGFloat] = [0, 0, 0, 1]
         
@@ -45,7 +47,7 @@ extension UIColor
     }
     
     // Calculates the midpoint value of each color component between two colors
-    static func uuCalculateMidColor(startColor: UIColor, endColor: UIColor) -> UIColor
+    public static func uuCalculateMidColor(startColor: UIColor, endColor: UIColor) -> UIColor
     {
         var startColors : [CGFloat] = [0, 0, 0, 0]
         startColor.getRed(&startColors[0], green: &startColors[1], blue: &startColors[2], alpha: &startColors[3])

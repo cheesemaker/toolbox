@@ -11,6 +11,8 @@
 //  Contact: @ryandevore or ryan@silverpine.com
 //
 
+import UIKit
+
 enum UUGradientDirection : Int
 {
     case Horizontal

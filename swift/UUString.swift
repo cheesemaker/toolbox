@@ -11,6 +11,8 @@
 //  Contact: @ryandevore or ryan@silverpine.com
 //
 
+import Foundation
+
 extension String
 {
     // Access a sub string based on integer start index and integer length. 
