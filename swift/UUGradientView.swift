@@ -13,19 +13,43 @@
 
 import UIKit
 
-enum UUGradientDirection : Int
+public enum UUGradientDirection : Int
 {
-    case Horizontal
-    case Vertical
+    case horizontal
+    case vertical
 }
 
 // This class is a simple UIView subclass that draws a gradient background using
 // two colors.
 //
 //
-@IBDesignable class UUGradientView : UIView
+@IBDesignable public class UUGradientView : UIView
 {
-    @IBInspectable var startColor : UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+    @IBInspectable public var startColor : UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+        {
+        didSet
+        {
+            self.setNeedsDisplay()
+        }
+    }
+    
+    @IBInspectable public var endColor : UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        {
+        didSet
+        {
+            self.setNeedsDisplay()
+        }
+    }
+    
+    @IBInspectable public var midPoint : Float = 0.5
+        {
+        didSet
+        {
+            self.setNeedsDisplay()
+        }
+    }
+    
+    public var direction : UUGradientDirection = .horizontal
     {
         didSet
         {
@@ -33,31 +57,16 @@ enum UUGradientDirection : Int
         }
     }
     
-    @IBInspectable var endColor : UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    public var transparentClipRect : CGRect = CGRect.zero
     {
         didSet
         {
             self.setNeedsDisplay()
+            self.isOpaque = false
         }
     }
     
-    @IBInspectable var midPoint : Float = 0.5
-    {
-        didSet
-        {
-            self.setNeedsDisplay()
-        }
-    }
-    
-    var direction : UUGradientDirection = .Horizontal
-    {
-        didSet
-        {
-            self.setNeedsDisplay()
-        }
-    }
-    
-    @IBInspectable var directionAdapter : Int
+    @IBInspectable public var directionAdapter : Int
     {
         get
         {
@@ -66,25 +75,25 @@ enum UUGradientDirection : Int
         
         set( val)
         {
-            self.direction = UUGradientDirection(rawValue: val) ?? .Horizontal
+            self.direction = UUGradientDirection(rawValue: val) ?? .horizontal
         }
     }
     
-    override init(frame: CGRect)
+    override required public init(frame: CGRect)
     {
         super.init(frame: frame)
     }
     
-    required init?(coder aDecoder: NSCoder)
+    required public init?(coder aDecoder: NSCoder)
     {
         super.init(coder: aDecoder)
     }
     
-    override func draw(_ rect: CGRect)
+    override public func draw(_ rect: CGRect)
     {
         let context = UIGraphicsGetCurrentContext()!
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-
+        
         let midColor = UIColor.uuCalculateMidColor(startColor: self.startColor, endColor: self.endColor)
         
         let colors : [CGColor] = [ self.startColor.cgColor, midColor.cgColor, self.endColor.cgColor ]
@@ -95,7 +104,7 @@ enum UUGradientDirection : Int
         var startPoint = CGPoint(x: rect.minX, y: rect.midY)
         var endPoint = CGPoint(x: rect.maxX, y: rect.midY)
         
-        if (self.direction == .Vertical)
+        if (self.direction == .vertical)
         {
             startPoint = CGPoint(x: rect.midX, y: rect.minY)
             endPoint = CGPoint(x: rect.midX, y: rect.maxY)
@@ -105,6 +114,9 @@ enum UUGradientDirection : Int
         context.addRect(rect)
         context.clip()
         context.drawLinearGradient(gradient, start: startPoint, end: endPoint, options: CGGradientDrawingOptions(rawValue: 0))
+        
         context.restoreGState()
+        
+        context.clear(transparentClipRect)
     }
 }
