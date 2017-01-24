@@ -365,7 +365,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
 {
     // Per CoreBluetooth documentation, a value of 127 indicates the RSSI
     // reading is not available
-    if (self.rssi.integerValue != 127)
+    if (rssi.integerValue != 127)
     {
         self.rssi = rssi;
         self.lastRssiUpdateTime = [NSDate date];
@@ -1520,18 +1520,15 @@ dispatch_queue_t UUCoreBluetoothQueue()
          [delegate.connectBlocks uuSafeRemove:peripheral.uuIdentifier];
          [delegate.disconnectBlocks uuSafeRemove:peripheral.uuIdentifier];
          
-         UUPeripheralDisconnectedBlock timeoutBlock = ^(CBPeripheral* _Nonnull peripheral, NSError* _Nullable error)
-         {
-             UUCoreBluetoothLog(@"Disconnected afer timeout from %@ - %@, error: %@", peripheral.identifier, peripheral.name, error);
-             
-             NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
-             [UUTimer cancelWatchdogTimer:timerId];
-             disconnected(peripheral, err);
-         };
+         // Issue the disconnect but disconnect any delegate's.  In the case of
+         // CBCentralManager being off or reset when this happens, immediately
+         // calling the disconnected block ensures there is not an infinite
+         // timeout situation.
+         [self uuDisconnectPeripheral:peripheral];
          
-         [delegate.disconnectBlocks uuSafeSetValue:timeoutBlock forKey:peripheral.uuIdentifier];
-         
-         [self cancelPeripheralConnection:peripheral];
+         NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
+         [UUTimer cancelWatchdogTimer:timerId];
+         disconnected(peripheral, err);
      }];
     
     [self connectPeripheral:peripheral options:options];
@@ -1675,11 +1672,6 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (void) handleCentralReset
 {
     UUCoreBluetoothLog(@"Central is resetting");
-    
-    for (UUPeripheral* p in self.peripherals.allValues)
-    {
-        [self disconnectPeripheral:p];
-    }
 }
 
 - (void) startScanForServices:(nullable NSArray<CBUUID *> *)serviceUUIDs
