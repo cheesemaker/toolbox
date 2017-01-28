@@ -61,8 +61,8 @@ public enum UUGradientDirection : Int
     {
         didSet
         {
-            self.setNeedsDisplay()
             self.isOpaque = false
+            self.setNeedsDisplay()
         }
     }
     
