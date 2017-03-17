@@ -31,7 +31,7 @@
 @property (assign, readwrite) NSTimeInterval interval;
 @property (assign, readwrite) BOOL repeat;
 
-@property (nonatomic, strong) dispatch_source_t dispatchSource;
+@property (atomic, strong) dispatch_source_t dispatchSource;
 
 @end
 
@@ -82,38 +82,19 @@
 {
     NSMutableDictionary* d = [self activeTimers];
     
-    [self logAllTimers:@"addTimer.before"];
-    
     @synchronized (d)
     {
         [d setValue:timer forKey:timer.timerId];
     }
-    
-    [self logAllTimers:@"addTimer.after"];
 }
 
 + (void) removeTimer:(nonnull UUTimer*)timer
 {
     NSMutableDictionary* d = [self activeTimers];
     
-    [self logAllTimers:@"removeTimer.before"];
-    
     @synchronized (d)
     {
         [d uuSafeRemove:timer.timerId];
-    }
-    
-    [self logAllTimers:@"removeTimer.after"];
-}
-
-+ (void) logAllTimers:(nonnull NSString*)fromWhere
-{
-    NSArray* list = [self listActiveTimers];
-    UUTimerLog(@"There are %@ active timers, fromWhere: %@", @(list.count), fromWhere);
-    
-    for (UUTimer* t in [self listActiveTimers])
-    {
-        UUTimerLog(@"Timer: %@, dispatchSource: %@, userInfo: %@", t.timerId, t.dispatchSource, t.userInfo);
     }
 }
 
@@ -179,33 +160,39 @@
 
 - (void) start
 {
-    UUTimerLog(@"Starting timer %@, interval: %@, repeat: %@, dispatchSource: %@, userInfo: %@",
-               self.timerId, @(self.interval), @(self.repeat), self.dispatchSource, self.userInfo);
-    
-    if (self.dispatchSource)
+    @synchronized (self)
     {
-        [[self class] addTimer:self];
-    
-        dispatch_resume(self.dispatchSource);
-    }
-    else
-    {
-        UUTimerLog(@"Cannot start timer %@ because dispatch source is nil", self.timerId);
+        UUTimerLog(@"Starting timer %@, interval: %@, repeat: %@, dispatchSource: %@, userInfo: %@",
+                   self.timerId, @(self.interval), @(self.repeat), self.dispatchSource, self.userInfo);
+        
+        if (self.dispatchSource)
+        {
+            [[self class] addTimer:self];
+            
+            dispatch_resume(self.dispatchSource);
+        }
+        else
+        {
+            UUTimerLog(@"Cannot start timer %@ because dispatch source is nil", self.timerId);
+        }
     }
 }
 
 - (void) cancel
 {
-    UUTimerLog(@"Cancelling timer %@, dispatchSource: %@, userInfo: %@", self.timerId, self.dispatchSource, self.userInfo);
-    
-    if (self.dispatchSource)
+    @synchronized (self)
     {
-        dispatch_source_cancel(self.dispatchSource);
+        UUTimerLog(@"Cancelling timer %@, dispatchSource: %@, userInfo: %@", self.timerId, self.dispatchSource, self.userInfo);
         
-        self.dispatchSource = nil;
+        if (self.dispatchSource)
+        {
+            dispatch_source_cancel(self.dispatchSource);
+            
+            self.dispatchSource = nil;
+        }
+        
+        [[self class] removeTimer:self];
     }
-    
-    [[self class] removeTimer:self];
 }
 
 @end
