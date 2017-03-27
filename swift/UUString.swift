@@ -15,23 +15,52 @@ import Foundation
 
 extension String
 {
-    // Access a sub string based on integer start index and integer length. 
-    // 
-    // Returns an empty string if arguments result in out of bounds ranges.
+    // Access a sub string based on integer start index and integer length.
     //
-    func uuSubString(from: Int, length: Int) -> String
+    // If the end index is out of bounds, will return as many characters as
+    // available up to the end of the string.
+    //
+    // Out of bounds indices are clamped to fit within range of the string.
+    //
+    public func uuSubString(_ from: Int, _ length: Int) -> String
     {
-        if (from >= 0 && length > 0)
+        var adjustedFrom = from
+        if (adjustedFrom < 0)
         {
-            let start = self.index(self.startIndex, offsetBy: from, limitedBy: self.endIndex)
-            let end = self.index(self.startIndex, offsetBy: (from + length), limitedBy: self.endIndex)
-            if (start != nil && end != nil)
-            {
-                let range = start! ..< end!
-                return self.substring(with: range)
-            }
+            adjustedFrom = 0
+        }
+        
+        var adjustedLength = length
+        if (adjustedLength > self.characters.count)
+        {
+            adjustedLength = self.characters.count
+        }
+        
+        let start = self.index(self.startIndex, offsetBy: adjustedFrom, limitedBy: self.endIndex)
+        var end = self.index(self.startIndex, offsetBy: (adjustedFrom + adjustedLength), limitedBy: self.endIndex)
+        if (end == nil)
+        {
+            end = self.endIndex
+        }
+        
+        if (start != nil && end != nil)
+        {
+            let range = start! ..< end!
+            return self.substring(with: range)
         }
         
         return ""
+    }
+    
+    // Returns the first N characters of the string
+    public func uuFirstNChars(_ count: Int) -> String
+    {
+        return uuSubString(0, count)
+    }
+    
+    // Returns the last N characters of the string
+    public func uuLastNChars(_ count: Int) -> String
+    {
+        return uuSubString(characters.count - count, count)
     }
 }
