@@ -32,18 +32,3 @@ extension Data
         return sb as String
     }
 }
-
-/*
-- (NSString*) uuToHexString
-    {
-        NSMutableString* sb = [NSMutableString string];
-        
-        const char* rawData = [self bytes];
-        int count = (int)self.length;
-        for (int i = 0; i < count; i++)
-        {
-            [sb appendFormat:@"%02X", (UInt8)rawData[i]];
-        }
-        
-        return sb;
-}*/
