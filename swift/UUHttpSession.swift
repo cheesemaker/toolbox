@@ -1,0 +1,429 @@
+//
+//  UUHttpSession.swift
+//  Useful Utilities - URLSession wrapper
+//
+//  Created by Ryan DeVore on 03/27/2017
+//
+//	License:
+//  You are free to use this code for whatever purposes you desire.
+//  The only requirement is that you smile everytime you use it.
+//
+//  Contact: @ryandevore or ryan@silverpine.com
+//
+
+import UIKit
+
+public enum UUHttpMethod : String
+{
+    case get
+    case post
+    case put
+    case delete
+    case head
+    case patch
+}
+
+public enum UUHttpSessionError : Int
+{
+    // Returned when URLSession completion block returns a non-nil Error.
+    // In this case, the underlying NSError is wrapped in the user info block
+    // using the NSUnderlyingError key
+    case HttpFailure = -1
+    
+    // Returned when the URLSession completion block returns with a nil Error
+    // and an HTTP return code that is not 2xx
+    case HttpError = -2
+    
+    // Returned when a user cancels an operation
+    case UserCancelled = -3
+}
+
+let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
+let UUHttpSessionHttpErrorCodeKey      = "UUHttpSessionHttpErrorCodeKey"
+let UUHttpSessionHttpErrorMessageKey   = "UUHttpSessionHttpErrorMessageKey"
+let UUHttpSessionAppResponseKey        = "UUHttpSessionAppResponseKey"
+
+struct UUContentType
+{
+    static let applicationJson  = "application/json"
+    static let textJson         = "text/json"
+    static let textHtml         = "text/html"
+    static let textPlain        = "text/plain"
+    static let binary           = "application/octet-stream"
+    static let imagePng         = "image/png"
+    static let imageJpeg        = "image/jpeg"
+}
+
+struct UUHeader
+{
+    static let contentLength = "Content-Length"
+    static let contentType = "Content-Type"
+}
+
+public class UUHttpRequest: NSObject
+{
+    public var url : String = ""
+    public var httpMethod : UUHttpMethod = .get
+    public var queryArguments : [String:String] = [:]
+    public var headerFields : [String:String] = [:]
+    public var body : Data? = nil
+    public var timeout : TimeInterval = 0
+    public var credentials : URLCredential? = nil
+    public var processMimeTypes : Bool = true
+    
+    var startTime : TimeInterval = 0
+    var httpRequest : URLRequest? = nil
+    
+    init(_ url : String)
+    {
+        super.init()
+        
+        self.url = url
+    }
+    
+    static func getRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
+    {
+        let req = UUHttpRequest.init(url)
+        req.httpMethod = .get
+        req.queryArguments = queryArguments
+        return req
+    }
+    
+    static func deleteRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
+    {
+        let req = UUHttpRequest.init(url)
+        req.httpMethod = .delete
+        req.queryArguments = queryArguments
+        return req
+    }
+    
+    static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String) -> UUHttpRequest
+    {
+        let req = UUHttpRequest.init(url)
+        req.httpMethod = .put
+        req.queryArguments = queryArguments
+        req.body = body
+        req.headerFields[UUHeader.contentType] = contentType
+        return req
+    }
+    
+    static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String) -> UUHttpRequest
+    {
+        let req = UUHttpRequest.init(url)
+        req.httpMethod = .post
+        req.queryArguments = queryArguments
+        req.body = body
+        req.headerFields[UUHeader.contentType] = contentType
+        return req
+    }
+    
+    static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String) -> UUHttpRequest
+    {
+        let req = UUHttpRequest.init(url)
+        req.httpMethod = .patch
+        req.queryArguments = queryArguments
+        req.body = body
+        req.headerFields[UUHeader.contentType] = contentType
+        return req
+    }
+}
+
+public class UUHttpResponse : NSObject
+{
+    public var httpError : Error? = nil
+    public var httpRequest : UUHttpRequest? = nil
+    public var httpResponse : HTTPURLResponse? = nil
+    public var parsedResponse : Any?
+    public var rawResponse : Data? = nil
+    public var rawResponsePath : String = ""
+    public var downloadTime : TimeInterval = 0
+    
+    init(_ request : UUHttpRequest, _ response : HTTPURLResponse)
+    {
+        httpRequest = request
+        httpResponse = response
+    }
+}
+
+public protocol UUHttpResponseHandler
+{
+    var supportedMimeTypes : [String] { get }
+    func parseResponse(_ data : Data, _ response: HTTPURLResponse, _ request: URLRequest) -> Any?
+}
+
+class UUTextResponseHandler : NSObject, UUHttpResponseHandler
+{
+    public var supportedMimeTypes: [String]
+    {
+        return [UUContentType.textHtml, UUContentType.textPlain]
+    }
+    
+    public func parseResponse(_ data: Data, _ response: HTTPURLResponse, _ request: URLRequest) -> Any?
+    {
+        var parsed : Any? = nil
+        
+        var responseEncoding : String.Encoding = .utf8
+        
+        if (response.textEncodingName != nil)
+        {
+            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(response.textEncodingName as CFString!)
+            responseEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))
+        }
+        
+        let stringResult : String? = String.init(data: data, encoding: responseEncoding)
+        if (stringResult != nil)
+        {
+            parsed = stringResult
+        }
+        
+        return parsed
+    }
+}
+
+class UUBinaryResponseHandler : NSObject, UUHttpResponseHandler
+{
+    public var supportedMimeTypes: [String]
+    {
+        return [UUContentType.binary]
+    }
+    
+    public func parseResponse(_ data: Data, _ response: HTTPURLResponse, _ request: URLRequest) -> Any?
+    {
+        return data
+    }
+}
+
+class UUJsonResponseHandler : NSObject, UUHttpResponseHandler
+{
+    public var supportedMimeTypes: [String]
+    {
+        return [UUContentType.applicationJson, UUContentType.textJson]
+    }
+    
+    public func parseResponse(_ data: Data, _ response: HTTPURLResponse, _ request: URLRequest) -> Any?
+    {
+        do
+        {
+            return try JSONSerialization.jsonObject(with: data, options: [])
+        }
+        catch (let err)
+        {
+            NSLog("Error deserializing JSON: \(err)")
+        }
+        
+        return nil
+    }
+}
+
+class UUImageResponseHandler : NSObject, UUHttpResponseHandler
+{
+    public var supportedMimeTypes: [String]
+    {
+        return [UUContentType.imagePng, UUContentType.imageJpeg]
+    }
+    
+    public func parseResponse(_ data: Data, _ response: HTTPURLResponse, _ request: URLRequest) -> Any?
+    {
+        return UIImage.init(data: data)
+    }
+}
+
+public class UUHttpSession: NSObject
+{
+    private static let kDefaultTimeout : TimeInterval = 120.0
+    
+    private var urlSession : URLSession? = nil
+    private var sessionConfiguration : URLSessionConfiguration? = nil
+    private var activeTasks : [URLSessionTask] = []
+    private var responseHandlers : [String:UUHttpResponseHandler] = [:]
+    
+    public static let shared = UUHttpSession()
+    
+    required override public init()
+    {
+        super.init()
+        
+        sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration?.timeoutIntervalForRequest = UUHttpSession.kDefaultTimeout
+        
+        urlSession = URLSession.init(configuration: sessionConfiguration!)
+        
+        installDefaultResponseHandlers()
+    }
+    
+    private func installDefaultResponseHandlers()
+    {
+        registerResponseHandler(UUJsonResponseHandler())
+        registerResponseHandler(UUTextResponseHandler())
+        registerResponseHandler(UUBinaryResponseHandler())
+        registerResponseHandler(UUImageResponseHandler())
+    }
+    
+    private func registerResponseHandler(_ handler : UUHttpResponseHandler)
+    {
+        for mimeType in handler.supportedMimeTypes
+        {
+            responseHandlers[mimeType] = handler
+        }
+    }
+    
+    private func executeRequest(_ request : UUHttpRequest, _ completion: @escaping (UUHttpResponse) -> Void) -> UUHttpRequest
+    {
+        request.httpRequest = buildRequest(request)
+        request.startTime = Date.timeIntervalSinceReferenceDate
+        
+        NSLog("Begin Request\n\nMethod: \(request.httpRequest?.httpMethod)\nURL:\(request.httpRequest?.url)\nHeaders: \(request.httpRequest?.allHTTPHeaderFields)")
+        
+        let task = urlSession!.dataTask(with: request.httpRequest!)
+        { (data : Data?, response: URLResponse?, error : Error?) in
+            
+            self.handleResponse(request, data, response, error, completion)
+        }
+        
+        activeTasks.append(task)
+        task.resume()
+        return request
+    }
+    
+    private func buildRequest(_ request : UUHttpRequest) -> URLRequest
+    {
+        var fullUrl = request.url;
+        if (request.queryArguments.count > 0)
+        {
+            fullUrl = "\(request.url)\(request.queryArguments.uuBuildQueryString())"
+        }
+        
+        var req : URLRequest = URLRequest.init(url: URL.init(string: fullUrl)!)
+        req.httpMethod = request.httpMethod.rawValue.uppercased()
+        req.timeoutInterval = request.timeout
+        
+        for key in request.headerFields.keys
+        {
+            let val = request.headerFields[key]
+            if (val != nil)
+            {
+                req.addValue(key, forHTTPHeaderField: val!)
+            }
+        }
+        
+        if (request.body != nil)
+        {
+            req.setValue(String.init(format: "%lu", request.body!.count), forHTTPHeaderField: UUHeader.contentLength)
+            req.httpBody = request.body
+        }
+        
+        return req;
+    }
+    
+    private func handleResponse(
+        _ request : UUHttpRequest,
+        _ data : Data?,
+        _ response : URLResponse?,
+        _ error : Error?,
+        _ completion: @escaping (UUHttpResponse) -> Void)
+    {
+        let httpResponse = response as? HTTPURLResponse
+        
+        let uuResponse : UUHttpResponse = UUHttpResponse(request, httpResponse!)
+        uuResponse.httpRequest = request
+        uuResponse.httpResponse = httpResponse!
+        uuResponse.rawResponse = data
+        
+        var err : Error? = nil
+        var parsedResponse : Any? = nil
+        
+        let httpResponseCode : Int = (httpResponse?.statusCode)!
+        
+        if (error != nil)
+        {
+            let userInfo = [NSUnderlyingErrorKey:error]
+            err = NSError.init(domain: UUHttpSessionErrorDomain, code: UUHttpSessionError.HttpFailure.rawValue, userInfo: userInfo)
+        }
+        else
+        {
+            if (request.processMimeTypes)
+            {
+                parsedResponse = parseResponse(request, httpResponse!, data)
+            }
+            else
+            {
+                if (!isHttpSuccessResponseCode(httpResponseCode))
+                {
+                    var d : [String:Any?] = [:]
+                    d[UUHttpSessionHttpErrorCodeKey] = NSNumber(value: httpResponseCode)
+                    d[UUHttpSessionHttpErrorMessageKey] = HTTPURLResponse.localizedString(forStatusCode: httpResponseCode)
+                    d[UUHttpSessionAppResponseKey] = parsedResponse
+                    
+                    err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.HttpError.rawValue, userInfo:d)
+                }
+            }
+        }
+        
+        uuResponse.httpError = err;
+        uuResponse.parsedResponse = parsedResponse;
+        uuResponse.downloadTime = Date.timeIntervalSinceReferenceDate - request.startTime
+        
+        completion(uuResponse)
+    }
+    
+    
+    private func parseResponse(_ request : UUHttpRequest, _ httpResponse : HTTPURLResponse, _ data : Data?) -> Any?
+    {
+        let httpRequest = request.httpRequest
+        
+        let mimeType = httpResponse.mimeType
+        
+        NSLog("Handle Response\n\nMethod: \(request.httpRequest?.httpMethod)\nURL: \(request.httpRequest?.url)\nMIMEType: \(mimeType)\nRaw Response:\n\n\(String.init(data: data!, encoding: .utf8))\n\n")
+        
+        if (mimeType != nil)
+        {
+            let handler : UUHttpResponseHandler? = responseHandlers[mimeType!]
+            if (handler != nil && data != nil && httpRequest != nil)
+            {
+                let parsedResponse = handler!.parseResponse(data!, httpResponse, httpRequest!)
+                return parsedResponse
+            }
+        }
+        
+        return nil
+    }
+    
+    private func isHttpSuccessResponseCode(_ responseCode : Int) -> Bool
+    {
+        return (responseCode >= 200 && responseCode < 300)
+    }
+    
+    public static func executeRequest(_ request : UUHttpRequest, _ completion: @escaping (UUHttpResponse) -> Void)
+    {
+        _ = shared.executeRequest(request, completion)
+    }
+    
+    public static func get(_ url : String, _ queryArguments : [String:String], _ completion: @escaping (UUHttpResponse) -> Void)
+    {
+        let req = UUHttpRequest.getRequest(url, queryArguments)
+        executeRequest(req, completion)
+    }
+    
+    public static func delete(_ url : String, _ queryArguments : [String:String], _ completion: @escaping (UUHttpResponse) -> Void)
+    {
+        let req = UUHttpRequest.deleteRequest(url, queryArguments)
+        executeRequest(req, completion)
+    }
+    
+    public static func put(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String, _ completion: @escaping (UUHttpResponse) -> Void)
+    {
+        let req = UUHttpRequest.putRequest(url, queryArguments, body, contentType)
+        executeRequest(req, completion)
+    }
+    
+    public static func post(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String, _ completion: @escaping (UUHttpResponse) -> Void)
+    {
+        let req = UUHttpRequest.postRequest(url, queryArguments, body, contentType)
+        executeRequest(req, completion)
+    }
+    
+    public static func registerResponseHandler(_ handler : UUHttpResponseHandler)
+    {
+        shared.registerResponseHandler(handler)
+    }
+}

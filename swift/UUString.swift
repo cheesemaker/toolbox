@@ -63,4 +63,15 @@ extension String
     {
         return uuSubString(characters.count - count, count)
     }
+    
+    public func uuUrlEncoded() -> String
+    {
+        var encoded : String? = addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        if (encoded == nil)
+        {
+            encoded = self
+        }
+        
+        return encoded!
+    }
 }
