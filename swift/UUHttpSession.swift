@@ -15,12 +15,12 @@ import UIKit
 
 public enum UUHttpMethod : String
 {
-    case get
-    case post
-    case put
-    case delete
-    case head
-    case patch
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case delete = "DELETE"
+    case head = "HEAD"
+    case patch = "PATCH"
 }
 
 public enum UUHttpSessionError : Int
@@ -42,6 +42,8 @@ let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
 let UUHttpSessionHttpErrorCodeKey      = "UUHttpSessionHttpErrorCodeKey"
 let UUHttpSessionHttpErrorMessageKey   = "UUHttpSessionHttpErrorMessageKey"
 let UUHttpSessionAppResponseKey        = "UUHttpSessionAppResponseKey"
+
+let kUUHttpDefaultTimeout : TimeInterval = 60.0
 
 struct UUContentType
 {
@@ -67,7 +69,8 @@ public class UUHttpRequest: NSObject
     public var queryArguments : [String:String] = [:]
     public var headerFields : [String:String] = [:]
     public var body : Data? = nil
-    public var timeout : TimeInterval = 0
+    public var bodyContentType : String? = nil
+    public var timeout : TimeInterval = kUUHttpDefaultTimeout
     public var credentials : URLCredential? = nil
     public var processMimeTypes : Bool = true
     
@@ -97,33 +100,33 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String) -> UUHttpRequest
+    static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .put
         req.queryArguments = queryArguments
         req.body = body
-        req.headerFields[UUHeader.contentType] = contentType
+        req.bodyContentType = contentType
         return req
     }
     
-    static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String) -> UUHttpRequest
+    static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .post
         req.queryArguments = queryArguments
         req.body = body
-        req.headerFields[UUHeader.contentType] = contentType
+        req.bodyContentType = contentType
         return req
     }
     
-    static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String) -> UUHttpRequest
+    static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .patch
         req.queryArguments = queryArguments
         req.body = body
-        req.headerFields[UUHeader.contentType] = contentType
+        req.bodyContentType = contentType
         return req
     }
 }
@@ -138,7 +141,7 @@ public class UUHttpResponse : NSObject
     public var rawResponsePath : String = ""
     public var downloadTime : TimeInterval = 0
     
-    init(_ request : UUHttpRequest, _ response : HTTPURLResponse)
+    init(_ request : UUHttpRequest, _ response : HTTPURLResponse?)
     {
         httpRequest = request
         httpResponse = response
@@ -208,7 +211,7 @@ class UUJsonResponseHandler : NSObject, UUHttpResponseHandler
         }
         catch (let err)
         {
-            NSLog("Error deserializing JSON: \(err)")
+            UUDebugLog("Error deserializing JSON: \(err)")
         }
         
         return nil
@@ -230,8 +233,6 @@ class UUImageResponseHandler : NSObject, UUHttpResponseHandler
 
 public class UUHttpSession: NSObject
 {
-    private static let kDefaultTimeout : TimeInterval = 120.0
-    
     private var urlSession : URLSession? = nil
     private var sessionConfiguration : URLSessionConfiguration? = nil
     private var activeTasks : [URLSessionTask] = []
@@ -244,7 +245,7 @@ public class UUHttpSession: NSObject
         super.init()
         
         sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration?.timeoutIntervalForRequest = UUHttpSession.kDefaultTimeout
+        sessionConfiguration?.timeoutIntervalForRequest = kUUHttpDefaultTimeout
         
         urlSession = URLSession.init(configuration: sessionConfiguration!)
         
@@ -272,7 +273,7 @@ public class UUHttpSession: NSObject
         request.httpRequest = buildRequest(request)
         request.startTime = Date.timeIntervalSinceReferenceDate
         
-        NSLog("Begin Request\n\nMethod: \(request.httpRequest?.httpMethod)\nURL:\(request.httpRequest?.url)\nHeaders: \(request.httpRequest?.allHTTPHeaderFields)")
+        UUDebugLog("Begin Request\n\nMethod: \(String(describing: request.httpRequest?.httpMethod))\nURL:\(String(describing: request.httpRequest?.url))\nHeaders: \(String(describing: request.httpRequest?.allHTTPHeaderFields))")
         
         let task = urlSession!.dataTask(with: request.httpRequest!)
         { (data : Data?, response: URLResponse?, error : Error?) in
@@ -294,7 +295,7 @@ public class UUHttpSession: NSObject
         }
         
         var req : URLRequest = URLRequest.init(url: URL.init(string: fullUrl)!)
-        req.httpMethod = request.httpMethod.rawValue.uppercased()
+        req.httpMethod = request.httpMethod.rawValue
         req.timeoutInterval = request.timeout
         
         for key in request.headerFields.keys
@@ -302,7 +303,7 @@ public class UUHttpSession: NSObject
             let val = request.headerFields[key]
             if (val != nil)
             {
-                req.addValue(key, forHTTPHeaderField: val!)
+                req.addValue(val!, forHTTPHeaderField: key)
             }
         }
         
@@ -310,6 +311,11 @@ public class UUHttpSession: NSObject
         {
             req.setValue(String.init(format: "%lu", request.body!.count), forHTTPHeaderField: UUHeader.contentLength)
             req.httpBody = request.body
+            
+            if (request.bodyContentType != nil && request.bodyContentType!.characters.count > 0)
+            {
+                req.addValue(request.bodyContentType!, forHTTPHeaderField: UUHeader.contentType)
+            }
         }
         
         return req;
@@ -322,40 +328,51 @@ public class UUHttpSession: NSObject
         _ error : Error?,
         _ completion: @escaping (UUHttpResponse) -> Void)
     {
-        let httpResponse = response as? HTTPURLResponse
+        let httpResponse : HTTPURLResponse? = response as? HTTPURLResponse
         
-        let uuResponse : UUHttpResponse = UUHttpResponse(request, httpResponse!)
-        uuResponse.httpRequest = request
-        uuResponse.httpResponse = httpResponse!
+        let uuResponse : UUHttpResponse = UUHttpResponse(request, httpResponse)
         uuResponse.rawResponse = data
         
         var err : Error? = nil
         var parsedResponse : Any? = nil
         
-        let httpResponseCode : Int = (httpResponse?.statusCode)!
+        var httpResponseCode : Int = 0
+        
+        if (httpResponse != nil)
+        {
+            httpResponseCode = httpResponse!.statusCode
+        }
+        
+        UUDebugLog("Http Response Code: %d", httpResponseCode)
         
         if (error != nil)
         {
-            let userInfo = [NSUnderlyingErrorKey:error]
+            UUDebugLog("Got an error: \(error!)")
+            
+            var userInfo : [AnyHashable : Any]  = [:]
+            userInfo[NSUnderlyingErrorKey] = error
             err = NSError.init(domain: UUHttpSessionErrorDomain, code: UUHttpSessionError.HttpFailure.rawValue, userInfo: userInfo)
         }
         else
         {
             if (request.processMimeTypes)
             {
-                parsedResponse = parseResponse(request, httpResponse!, data)
-            }
-            else
-            {
-                if (!isHttpSuccessResponseCode(httpResponseCode))
+                parsedResponse = parseResponse(request, httpResponse, data)
+                if (parsedResponse is Error)
                 {
-                    var d : [String:Any?] = [:]
-                    d[UUHttpSessionHttpErrorCodeKey] = NSNumber(value: httpResponseCode)
-                    d[UUHttpSessionHttpErrorMessageKey] = HTTPURLResponse.localizedString(forStatusCode: httpResponseCode)
-                    d[UUHttpSessionAppResponseKey] = parsedResponse
-                    
-                    err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.HttpError.rawValue, userInfo:d)
+                    err = (parsedResponse as! Error)
+                    parsedResponse = nil
                 }
+            }
+            
+            if (!isHttpSuccessResponseCode(httpResponseCode))
+            {
+                var d : [AnyHashable:Any] = [:]
+                d[UUHttpSessionHttpErrorCodeKey] = NSNumber(value: httpResponseCode)
+                d[UUHttpSessionHttpErrorMessageKey] = HTTPURLResponse.localizedString(forStatusCode: httpResponseCode)
+                d[UUHttpSessionAppResponseKey] = parsedResponse
+                
+                err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.HttpError.rawValue, userInfo:d)
             }
         }
         
@@ -366,22 +383,26 @@ public class UUHttpSession: NSObject
         completion(uuResponse)
     }
     
-    
-    private func parseResponse(_ request : UUHttpRequest, _ httpResponse : HTTPURLResponse, _ data : Data?) -> Any?
+    private func parseResponse(_ request : UUHttpRequest, _ httpResponse : HTTPURLResponse?, _ data : Data?) -> Any?
     {
-        let httpRequest = request.httpRequest
-        
-        let mimeType = httpResponse.mimeType
-        
-        NSLog("Handle Response\n\nMethod: \(request.httpRequest?.httpMethod)\nURL: \(request.httpRequest?.url)\nMIMEType: \(mimeType)\nRaw Response:\n\n\(String.init(data: data!, encoding: .utf8))\n\n")
-        
-        if (mimeType != nil)
+        if (httpResponse != nil)
         {
-            let handler : UUHttpResponseHandler? = responseHandlers[mimeType!]
-            if (handler != nil && data != nil && httpRequest != nil)
+            let httpRequest = request.httpRequest
+            
+            let mimeType = httpResponse!.mimeType
+            
+            UUDebugLog("Parsing response,\n%@ %@", String(describing: httpRequest?.httpMethod), String(describing: httpRequest?.url))
+            UUDebugLog("Response Mime: %@", String(describing: mimeType))
+            UUDebugLog("Raw Response: %@", String(describing: String.init(data: data!, encoding: .utf8)))
+            
+            if (mimeType != nil)
             {
-                let parsedResponse = handler!.parseResponse(data!, httpResponse, httpRequest!)
-                return parsedResponse
+                let handler : UUHttpResponseHandler? = responseHandlers[mimeType!]
+                if (handler != nil && data != nil && httpRequest != nil)
+                {
+                    let parsedResponse = handler!.parseResponse(data!, httpResponse!, httpRequest!)
+                    return parsedResponse
+                }
             }
         }
         
@@ -410,13 +431,13 @@ public class UUHttpSession: NSObject
         executeRequest(req, completion)
     }
     
-    public static func put(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String, _ completion: @escaping (UUHttpResponse) -> Void)
+    public static func put(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String?, _ completion: @escaping (UUHttpResponse) -> Void)
     {
         let req = UUHttpRequest.putRequest(url, queryArguments, body, contentType)
         executeRequest(req, completion)
     }
     
-    public static func post(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String, _ completion: @escaping (UUHttpResponse) -> Void)
+    public static func post(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String?, _ completion: @escaping (UUHttpResponse) -> Void)
     {
         let req = UUHttpRequest.postRequest(url, queryArguments, body, contentType)
         executeRequest(req, completion)
