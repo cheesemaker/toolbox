@@ -36,6 +36,10 @@ public enum UUHttpSessionError : Int
     
     // Returned when a user cancels an operation
     case UserCancelled = -3
+    
+    // The request URL and/or query string parameters resulted in an invalid
+    // URL.
+    case InvalidRequest = -4
 }
 
 let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
@@ -270,7 +274,17 @@ public class UUHttpSession: NSObject
     
     private func executeRequest(_ request : UUHttpRequest, _ completion: @escaping (UUHttpResponse) -> Void) -> UUHttpRequest
     {
-        request.httpRequest = buildRequest(request)
+        let httpRequest : URLRequest? = buildRequest(request)
+        if (httpRequest == nil)
+        {
+            let uuResponse : UUHttpResponse = UUHttpResponse(request, nil)
+            uuResponse.httpError = NSError.init(domain: UUHttpSessionErrorDomain, code: UUHttpSessionError.InvalidRequest.rawValue, userInfo: nil)
+            completion(uuResponse)
+            return request
+        }
+        
+        request.httpRequest = httpRequest!
+        
         request.startTime = Date.timeIntervalSinceReferenceDate
         
         UUDebugLog("Begin Request\n\nMethod: \(String(describing: request.httpRequest?.httpMethod))\nURL:\(String(describing: request.httpRequest?.url))\nHeaders: \(String(describing: request.httpRequest?.allHTTPHeaderFields))")
@@ -286,7 +300,7 @@ public class UUHttpSession: NSObject
         return request
     }
     
-    private func buildRequest(_ request : UUHttpRequest) -> URLRequest
+    private func buildRequest(_ request : UUHttpRequest) -> URLRequest?
     {
         var fullUrl = request.url;
         if (request.queryArguments.count > 0)
@@ -294,7 +308,13 @@ public class UUHttpSession: NSObject
             fullUrl = "\(request.url)\(request.queryArguments.uuBuildQueryString())"
         }
         
-        var req : URLRequest = URLRequest.init(url: URL.init(string: fullUrl)!)
+        let url = URL.init(string: fullUrl)
+        if (url == nil)
+        {
+            return nil
+        }
+        
+        var req : URLRequest = URLRequest.init(url: url!)
         req.httpMethod = request.httpMethod.rawValue
         req.timeoutInterval = request.timeout
         
@@ -318,7 +338,7 @@ public class UUHttpSession: NSObject
             }
         }
         
-        return req;
+        return req
     }
     
     private func handleResponse(
