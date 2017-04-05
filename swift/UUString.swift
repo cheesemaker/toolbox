@@ -64,9 +64,16 @@ extension String
         return uuSubString(characters.count - count, count)
     }
     
+    private static let kUrlEncodingChars = "!*'();:@&=+$,/?%#[]"
+    private static let kUrlEncodingCharSet = CharacterSet.init(charactersIn: kUrlEncodingChars).inverted
+    
+    // Percent encodes the following characters:
+    //
+    // !*'();:@&=+$,/?%#[]
+    //
     public func uuUrlEncoded() -> String
     {
-        var encoded : String? = addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        var encoded : String? = addingPercentEncoding(withAllowedCharacters: String.kUrlEncodingCharSet)
         if (encoded == nil)
         {
             encoded = self
