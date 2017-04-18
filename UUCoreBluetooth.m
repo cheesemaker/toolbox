@@ -1504,11 +1504,18 @@ dispatch_queue_t UUCoreBluetoothQueue()
 
 - (void) uuStopScanning
 {
-    UUCoreBluetoothLog(@"Stopping BTLE scan");
-    [self stopScan];
+    UUCoreBluetoothLog(@"Stopping BTLE scan, state: %@", UUCBManagerStateToString(self.state));
     
     UUCentralManagerDelegate* delegate = [self uuCentralManagerDelegate];
     delegate.peripheralFoundBlock = nil;
+    
+    if (![self uuIsPoweredOn])
+    {
+        UUCoreBluetoothLog(@"Central is not powered on, cannot stop scanning now!");
+        return;
+    }
+    
+    [self stopScan];
 }
 
 - (void) uuConnectPeripheral:(nonnull CBPeripheral*)peripheral
@@ -1575,6 +1582,13 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (void) uuDisconnectPeripheral:(nonnull CBPeripheral*)peripheral
 {
     UUCoreBluetoothLog(@"Cancelling connection to peripheral %@ - %@", peripheral.uuIdentifier, peripheral.name);
+    
+    if (![self uuIsPoweredOn])
+    {
+        UUCoreBluetoothLog(@"Central is not powered on, cannot cancel a connection!");
+        return;
+    }
+    
     [self cancelPeripheralConnection:peripheral];
 }
 
