@@ -39,15 +39,7 @@
 
 + (nonnull dispatch_queue_t) backgroundTimerQueue
 {
-    static dispatch_queue_t theBackgroundTimerQueue = nil;
-    static dispatch_once_t onceToken;
-    
-    dispatch_once (&onceToken, ^
-    {
-        theBackgroundTimerQueue = dispatch_queue_create("UUTimer.BackgroundTimers", DISPATCH_QUEUE_SERIAL);
-    });
-    
-    return theBackgroundTimerQueue;
+    return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 }
 
 + (nonnull dispatch_queue_t) mainThreadTimerQueue
