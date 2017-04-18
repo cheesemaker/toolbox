@@ -1519,6 +1519,13 @@ dispatch_queue_t UUCoreBluetoothQueue()
 {
     UUCoreBluetoothLog(@"Connecting to %@ - %@, timeout: %@", peripheral.identifier, peripheral.name, @(timeout));
     
+    if (![self uuIsPoweredOn])
+    {
+        NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeCentralNotReady];
+        disconnected(peripheral, err);
+        return;
+    }
+    
     NSString* timerId = [peripheral uuConnectWatchdogTimerId];
     
     UUCentralManagerDelegate* delegate = [self uuCentralManagerDelegate];
