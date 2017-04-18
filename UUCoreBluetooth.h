@@ -151,6 +151,10 @@ typedef NS_ENUM(NSUInteger, UUCoreBluetoothErrorCode)
     // An operation was passed an invalid argument.  Inspect user info for
     // specific details
     UUCoreBluetoothErrorCodeInvalidParam = 6,
+    
+    // An operation was attempted while CBCentralManager was in a state other
+    // that 'On'
+    UUCoreBluetoothErrorCodeCentralNotReady = 7,
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,6 +170,9 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 ////////////////////////////////////////////////////////////////////////////////
 
 @interface CBCentralManager (UUCoreBluetooth)
+
+// Returns a flag indicating whether the central state is powered on or not.
+- (BOOL) uuIsPoweredOn;
 
 // Block based wrapper around CBCentralManager scanForPeripheralsWithServices:options
 - (void) uuScanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs
@@ -379,5 +386,15 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 
 // Returns a flag indicating if RSSI polling is active
 - (BOOL) isPollingForRssi:(nonnull UUPeripheral*)peripheral;
+
+// Cancels any existing timer with this ID, and kicks off a new timer
+// on the UUCoreBluetooth queue. If the timeout value is negative, the
+// new timer will not be started.
++ (void) startWatchdogTimer:(nonnull NSString*)timerId
+                    timeout:(NSTimeInterval)timeout
+                   userInfo:(nullable id)userInfo
+                      block:(nonnull void (^)(id _Nullable userInfo))block;
+
++ (void) cancelWatchdogTimer:(nonnull NSString*)timerId;
 
 @end
