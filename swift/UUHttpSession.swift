@@ -215,7 +215,7 @@ class UUJsonResponseHandler : NSObject, UUHttpResponseHandler
         }
         catch (let err)
         {
-            UUDebugLog("Error deserializing JSON: \(err)")
+            UUDebugLog("Error deserializing JSON: %@", String(describing: err))
         }
         
         return nil
@@ -287,7 +287,10 @@ public class UUHttpSession: NSObject
         
         request.startTime = Date.timeIntervalSinceReferenceDate
         
-        UUDebugLog("Begin Request\n\nMethod: \(String(describing: request.httpRequest?.httpMethod))\nURL:\(String(describing: request.httpRequest?.url))\nHeaders: \(String(describing: request.httpRequest?.allHTTPHeaderFields))")
+        UUDebugLog("Begin Request\n\nMethod: %@\nURL: %@\nHeaders: %@)",
+            String(describing: request.httpRequest?.httpMethod),
+            String(describing: request.httpRequest?.url),
+            String(describing: request.httpRequest?.allHTTPHeaderFields))
         
         let task = urlSession!.dataTask(with: request.httpRequest!)
         { (data : Data?, response: URLResponse?, error : Error?) in
@@ -367,7 +370,7 @@ public class UUHttpSession: NSObject
         
         if (error != nil)
         {
-            UUDebugLog("Got an error: \(error!)")
+            UUDebugLog("Got an error: %@", String(describing: error!))
             
             var userInfo : [AnyHashable : Any]  = [:]
             userInfo[NSUnderlyingErrorKey] = error

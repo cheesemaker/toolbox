@@ -36,7 +36,7 @@ func UUDebugLog(function : NSString = #function, file : NSString = #file, line :
  
         let fileNameOnly : String = file.lastPathComponent
         let s = NSString.init(format: "\(fileNameOnly) [\(function):\(line)] - \(format)", arguments: p)
-        NSLog(s as String)
+        NSLog("%@", s as String)
     })
 #endif
 }
