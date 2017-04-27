@@ -1617,6 +1617,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
 @property (assign, readwrite) BOOL isScanning;
 
 @property (nullable, copy, readwrite) UUPeripheralFoundBlock peripheralFoundBlock;
+@property (nullable, copy, readwrite) UUCentralStateChangedBlock centralStateChangedBlock;
 
 @property (nullable, nonatomic, strong) NSMutableDictionary< NSString*, UUPeripheralBlock >* rssiPollingBlocks;
 
@@ -1673,6 +1674,11 @@ dispatch_queue_t UUCoreBluetoothQueue()
     return self.centralManager.state;
 }
 
+- (void) registerForCentralStateChanges:(nullable UUCentralStateChangedBlock)block
+{
+    self.centralStateChangedBlock = block;
+}
+
 - (void) handleCentralStateChanged:(CBManagerState)state
 {
     for (UUPeripheral* p in self.peripherals.allValues)
@@ -1709,9 +1715,10 @@ dispatch_queue_t UUCoreBluetoothQueue()
             
         }
     }
-    if (state == CBManagerStatePoweredOn && self.isScanning)
+    
+    if (self.centralStateChangedBlock)
     {
-        [self resumeScanning];
+        self.centralStateChangedBlock(state);
     }
 }
 

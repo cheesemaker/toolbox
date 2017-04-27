@@ -39,6 +39,7 @@ typedef void (^UUWriteValueForDescriptorBlock)(CBPeripheral* _Nonnull peripheral
 typedef void (^UUPeripheralBlock)(UUPeripheral* _Nonnull peripheral);
 typedef void (^UUPeripheralErrorBlock)(UUPeripheral* _Nonnull peripheral, NSError* _Nullable error);
 
+typedef void (^UUCentralStateChangedBlock)(CBManagerState state);
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UUPeripheral
@@ -331,6 +332,9 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 
 // Returns current CBCentralManager.state value
 - (CBManagerState) centralState;
+
+// Register a listener for central state changes
+- (void) registerForCentralStateChanges:(nullable UUCentralStateChangedBlock)block;
 
 // Initiates a CoreBluetooth scan for nearby peripherals
 //
