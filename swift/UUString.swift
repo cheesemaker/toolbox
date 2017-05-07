@@ -81,4 +81,10 @@ extension String
         
         return encoded!
     }
+    
+    // Trim whitespace from beginning and end of string
+    public func uuTrimWhitespace() -> String
+    {
+        return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    }
 }
