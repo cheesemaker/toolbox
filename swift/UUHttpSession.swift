@@ -25,21 +25,32 @@ public enum UUHttpMethod : String
 
 public enum UUHttpSessionError : Int
 {
-    // Returned when URLSession completion block returns a non-nil Error.
+    // Returned when URLSession returns a non-nil error and the underlying
+    // error domain is NSURLErrorDomain and the underlying error code is
+    // NSURLErrorNotConnectedToInternet
+    case noInternet = 0x1000
+    
+    // Returned when URLSession returns a non-nil error and the underlying
+    // error domain is NSURLErrorDomain and the underlying error code is
+    // NSURLErrorCannotFindHost
+    case cannotFindHost = 0x1001
+    
+    // Returned when URLSession completion block returns a non-nil Error, and
+    // that error is not specifically mapped to a more common UUHttpSessionError
     // In this case, the underlying NSError is wrapped in the user info block
     // using the NSUnderlyingError key
-    case HttpFailure = -1
+    case httpFailure = 0x2000
     
     // Returned when the URLSession completion block returns with a nil Error
     // and an HTTP return code that is not 2xx
-    case HttpError = -2
+    case httpError = 0x2001
     
     // Returned when a user cancels an operation
-    case UserCancelled = -3
+    case userCancelled = 0x2002
     
     // The request URL and/or query string parameters resulted in an invalid
     // URL.
-    case InvalidRequest = -4
+    case invalidRequest = 0x2003
 }
 
 let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
@@ -278,7 +289,7 @@ public class UUHttpSession: NSObject
         if (httpRequest == nil)
         {
             let uuResponse : UUHttpResponse = UUHttpResponse(request, nil)
-            uuResponse.httpError = NSError.init(domain: UUHttpSessionErrorDomain, code: UUHttpSessionError.InvalidRequest.rawValue, userInfo: nil)
+            uuResponse.httpError = NSError.init(domain: UUHttpSessionErrorDomain, code: UUHttpSessionError.invalidRequest.rawValue, userInfo: nil)
             completion(uuResponse)
             return request
         }
@@ -372,9 +383,27 @@ public class UUHttpSession: NSObject
         {
             UUDebugLog("Got an error: %@", String(describing: error!))
             
+            var errCode : UUHttpSessionError = UUHttpSessionError.httpFailure
+            
+            let nsError = error! as NSError
+            if (nsError.domain == NSURLErrorDomain as String)
+            {
+                switch (nsError.code)
+                {
+                    case NSURLErrorCannotFindHost:
+                        errCode = .cannotFindHost
+                    
+                    case NSURLErrorNotConnectedToInternet:
+                        errCode = .noInternet
+                    
+                    default:
+                        errCode = UUHttpSessionError.httpFailure
+                }
+            }
+            
             var userInfo : [AnyHashable : Any]  = [:]
             userInfo[NSUnderlyingErrorKey] = error
-            err = NSError.init(domain: UUHttpSessionErrorDomain, code: UUHttpSessionError.HttpFailure.rawValue, userInfo: userInfo)
+            err = NSError.init(domain: UUHttpSessionErrorDomain, code: errCode.rawValue, userInfo: userInfo)
         }
         else
         {
@@ -395,7 +424,7 @@ public class UUHttpSession: NSObject
                 d[UUHttpSessionHttpErrorMessageKey] = HTTPURLResponse.localizedString(forStatusCode: httpResponseCode)
                 d[UUHttpSessionAppResponseKey] = parsedResponse
                 
-                err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.HttpError.rawValue, userInfo:d)
+                err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.httpError.rawValue, userInfo:d)
             }
         }
         
