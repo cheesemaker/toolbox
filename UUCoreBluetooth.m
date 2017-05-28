@@ -43,6 +43,7 @@ NSString * _Nonnull const kUUCoreBluetoothReadCharacteristicValueWatchdogBucket 
 NSString * _Nonnull const kUUCoreBluetoothWriteCharacteristicValueWatchdogBucket = @"UUCoreBluetoothWriteCharacteristicValueWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothReadRssiWatchdogBucket = @"UUCoreBluetoothReadRssiWatchdogBucket";
 NSString * _Nonnull const kUUCoreBluetoothPollRssiBucket = @"UUCoreBluetoothPollRssiBucket";
+NSString * _Nonnull const kUUCoreBluetoothDisconnectWatchdogBucket = @"UUCoreBluetoothDisconnectWatchdogBucket";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -749,6 +750,11 @@ dispatch_queue_t UUCoreBluetoothQueue()
     return [self formatTimerId:kUUCoreBluetoothConnectWatchdogBucket];
 }
 
+- (nonnull NSString*) uuDisconnectWatchdogTimerId
+{
+    return [self formatTimerId:kUUCoreBluetoothDisconnectWatchdogBucket];
+}
+
 - (nonnull NSString*) uuServiceDiscoveryWatchdogTimerId
 {
     return [self formatTimerId:kUUCoreBluetoothServiceDiscoveryWatchdogBucket];
@@ -810,6 +816,8 @@ dispatch_queue_t UUCoreBluetoothQueue()
             timeout:(NSTimeInterval)timeout
               block:(nonnull void(^)(CBPeripheral* _Nonnull peripheral))block
 {
+    UUCoreBluetoothLog(@"Starting timer %@ with timeout: %@", timerId, @(timeout));
+    
     [UUCoreBluetooth startWatchdogTimer:timerId
                                 timeout:timeout
                                userInfo:self
@@ -1521,6 +1529,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
 - (void) uuConnectPeripheral:(nonnull CBPeripheral*)peripheral
                      options:(nullable NSDictionary<NSString *, id> *)options
                      timeout:(NSTimeInterval)timeout
+           disconnectTimeout:(NSTimeInterval)disconnectTimeout
                    connected:(nonnull UUPeripheralConnectedBlock)connected
                 disconnected:(nonnull UUPeripheralDisconnectedBlock)disconnected
 {
@@ -1569,7 +1578,7 @@ dispatch_queue_t UUCoreBluetoothQueue()
          // CBCentralManager being off or reset when this happens, immediately
          // calling the disconnected block ensures there is not an infinite
          // timeout situation.
-         [self uuDisconnectPeripheral:peripheral];
+         [self uuDisconnectPeripheral:peripheral timeout:disconnectTimeout];
          
          NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
          [UUCoreBluetooth cancelWatchdogTimer:timerId];
@@ -1579,15 +1588,42 @@ dispatch_queue_t UUCoreBluetoothQueue()
     [self connectPeripheral:peripheral options:options];
 }
 
-- (void) uuDisconnectPeripheral:(nonnull CBPeripheral*)peripheral
+- (void) uuDisconnectPeripheral:(nonnull CBPeripheral*)peripheral timeout:(NSTimeInterval)timeout;
 {
-    UUCoreBluetoothLog(@"Cancelling connection to peripheral %@ - %@", peripheral.uuIdentifier, peripheral.name);
+    UUCoreBluetoothLog(@"Cancelling connection to peripheral %@ - %@, timeout: %@", peripheral.uuIdentifier, peripheral.name, @(timeout));
     
     if (![self uuIsPoweredOn])
     {
         UUCoreBluetoothLog(@"Central is not powered on, cannot cancel a connection!");
         return;
     }
+    
+    NSString* timerId = [peripheral uuDisconnectWatchdogTimerId];
+    
+    [peripheral startTimer:timerId timeout:timeout block:^(CBPeripheral * _Nonnull peripheral)
+    {
+        UUCoreBluetoothLog(@"Disconnect timeout for %@ - %@", peripheral.uuIdentifier, peripheral.name);
+        
+        UUCentralManagerDelegate* delegate = [self uuCentralManagerDelegate];
+        UUPeripheralDisconnectedBlock block = [delegate.disconnectBlocks uuSafeGet:peripheral.uuIdentifier];
+        [delegate.disconnectBlocks uuSafeRemove:peripheral.uuIdentifier];
+        [delegate.connectBlocks uuSafeRemove:peripheral.uuIdentifier];
+        [UUCoreBluetooth cancelWatchdogTimer:timerId];
+        
+        if (block)
+        {
+            NSError* err = [NSError uuCoreBluetoothError:UUCoreBluetoothErrorCodeTimeout];
+            block(peripheral, err);
+        }
+        else
+        {
+            UUCoreBluetoothLog(@"No delegate to notify disconnected");
+        }
+        
+        // Just in case the timeout fires and a real disconnect is needed, this is the last
+        // ditch effort to close the connection
+        [self cancelPeripheralConnection:peripheral];
+    }];
     
     [self cancelPeripheralConnection:peripheral];
 }
@@ -1812,12 +1848,14 @@ dispatch_queue_t UUCoreBluetoothQueue()
 
 - (void) connectPeripheral:(nonnull UUPeripheral*)peripheral
                    timeout:(NSTimeInterval)timeout
+         disconnectTimeout:(NSTimeInterval)disconnectTimeout
                  connected:(nonnull UUPeripheralBlock)connected
               disconnected:(nonnull UUPeripheralErrorBlock)disconnected
 {
     [self.centralManager uuConnectPeripheral:peripheral.peripheral
                                      options:nil
                                      timeout:timeout
+                           disconnectTimeout:disconnectTimeout
                                    connected:^(CBPeripheral * _Nonnull peripheral)
     {
         UUPeripheral* uuPeripheral = [self updatedPeripheralFromCbPeripheral:peripheral];
@@ -1833,9 +1871,9 @@ dispatch_queue_t UUCoreBluetoothQueue()
     }];
 }
 
-- (void) disconnectPeripheral:(nonnull UUPeripheral*)peripheral
+- (void) disconnectPeripheral:(nonnull UUPeripheral*)peripheral timeout:(NSTimeInterval)timeout;
 {
-    [self.centralManager uuDisconnectPeripheral:peripheral.peripheral];
+    [self.centralManager uuDisconnectPeripheral:peripheral.peripheral timeout:timeout];
 }
 
 // Begins polling RSSI for a peripheral.  When the RSSI is successfully

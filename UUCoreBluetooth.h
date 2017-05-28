@@ -196,12 +196,13 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 - (void) uuConnectPeripheral:(nonnull CBPeripheral*)peripheral
                      options:(nullable NSDictionary<NSString *, id> *)options
                      timeout:(NSTimeInterval)timeout
+           disconnectTimeout:(NSTimeInterval)disconnectTimeout
                    connected:(nonnull UUPeripheralConnectedBlock)connected
                 disconnected:(nonnull UUPeripheralDisconnectedBlock)disconnected;
 
 // Wrapper around CBCentralManager cancelPeripheralConnection.  After calling this
 // method, the disconnected block passed in at connect time will be invoked.
-- (void) uuDisconnectPeripheral:(nonnull CBPeripheral*)peripheral;
+- (void) uuDisconnectPeripheral:(nonnull CBPeripheral*)peripheral timeout:(NSTimeInterval)timeout;
 
 @end
 
@@ -372,11 +373,12 @@ extern  NSTimeInterval const kUUCoreBluetoothTimeoutDisabled;
 // for the connect options
 - (void) connectPeripheral:(nonnull UUPeripheral*)peripheral
                    timeout:(NSTimeInterval)timeout
+         disconnectTimeout:(NSTimeInterval)disconnectTimeout
                  connected:(nonnull UUPeripheralBlock)connected
               disconnected:(nonnull UUPeripheralErrorBlock)disconnected;
 
 // Convenience wrapper around CBCentralManager uuDisconnectPeripheral
-- (void) disconnectPeripheral:(nonnull UUPeripheral*)peripheral;
+- (void) disconnectPeripheral:(nonnull UUPeripheral*)peripheral timeout:(NSTimeInterval)timeout;
 
 // Begins polling RSSI for a peripheral.  When the RSSI is successfully
 // retrieved, the peripheralFoundBlock is called.  This method is useful to
