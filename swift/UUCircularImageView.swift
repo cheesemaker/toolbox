@@ -19,5 +19,6 @@ class UUCircularImageView: UIImageView
     {
         super.layoutSubviews()
         layer.cornerRadius = bounds.size.width / 2
+        layer.masksToBounds = true
     }
 }
