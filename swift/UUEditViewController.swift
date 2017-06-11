@@ -22,6 +22,7 @@ import UIKit
 class UUEditViewController : UIViewController
 {
     var currentEditFieldFrame: CGRect? = nil
+    var spaceToKeybaord : CGFloat = 10
     
     override func viewDidLoad()
     {
@@ -40,6 +41,11 @@ class UUEditViewController : UIViewController
     {
         super.viewWillAppear(animated)
         clearNotificationHandlers()
+    }
+    
+    func referenceViewForEditField(_ textField: UITextField) -> UIView
+    {
+        return textField
     }
     
     func registerNotificationHandlers()
@@ -70,7 +76,7 @@ class UUEditViewController : UIViewController
             
             if (keyboardTop < fieldBottom)
             {
-                let keyboardAdjust = fieldBottom - keyboardTop + 10
+                let keyboardAdjust = fieldBottom - keyboardTop + spaceToKeybaord
                 
                 var f = view.frame
                 f.origin.y = -keyboardAdjust
@@ -99,7 +105,7 @@ extension UUEditViewController : UITextFieldDelegate
 {
     func textFieldDidBeginEditing(_ textField: UITextField)
     {
-        currentEditFieldFrame = textField.frame
+        currentEditFieldFrame = referenceViewForEditField(textField).frame
     }
     
     func textFieldDidEndEditing(_ textField: UITextField)
