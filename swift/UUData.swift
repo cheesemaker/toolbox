@@ -31,4 +31,28 @@ extension Data
         
         return sb as String
     }
+    
+    // Return JSON object of the data
+    //
+    public func uuToJson() -> Any?
+    {
+        do
+        {
+            return try JSONSerialization.jsonObject(with: self, options: [])
+        }
+        catch (let err)
+        {
+            UUDebugLog("Error deserializing JSON: %@", String(describing: err))
+        }
+        
+        return nil
+    }
+    
+    // Returns JSON string representation of the data
+    //
+    public func uuToJsonString() -> String
+    {
+        let json = uuToJson()
+        return String(format: "%@", (json as? CVarArg) ?? "")
+    }
 }
