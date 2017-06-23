@@ -303,6 +303,18 @@ public class UUHttpSession: NSObject
             String(describing: request.httpRequest?.url),
             String(describing: request.httpRequest?.allHTTPHeaderFields))
         
+        if (request.body != nil)
+        {
+            if (UUContentType.applicationJson == request.bodyContentType)
+            {
+                UUDebugLog("JSON Body: %@", request.body!.uuToJsonString())
+            }
+            else
+            {
+                UUDebugLog("Raw Body: %@", request.body!.uuToHexString())
+            }
+        }
+        
         let task = urlSession!.dataTask(with: request.httpRequest!)
         { (data : Data?, response: URLResponse?, error : Error?) in
             
