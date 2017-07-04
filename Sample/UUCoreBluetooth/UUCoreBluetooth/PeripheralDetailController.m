@@ -227,6 +227,7 @@
     {
         [[UUCoreBluetooth sharedInstance] connectPeripheral:self.peripheral
                                                     timeout:30.0f
+                                          disconnectTimeout:10.0f
                                                   connected:^(UUPeripheral * _Nonnull peripheral)
         {
             self.peripheral = peripheral;
@@ -246,7 +247,7 @@
     }
     else
     {
-        [[UUCoreBluetooth sharedInstance] disconnectPeripheral:self.peripheral];
+        [[UUCoreBluetooth sharedInstance] disconnectPeripheral:self.peripheral timeout:10.0f];
     }
 }
 
