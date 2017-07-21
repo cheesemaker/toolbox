@@ -64,7 +64,7 @@ extension String
         return uuSubString(characters.count - count, count)
     }
     
-    private static let kUrlEncodingChars = "!*'();:@&=+$,/?%#[]"
+    private static let kUrlEncodingChars = "!*'();:@&=+$,/?%#[] "
     private static let kUrlEncodingCharSet = CharacterSet.init(charactersIn: kUrlEncodingChars).inverted
     
     // Percent encodes the following characters:
@@ -86,5 +86,13 @@ extension String
     public func uuTrimWhitespace() -> String
     {
         return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    }
+    
+    // Parses this string as a decimal number
+    public func uuAsDecimalNumber() -> NSNumber?
+    {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        return f.number(from: self)
     }
 }
