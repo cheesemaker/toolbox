@@ -66,7 +66,7 @@ extension DateFormatter
 
 extension Date
 {
-    func uuFormat(_ format : String, _ timeZone : TimeZone, _ locale : Locale) -> String
+    public func uuFormat(_ format : String, timeZone : TimeZone = TimeZone.current, locale : Locale = Locale.current) -> String
     {
         let df = DateFormatter.uuCachedFormatter(format)
         df.timeZone = timeZone
@@ -75,43 +75,53 @@ extension Date
         return df.string(from: self)
     }
     
+    public func uuRfc3339String(timeZone : TimeZone = TimeZone.current, locale : Locale = Locale.current) -> String
+    {
+        return uuFormat(UUDate.Formats.rfc3339, timeZone: timeZone, locale: locale)
+    }
+    
+    public func uuRfc3339StringUtc(locale : Locale = Locale.current) -> String
+    {
+        return uuFormat(UUDate.Formats.rfc3339, timeZone: TimeZone(abbreviation: "UTC")!, locale: locale)
+    }
+    
     public var uuDayOfMonth : String
     {
-        return uuFormat(UUDate.Formats.dayOfMonth, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.dayOfMonth)
     }
     
     public var uuNumericMonthOfYear : String
     {
-        return uuFormat(UUDate.Formats.numericMonthOfYear, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.numericMonthOfYear)
     }
     
     public var uuShortMonthOfYear : String
     {
-        return uuFormat(UUDate.Formats.shortMonthOfYear, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.shortMonthOfYear)
     }
     
     public var uuLongMonthOfYear : String
     {
-        return uuFormat(UUDate.Formats.longMonthOfYear, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.longMonthOfYear)
     }
     
     public var uuShortDayOfWeek : String
     {
-        return uuFormat(UUDate.Formats.shortDayOfWeek, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.shortDayOfWeek)
     }
     
     public var uuLongDayOfWeek : String
     {
-        return uuFormat(UUDate.Formats.longDayOfWeek, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.longDayOfWeek)
     }
     
     public var uuTwoDigitYear : String
     {
-        return uuFormat(UUDate.Formats.twoDigitYear, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.twoDigitYear)
     }
     
     public var uuFourDigitYear : String
     {
-        return uuFormat(UUDate.Formats.fourDigitYear, TimeZone.current, Locale.current)
+        return uuFormat(UUDate.Formats.fourDigitYear)
     }
 }
