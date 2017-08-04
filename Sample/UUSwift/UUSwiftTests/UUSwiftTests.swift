@@ -54,10 +54,9 @@ class UUCoreDataTests: XCTestCase
         let exp = expectation(description: "testFetchOnEmptyDb")
         
         let context = UUCoreData.mainThreadContext!
-        
-        Player.uuFetchObjects(context: context)
-        { (list : [Any]) in
-        
+        context.perform
+        {
+            let list = Player.uuFetchObjects(context: context)
             XCTAssert(list.count == 0)
             exp.fulfill()
         }
