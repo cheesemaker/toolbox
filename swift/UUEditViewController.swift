@@ -3,13 +3,9 @@
 //  Useful Utilities - Subclass of UIViewController that handles automatically
 //  some common editing tasks
 //
-//  Created by Ryan DeVore on 01/27/2017
-//
 //	License:
 //  You are free to use this code for whatever purposes you desire.
 //  The only requirement is that you smile everytime you use it.
-//
-//  Contact: @ryandevore or ryan@silverpine.com
 //
 //  UUEditViewController has two main functions:
 //

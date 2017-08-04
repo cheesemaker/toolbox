@@ -2,13 +2,9 @@
 //  UUDate
 //  Useful Utilities - Handy helpers for working with Date's
 //
-//  Created by Ryan DeVore on 01/06/2017
-//
 //	License:
 //  You are free to use this code for whatever purposes you desire.
 //  The only requirement is that you smile everytime you use it.
-//
-//  Contact: @ryandevore or ryan@silverpine.com
 //
 
 import UIKit

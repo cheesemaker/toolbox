@@ -2,13 +2,9 @@
 //  UUGradientView.swift
 //  Useful Utilities - Simple UIView subclass to draw a gradient background color
 //
-//  Created by Ryan DeVore on 10/29/2016
-//
 //	License:
 //  You are free to use this code for whatever purposes you desire.
 //  The only requirement is that you smile everytime you use it.
-//
-//  Contact: @ryandevore or ryan@silverpine.com
 //
 
 import UIKit
