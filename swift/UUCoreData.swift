@@ -215,21 +215,6 @@ public extension NSManagedObject
         sortDescriptors: [NSSortDescriptor]? = nil,
         offset: Int? = nil,
         limit: Int? = nil,
-        context: NSManagedObjectContext,
-        completion: @escaping([Any]) -> Void)
-    {
-        context.perform
-        {
-            let results = uuFetchObjects(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
-            completion(results)
-        }
-    }
-    
-    public static func uuFetchObjects(
-        predicate: NSPredicate? = nil,
-        sortDescriptors: [NSSortDescriptor]? = nil,
-        offset: Int? = nil,
-        limit: Int? = nil,
         context: NSManagedObjectContext) -> [Any]
     {
         let fr = uuFetchRequest(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
@@ -252,7 +237,7 @@ public extension NSManagedObject
     }
     
     public class func uuFetchSingleObject(
-        predicate: NSPredicate,
+        predicate: NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil,
         context: NSManagedObjectContext) -> Self?
     {
@@ -260,7 +245,7 @@ public extension NSManagedObject
     }
     
     private class func uuFetchSingleObjectInternal<T>(
-        predicate: NSPredicate,
+        predicate: NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil,
         context: NSManagedObjectContext) -> T?
     {
@@ -277,7 +262,7 @@ public extension NSManagedObject
     }
     
     public static func uuFetchOrCreate(
-        predicate: NSPredicate,
+        predicate: NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil,
         context: NSManagedObjectContext) -> Self
     {
