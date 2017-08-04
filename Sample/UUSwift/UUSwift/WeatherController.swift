@@ -2,8 +2,9 @@
 //  WeatherController.swift
 //  UUSwift
 //
-//  Created by Ryan DeVore on 7/3/17.
-//  Copyright © 2017 Useful Utilities. All rights reserved.
+//	License:
+//  You are free to use this code for whatever purposes you desire.
+//  The only requirement is that you smile everytime you use it.
 //
 
 import UIKit
@@ -16,17 +17,32 @@ class WeatherTableRow : NSObject
         "\(UUDate.Formats.longDayOfWeek), \(UUDate.Formats.longMonthOfYear) \(UUDate.Formats.dayOfMonth) \(UUDate.Formats.fourDigitYear)"
     
     var date : Date = Date()
-    var lowTemp : Float = 0
-    var highTemp : Float = 0
+    var lowTemp : Double = 0
+    var highTemp : Double = 0
     
     func formatDate() -> String
     {
-        return date.uuFormat(WeatherTableRow.kDateFormat, TimeZone.current, Locale.current)
+        return date.uuFormat(WeatherTableRow.kDateFormat)
     }
     
     func formatTemp() -> String
     {
-        return "High \(highTemp) / Low \(lowTemp)"
+        return "High \(highTempAsFahrenheit) / Low \(lowTempAsFahrenheit)"
+    }
+    
+    var lowTempAsFahrenheit : Double
+    {
+        return celsiusToFahrenheit(lowTemp)
+    }
+    
+    var highTempAsFahrenheit : Double
+    {
+        return celsiusToFahrenheit(highTemp)
+    }
+    
+    func celsiusToFahrenheit(_ celsius: Double) -> Double
+    {
+        return ((celsius * (9 / 5)) + 32)
     }
 }
 
@@ -43,24 +59,38 @@ class WeatherController: UIViewController, UITableViewDelegate, UITableViewDataS
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 44
         tableView.tableFooterView = UIView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
         
-        var row = WeatherTableRow()
-        row.lowTemp = 50
-        row.highTemp = 80
-        row.date = Date()
-        tableData.append(row)
+        WeatherService.shared.fetchWeather(city: "Wilsonville", country: "United States")
+        { (err: Error?) in
         
-        row = WeatherTableRow()
-        row.lowTemp = 45
-        row.highTemp = 75
-        row.date = Date().addingTimeInterval(-UUDate.Constants.secondsInOneDay * 2)
-        tableData.append(row)
-        
-        row = WeatherTableRow()
-        row.lowTemp = 53
-        row.highTemp = 68
-        row.date = Date().addingTimeInterval(-UUDate.Constants.secondsInOneDay * 3)
-        tableData.append(row)
+            print ("Weather fetch done")
+            
+            let context = UUCoreData.mainThreadContext!
+            context.perform
+            {
+                let results = WeatherRecord.uuFetchObjects(context: context)
+                
+                for obj in results
+                {
+                    let realObj = obj as? WeatherRecord
+                    if (realObj != nil)
+                    {
+                        let row = WeatherTableRow()
+                        row.lowTemp = realObj!.minTemperature
+                        row.highTemp = realObj!.maxTemperature
+                        row.date = realObj!.timestamp! as Date
+                        
+                        self.tableData.append(row)
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int

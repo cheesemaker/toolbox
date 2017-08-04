@@ -29,6 +29,14 @@
 		084508351F0B41480045C0A6 /* UUView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508281F0B41480045C0A6 /* UUView.swift */; };
 		084508381F0B41B70045C0A6 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508371F0B41B70045C0A6 /* HomeController.swift */; };
 		0845083A1F0B477B0045C0A6 /* WeatherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508391F0B477B0045C0A6 /* WeatherController.swift */; };
+		0845083D1F0B4FF80045C0A6 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845083C1F0B4FF80045C0A6 /* WeatherService.swift */; };
+		085C76B91F2B91A100E9214D /* WeatherRecord+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */; };
+		085C76CA1F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */; };
+		085C76D11F325B1200E9214D /* UUCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084B69021F29A137000B5FB9 /* UUCoreData.swift */; };
+		0867CDC31F34326700FEAA52 /* UUObjectFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */; };
+		0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */; };
+		0867CDCB1F3451DE00FEAA52 /* RSQuoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */; };
+		0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +85,16 @@
 		084508281F0B41480045C0A6 /* UUView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUView.swift; path = ../../swift/UUView.swift; sourceTree = "<group>"; };
 		084508371F0B41B70045C0A6 /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		084508391F0B477B0045C0A6 /* WeatherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherController.swift; sourceTree = "<group>"; };
+		0845083C1F0B4FF80045C0A6 /* WeatherService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
+		084B69021F29A137000B5FB9 /* UUCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUCoreData.swift; path = ../../swift/UUCoreData.swift; sourceTree = "<group>"; };
+		085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WeatherRecord+Ext.swift"; path = "Data/WeatherRecord+Ext.swift"; sourceTree = "<group>"; };
+		085C76C91F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UUCoreDataUnitTests.xcdatamodel; sourceTree = "<group>"; };
+		0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUObjectFactory.swift; path = ../../swift/UUObjectFactory.swift; sourceTree = "<group>"; };
+		0867CDC41F3432B200FEAA52 /* UUObjectFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUObjectFactory.h; path = ../../UUObjectFactory.h; sourceTree = "<group>"; };
+		0867CDC51F3432B200FEAA52 /* UUObjectFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UUObjectFactory.m; path = ../../UUObjectFactory.m; sourceTree = "<group>"; };
+		0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RSQuote+Ext.swift"; sourceTree = "<group>"; };
+		0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteService.swift; sourceTree = "<group>"; };
+		0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,9 +122,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		081CC1451F2B0B1200AA7774 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */,
+				0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
 		084507DE1F0B41290045C0A6 = {
 			isa = PBXGroup;
 			children = (
+				0867CDC41F3432B200FEAA52 /* UUObjectFactory.h */,
+				0867CDC51F3432B200FEAA52 /* UUObjectFactory.m */,
 				0845081B1F0B41360045C0A6 /* UUToolbox */,
 				084507E91F0B41290045C0A6 /* UUSwift */,
 				084508011F0B41290045C0A6 /* UUSwiftTests */,
@@ -128,6 +157,8 @@
 		084507E91F0B41290045C0A6 /* UUSwift */ = {
 			isa = PBXGroup;
 			children = (
+				081CC1451F2B0B1200AA7774 /* Data */,
+				0845083B1F0B4FD90045C0A6 /* Core */,
 				084508361F0B415F0045C0A6 /* UI */,
 				084507EA1F0B41290045C0A6 /* AppDelegate.swift */,
 				084507EE1F0B41290045C0A6 /* Main.storyboard */,
@@ -144,6 +175,7 @@
 			children = (
 				084508021F0B41290045C0A6 /* UUSwiftTests.swift */,
 				084508041F0B41290045C0A6 /* Info.plist */,
+				085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */,
 			);
 			path = UUSwiftTests;
 			sourceTree = "<group>";
@@ -173,6 +205,8 @@
 				084508261F0B41480045C0A6 /* UUString.swift */,
 				084508271F0B41480045C0A6 /* UUTextField.swift */,
 				084508281F0B41480045C0A6 /* UUView.swift */,
+				084B69021F29A137000B5FB9 /* UUCoreData.swift */,
+				0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */,
 			);
 			name = UUToolbox;
 			sourceTree = "<group>";
@@ -182,8 +216,18 @@
 			children = (
 				084508371F0B41B70045C0A6 /* HomeController.swift */,
 				084508391F0B477B0045C0A6 /* WeatherController.swift */,
+				0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */,
 			);
 			name = UI;
+			sourceTree = "<group>";
+		};
+		0845083B1F0B4FD90045C0A6 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				0845083C1F0B4FF80045C0A6 /* WeatherService.swift */,
+				0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */,
+			);
+			name = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,6 +304,7 @@
 					084507FD1F0B41290045C0A6 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5LSSE6XSXJ;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 084507E61F0B41290045C0A6;
 					};
@@ -324,22 +369,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				084507F31F0B41290045C0A6 /* UUSwift.xcdatamodeld in Sources */,
+				0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */,
 				0845082B1F0B41480045C0A6 /* UUColor.swift in Sources */,
+				085C76D11F325B1200E9214D /* UUCoreData.swift in Sources */,
 				084508311F0B41480045C0A6 /* UUGradientView.swift in Sources */,
 				0845082A1F0B41480045C0A6 /* UUCircularView.swift in Sources */,
 				084508291F0B41480045C0A6 /* UUCircularImageView.swift in Sources */,
 				084508321F0B41480045C0A6 /* UUHttpSession.swift in Sources */,
+				0867CDC31F34326700FEAA52 /* UUObjectFactory.swift in Sources */,
 				0845082C1F0B41480045C0A6 /* UUData.swift in Sources */,
 				084508381F0B41B70045C0A6 /* HomeController.swift in Sources */,
+				0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */,
 				0845082E1F0B41480045C0A6 /* UUDebugLog.swift in Sources */,
 				084508301F0B41480045C0A6 /* UUEditViewController.swift in Sources */,
+				0845083D1F0B4FF80045C0A6 /* WeatherService.swift in Sources */,
 				084508331F0B41480045C0A6 /* UUString.swift in Sources */,
 				0845083A1F0B477B0045C0A6 /* WeatherController.swift in Sources */,
 				084508341F0B41480045C0A6 /* UUTextField.swift in Sources */,
 				084508351F0B41480045C0A6 /* UUView.swift in Sources */,
 				084507EB1F0B41290045C0A6 /* AppDelegate.swift in Sources */,
+				0867CDCB1F3451DE00FEAA52 /* RSQuoteService.swift in Sources */,
 				0845082D1F0B41480045C0A6 /* UUDate.swift in Sources */,
 				0845082F1F0B41480045C0A6 /* UUDictionary.swift in Sources */,
+				085C76B91F2B91A100E9214D /* WeatherRecord+Ext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +399,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				085C76CA1F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld in Sources */,
 				084508031F0B41290045C0A6 /* UUSwiftTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -494,6 +547,7 @@
 				DEVELOPMENT_TEAM = 5LSSE6XSXJ;
 				INFOPLIST_FILE = UUSwift/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -507,6 +561,7 @@
 				DEVELOPMENT_TEAM = 5LSSE6XSXJ;
 				INFOPLIST_FILE = UUSwift/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -518,11 +573,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 5LSSE6XSXJ;
 				INFOPLIST_FILE = UUSwiftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwiftTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UUSwift.app/UUSwift";
 			};
@@ -533,6 +590,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 5LSSE6XSXJ;
 				INFOPLIST_FILE = UUSwiftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -590,6 +648,7 @@
 				084508141F0B41290045C0A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		084508151F0B41290045C0A6 /* Build configuration list for PBXNativeTarget "UUSwiftTests" */ = {
 			isa = XCConfigurationList;
@@ -598,6 +657,7 @@
 				084508171F0B41290045C0A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		084508181F0B41290045C0A6 /* Build configuration list for PBXNativeTarget "UUSwiftUITests" */ = {
 			isa = XCConfigurationList;
@@ -606,6 +666,7 @@
 				0845081A1F0B41290045C0A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
@@ -617,6 +678,16 @@
 			);
 			currentVersion = 084507F21F0B41290045C0A6 /* UUSwift.xcdatamodel */;
 			path = UUSwift.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				085C76C91F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodel */,
+			);
+			currentVersion = 085C76C91F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodel */;
+			path = UUCoreDataUnitTests.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -2,8 +2,9 @@
 //  UUSwiftUITests.swift
 //  UUSwiftUITests
 //
-//  Created by Ryan DeVore on 7/3/17.
-//  Copyright © 2017 Useful Utilities. All rights reserved.
+//	License:
+//  You are free to use this code for whatever purposes you desire.
+//  The only requirement is that you smile everytime you use it.
 //
 
 import XCTest

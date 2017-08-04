@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="gvF-hy-mS7">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="gvF-hy-mS7">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -70,6 +70,7 @@
                     <connections>
                         <outlet property="tableView" destination="LHu-YA-ivK" id="APA-nq-R9K"/>
                         <segue destination="tBM-98-bOC" kind="show" identifier="showWeatherController" id="1Rs-0G-zgD"/>
+                        <segue destination="sNg-rX-wa8" kind="show" identifier="showRSQuotes" id="gif-C0-yht"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -157,6 +158,64 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="y3X-ql-u9q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1048.8" y="638.2308845577212"/>
+        </scene>
+        <!--Quote Controller-->
+        <scene sceneID="cac-Nm-GSD">
+            <objects>
+                <viewController id="sNg-rX-wa8" customClass="RSQuoteController" customModule="UUSwift" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="uYY-JD-NYF"/>
+                        <viewControllerLayoutGuide type="bottom" id="TAj-rx-pdE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="cDv-0H-3tr">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tCP-cq-86R">
+                                <rect key="frame" x="36" y="316" width="303" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap for another quote" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U9n-fu-zJ2">
+                                <rect key="frame" x="104.5" y="628" width="166" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="b0E-Xc-Dot">
+                                <rect key="frame" x="177" y="573" width="20" height="20"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="tCP-cq-86R" firstAttribute="leading" secondItem="cDv-0H-3tr" secondAttribute="leadingMargin" constant="20" id="2Yf-sM-1oS"/>
+                            <constraint firstItem="U9n-fu-zJ2" firstAttribute="centerX" secondItem="cDv-0H-3tr" secondAttribute="centerX" id="6AB-yQ-MVJ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="tCP-cq-86R" secondAttribute="trailing" constant="20" id="7F4-D1-xWZ"/>
+                            <constraint firstItem="TAj-rx-pdE" firstAttribute="top" secondItem="U9n-fu-zJ2" secondAttribute="bottom" constant="18" id="Ipg-qo-XYl"/>
+                            <constraint firstItem="tCP-cq-86R" firstAttribute="centerX" secondItem="cDv-0H-3tr" secondAttribute="centerX" id="Vb2-jd-RUD"/>
+                            <constraint firstItem="U9n-fu-zJ2" firstAttribute="top" secondItem="b0E-Xc-Dot" secondAttribute="bottom" constant="35" id="Zx2-mf-36B"/>
+                            <constraint firstItem="b0E-Xc-Dot" firstAttribute="centerX" secondItem="cDv-0H-3tr" secondAttribute="centerX" id="uZ8-KH-Mqu"/>
+                            <constraint firstItem="tCP-cq-86R" firstAttribute="centerY" secondItem="cDv-0H-3tr" secondAttribute="centerY" id="vLU-Oh-BwB"/>
+                        </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="VoW-ZB-vrB" appends="YES" id="f1d-yH-rrk"/>
+                        </connections>
+                    </view>
+                    <connections>
+                        <outlet property="progressSpinner" destination="b0E-Xc-Dot" id="r5o-mK-BOy"/>
+                        <outlet property="quoteLabel" destination="tCP-cq-86R" id="TPi-7T-rCf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wtu-bz-8jB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="VoW-ZB-vrB">
+                    <connections>
+                        <action selector="onShowAnotherQuote:" destination="sNg-rX-wa8" id="WTf-52-gJj"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1044" y="1359.6701649175413"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="lZl-HI-6ur">

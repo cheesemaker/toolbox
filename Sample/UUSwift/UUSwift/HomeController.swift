@@ -2,8 +2,9 @@
 //  HomeController.swift
 //  UUSwift
 //
-//  Created by Ryan DeVore on 7/3/17.
-//  Copyright © 2017 Useful Utilities. All rights reserved.
+//	License:
+//  You are free to use this code for whatever purposes you desire.
+//  The only requirement is that you smile everytime you use it.
 //
 
 import UIKit
@@ -33,6 +34,7 @@ class HomeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
 
         tableData.append(HomeTableRow("UUWeather", loadWeather))
+        tableData.append(HomeTableRow("Ron Swanson Quotes", loadRSQuotes))
         
         tableView.tableFooterView = UIView()
     }
@@ -60,6 +62,13 @@ class HomeController: UIViewController, UITableViewDelegate, UITableViewDataSour
     {
         performSegue(withIdentifier: "showWeatherController", sender: nil)
     }
+    
+    private func loadRSQuotes()
+    {
+        performSegue(withIdentifier: "showRSQuotes", sender: nil)
+    }
+    
+    
 
 }
 
