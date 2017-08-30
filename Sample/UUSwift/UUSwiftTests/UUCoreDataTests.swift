@@ -1,6 +1,6 @@
 //
-//  UUSwiftTests.swift
-//  UUSwiftTests
+//  UUCoreDataTests.swift
+//  UUCoreDataTests
 //
 //	License:
 //  You are free to use this code for whatever purposes you desire.

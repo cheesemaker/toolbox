@@ -12,7 +12,7 @@
 		084507F31F0B41290045C0A6 /* UUSwift.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 084507F11F0B41290045C0A6 /* UUSwift.xcdatamodeld */; };
 		084507F51F0B41290045C0A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 084507F41F0B41290045C0A6 /* Assets.xcassets */; };
 		084507F81F0B41290045C0A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 084507F61F0B41290045C0A6 /* LaunchScreen.storyboard */; };
-		084508031F0B41290045C0A6 /* UUSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508021F0B41290045C0A6 /* UUSwiftTests.swift */; };
+		084508031F0B41290045C0A6 /* UUCoreDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508021F0B41290045C0A6 /* UUCoreDataTests.swift */; };
 		0845080E1F0B41290045C0A6 /* UUSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845080D1F0B41290045C0A6 /* UUSwiftUITests.swift */; };
 		084508291F0B41480045C0A6 /* UUCircularImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845081C1F0B41480045C0A6 /* UUCircularImageView.swift */; };
 		0845082A1F0B41480045C0A6 /* UUCircularView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845081D1F0B41480045C0A6 /* UUCircularView.swift */; };
@@ -30,6 +30,7 @@
 		084508381F0B41B70045C0A6 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508371F0B41B70045C0A6 /* HomeController.swift */; };
 		0845083A1F0B477B0045C0A6 /* WeatherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508391F0B477B0045C0A6 /* WeatherController.swift */; };
 		0845083D1F0B4FF80045C0A6 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845083C1F0B4FF80045C0A6 /* WeatherService.swift */; };
+		0857606B1F55D0E900483FDE /* UUDataCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0857606A1F55D0E900483FDE /* UUDataCacheTests.swift */; };
 		085C76B91F2B91A100E9214D /* WeatherRecord+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */; };
 		085C76CA1F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */; };
 		085C76D11F325B1200E9214D /* UUCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084B69021F29A137000B5FB9 /* UUCoreData.swift */; };
@@ -37,6 +38,7 @@
 		0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */; };
 		0867CDCB1F3451DE00FEAA52 /* RSQuoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */; };
 		0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */; };
+		08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C3A6E71F551B3000BB8095 /* UUDataCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,7 +67,7 @@
 		084507F71F0B41290045C0A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		084507F91F0B41290045C0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		084507FE1F0B41290045C0A6 /* UUSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		084508021F0B41290045C0A6 /* UUSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUSwiftTests.swift; sourceTree = "<group>"; };
+		084508021F0B41290045C0A6 /* UUCoreDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUCoreDataTests.swift; sourceTree = "<group>"; };
 		084508041F0B41290045C0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		084508091F0B41290045C0A6 /* UUSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0845080D1F0B41290045C0A6 /* UUSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUSwiftUITests.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 		084508391F0B477B0045C0A6 /* WeatherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherController.swift; sourceTree = "<group>"; };
 		0845083C1F0B4FF80045C0A6 /* WeatherService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		084B69021F29A137000B5FB9 /* UUCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUCoreData.swift; path = ../../swift/UUCoreData.swift; sourceTree = "<group>"; };
+		0857606A1F55D0E900483FDE /* UUDataCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUDataCacheTests.swift; sourceTree = "<group>"; };
 		085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WeatherRecord+Ext.swift"; path = "Data/WeatherRecord+Ext.swift"; sourceTree = "<group>"; };
 		085C76C91F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UUCoreDataUnitTests.xcdatamodel; sourceTree = "<group>"; };
 		0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUObjectFactory.swift; path = ../../swift/UUObjectFactory.swift; sourceTree = "<group>"; };
@@ -95,6 +98,15 @@
 		0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RSQuote+Ext.swift"; sourceTree = "<group>"; };
 		0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteService.swift; sourceTree = "<group>"; };
 		0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteController.swift; sourceTree = "<group>"; };
+		08C3A6DF1F551AB500BB8095 /* UUDataCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUDataCache.h; path = ../../UUDataCache.h; sourceTree = "<group>"; };
+		08C3A6E01F551AB500BB8095 /* UUDataCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UUDataCache.m; path = ../../UUDataCache.m; sourceTree = "<group>"; };
+		08C3A6E11F551AB500BB8095 /* UUImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUImageCache.h; path = ../../UUImageCache.h; sourceTree = "<group>"; };
+		08C3A6E21F551AB500BB8095 /* UUImageCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UUImageCache.m; path = ../../UUImageCache.m; sourceTree = "<group>"; };
+		08C3A6E31F551AB500BB8095 /* UURemoteData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UURemoteData.h; path = ../../UURemoteData.h; sourceTree = "<group>"; };
+		08C3A6E41F551AB500BB8095 /* UURemoteData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UURemoteData.m; path = ../../UURemoteData.m; sourceTree = "<group>"; };
+		08C3A6E51F551AB500BB8095 /* UURemoteImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UURemoteImage.h; path = ../../UURemoteImage.h; sourceTree = "<group>"; };
+		08C3A6E61F551AB500BB8095 /* UURemoteImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UURemoteImage.m; path = ../../UURemoteImage.m; sourceTree = "<group>"; };
+		08C3A6E71F551B3000BB8095 /* UUDataCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDataCache.swift; path = ../../swift/UUDataCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +148,14 @@
 			children = (
 				0867CDC41F3432B200FEAA52 /* UUObjectFactory.h */,
 				0867CDC51F3432B200FEAA52 /* UUObjectFactory.m */,
+				08C3A6DF1F551AB500BB8095 /* UUDataCache.h */,
+				08C3A6E01F551AB500BB8095 /* UUDataCache.m */,
+				08C3A6E11F551AB500BB8095 /* UUImageCache.h */,
+				08C3A6E21F551AB500BB8095 /* UUImageCache.m */,
+				08C3A6E31F551AB500BB8095 /* UURemoteData.h */,
+				08C3A6E41F551AB500BB8095 /* UURemoteData.m */,
+				08C3A6E51F551AB500BB8095 /* UURemoteImage.h */,
+				08C3A6E61F551AB500BB8095 /* UURemoteImage.m */,
 				0845081B1F0B41360045C0A6 /* UUToolbox */,
 				084507E91F0B41290045C0A6 /* UUSwift */,
 				084508011F0B41290045C0A6 /* UUSwiftTests */,
@@ -173,7 +193,8 @@
 		084508011F0B41290045C0A6 /* UUSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
-				084508021F0B41290045C0A6 /* UUSwiftTests.swift */,
+				084508021F0B41290045C0A6 /* UUCoreDataTests.swift */,
+				0857606A1F55D0E900483FDE /* UUDataCacheTests.swift */,
 				084508041F0B41290045C0A6 /* Info.plist */,
 				085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */,
 			);
@@ -207,6 +228,7 @@
 				084508281F0B41480045C0A6 /* UUView.swift */,
 				084B69021F29A137000B5FB9 /* UUCoreData.swift */,
 				0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */,
+				08C3A6E71F551B3000BB8095 /* UUDataCache.swift */,
 			);
 			name = UUToolbox;
 			sourceTree = "<group>";
@@ -371,6 +393,7 @@
 				084507F31F0B41290045C0A6 /* UUSwift.xcdatamodeld in Sources */,
 				0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */,
 				0845082B1F0B41480045C0A6 /* UUColor.swift in Sources */,
+				08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */,
 				085C76D11F325B1200E9214D /* UUCoreData.swift in Sources */,
 				084508311F0B41480045C0A6 /* UUGradientView.swift in Sources */,
 				0845082A1F0B41480045C0A6 /* UUCircularView.swift in Sources */,
@@ -400,7 +423,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				085C76CA1F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld in Sources */,
-				084508031F0B41290045C0A6 /* UUSwiftTests.swift in Sources */,
+				0857606B1F55D0E900483FDE /* UUDataCacheTests.swift in Sources */,
+				084508031F0B41290045C0A6 /* UUCoreDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
