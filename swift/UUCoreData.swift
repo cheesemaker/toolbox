@@ -20,6 +20,12 @@ public class UUCoreData: NSObject
         configure(url: url, modelDefinitionBundle: modelDefinitionBundle)
     }
     
+    init(url: URL, model: NSManagedObjectModel)
+    {
+        super.init()
+        configure(url: url, model: model)
+    }
+    
     private func configure(url: URL, modelDefinitionBundle: Bundle = Bundle.main)
     {
         let mom : NSManagedObjectModel? = NSManagedObjectModel.mergedModel(from: [modelDefinitionBundle])
@@ -29,13 +35,18 @@ public class UUCoreData: NSObject
             return
         }
         
+        configure(url: url, model: mom!)
+    }
+    
+    private func configure(url: URL, model: NSManagedObjectModel)
+    {
         let options : [AnyHashable:Any] =
         [
             NSMigratePersistentStoresAutomaticallyOption : true,
             NSInferredMappingModelError: true
         ]
         
-        storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: mom!)
+        storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
         do
         {
@@ -44,6 +55,17 @@ public class UUCoreData: NSObject
         catch (let err)
         {
             UUDebugLog("Error setting up CoreData: %@", String(describing: err))
+            
+            do
+            {
+                try FileManager.default.removeItem(at: url)
+                
+                try storeCoordinator?.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: options)
+            }
+            catch (let innerError)
+            {
+                UUDebugLog("Error Clearing CoreData: %@", String(describing: innerError))
+            }
         }
         
         mainThreadContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
