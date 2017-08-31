@@ -86,7 +86,13 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
     {
         removeIfExpired(for: key)
         
-        let data = loadData(for: key)
+        let cached = loadFromCache(for: key)
+        if (cached != nil)
+        {
+            return cached
+        }
+        
+        let data = loadFromDisk(for: key)
         
         return data
     }
@@ -94,6 +100,7 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
     public func set(data: Data, for key: String)
     {
         saveToDisk(data: data, for: key)
+        saveToCache(data: data, for: key)
         
         var md = metaData(for: key)
         md[MetaDataKeys.timestamp] = Date()
@@ -132,6 +139,7 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
     public func removeData(for key: String)
     {
         UUDataCacheDb.shared.clearMetaData(for: key)
+        dataCache.removeObject(forKey: key as NSString)
         removeFile(for: key)
     }
     
@@ -151,6 +159,8 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
         UUDataCache.createFolderIfNeeded(cacheFolder)
         
         UUDataCacheDb.shared.clearAllMetaData()
+        
+        dataCache.removeAllObjects()
     }
     
     public func purgeExpiredData()
@@ -241,7 +251,7 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
         }
     }
     
-    private func loadData(for key: String) -> Data?
+    private func loadFromDisk(for key: String) -> Data?
     {
         var data : Data? = nil
         
@@ -257,6 +267,11 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
         }
         
         return data
+    }
+    
+    private func loadFromCache(for key: String) -> Data?
+    {
+        return dataCache.object(forKey: key as NSString) as Data?
     }
     
     private func removeFile(for key: String)
@@ -285,6 +300,11 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
         {
             UUDebugLog("Error saving data: %@", String(describing: err))
         }
+    }
+    
+    private func saveToCache(data: Data, for key: String)
+    {
+        dataCache.setObject(data as NSData, forKey: key as NSString)
     }
 }
 
