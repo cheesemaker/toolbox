@@ -474,33 +474,33 @@ public class UUHttpSession: NSObject
         return (responseCode >= 200 && responseCode < 300)
     }
     
-    public static func executeRequest(_ request : UUHttpRequest, _ completion: @escaping (UUHttpResponse) -> Void)
+    public static func executeRequest(_ request : UUHttpRequest, _ completion: @escaping (UUHttpResponse) -> Void) -> UUHttpRequest
     {
-        _ = shared.executeRequest(request, completion)
+        return shared.executeRequest(request, completion)
     }
     
     public static func get(_ url : String, _ queryArguments : [String:String], _ completion: @escaping (UUHttpResponse) -> Void)
     {
         let req = UUHttpRequest.getRequest(url, queryArguments)
-        executeRequest(req, completion)
+        _ = executeRequest(req, completion)
     }
     
     public static func delete(_ url : String, _ queryArguments : [String:String], _ completion: @escaping (UUHttpResponse) -> Void)
     {
         let req = UUHttpRequest.deleteRequest(url, queryArguments)
-        executeRequest(req, completion)
+        _ = executeRequest(req, completion)
     }
     
     public static func put(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String?, _ completion: @escaping (UUHttpResponse) -> Void)
     {
         let req = UUHttpRequest.putRequest(url, queryArguments, body, contentType)
-        executeRequest(req, completion)
+        _ = executeRequest(req, completion)
     }
     
     public static func post(_ url : String, _ queryArguments : [String:String], _ body: Data?, _ contentType : String?, _ completion: @escaping (UUHttpResponse) -> Void)
     {
         let req = UUHttpRequest.postRequest(url, queryArguments, body, contentType)
-        executeRequest(req, completion)
+        _ = executeRequest(req, completion)
     }
     
     public static func registerResponseHandler(_ handler : UUHttpResponseHandler)
