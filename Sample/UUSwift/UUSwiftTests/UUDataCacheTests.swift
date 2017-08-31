@@ -14,7 +14,9 @@ class UUDataCacheTests: XCTestCase
 {
     static var isFirstTest : Bool = true
     
-    let testUrl = URL(string: "http://hack.for.test/data/file.dat")!
+    var cacheToTest : UUDataCacheProtocol = UUDataCache.shared
+    
+    let testKey = "http://hack.for.test/data/file.dat"
     
     override func setUp()
     {
@@ -22,7 +24,7 @@ class UUDataCacheTests: XCTestCase
         
         if (UUDataCacheTests.isFirstTest)
         {
-            UUDataCache.shared.clearCacheContents()
+            cacheToTest.clearCache()
             UUDataCacheTests.isFirstTest = false
         }
     }
@@ -32,33 +34,32 @@ class UUDataCacheTests: XCTestCase
         super.tearDown()
     }
     
-    func test_0000_CacheLocNeverNil()
+    func test_0000_KeysEmpty()
     {
-        let cacheLoc = UUDataCache.shared.cacheLocation()
-        print("cacheLocation: \(cacheLoc)")
-        XCTAssertNotNil(cacheLoc)
+        let list = cacheToTest.listKeys()
+        XCTAssertEqual(list.count, 0)
     }
     
     func test_0001_ReturnNilBeforeCached()
     {
-        let url = testUrl
-        let data = UUDataCache.shared.dataForUrl(url: url)
+        let data = cacheToTest.data(for: testKey)
         XCTAssertNil(data)
     }
     
     func test_0002_CacheSomeDataAndRetrieveIt()
     {
-        let url = testUrl
+        let key = testKey
         let data : Data = Data(bytes: [0, 1, 2, 3, 4, 5, 6, 7, 8])
         
-        var exists = UUDataCache.shared.doesCachedFileExist(url: url)
+        var exists = cacheToTest.doesDataExist(for: key)
         XCTAssertFalse(exists)
         
-        UUDataCache.shared.cacheData(data: data, url: url)
+        cacheToTest.set(data: data, for: key)
         
-        exists = UUDataCache.shared.doesCachedFileExist(url: url)
+        exists = cacheToTest.doesDataExist(for: key)
         XCTAssertTrue(exists)
         
+        /*
         do
         {
             let list = try FileManager.default.contentsOfDirectory(atPath: UUDataCache.shared.cacheLocation().path)
@@ -70,86 +71,86 @@ class UUDataCacheTests: XCTestCase
         catch (let err)
         {
             UUDebugLog("Error writing data: %@", String(describing: err))
-        }
+        }*/
         
-        let check = UUDataCache.shared.dataForUrl(url: url)
+        let check = cacheToTest.data(for: key)
         XCTAssertNotNil(check)
         XCTAssertEqual(data, check!)
     }
     
     func test_0003_DeleteFile()
     {
-        let url = testUrl
+        let key = testKey
         
-        var exists = UUDataCache.shared.doesCachedFileExist(url: url)
+        var exists = cacheToTest.doesDataExist(for: key)
         XCTAssertTrue(exists)
         
-        UUDataCache.shared.clearCache(url: url)
+        cacheToTest.removeData(for: key)
         
-        let check = UUDataCache.shared.dataForUrl(url: url)
+        let check = cacheToTest.data(for: key)
         XCTAssertNil(check)
         
-        exists = UUDataCache.shared.doesCachedFileExist(url: url)
+        exists = cacheToTest.doesDataExist(for: key)
         XCTAssertFalse(exists)
     }
     
     func test_0004_ModifyFile()
     {
-        let url = testUrl
+        let key = testKey
         
         let data : Data = Data(bytes: [0, 1, 2, 3, 4, 5, 6, 7, 8])
         
-        UUDataCache.shared.cacheData(data: data, url: url)
+        cacheToTest.set(data: data, for: key)
         
-        var check = UUDataCache.shared.dataForUrl(url: url)
+        var check = cacheToTest.data(for: key)
         XCTAssertNotNil(check)
         XCTAssertEqual(data, check!)
         
         let modifiedData : Data = Data(bytes: [0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F])
         
-        UUDataCache.shared.cacheData(data: modifiedData, url: url)
+        cacheToTest.set(data: modifiedData, for: key)
         
-        check = UUDataCache.shared.dataForUrl(url: url)
+        check = cacheToTest.data(for: key)
         XCTAssertNotNil(check)
         XCTAssertEqual(modifiedData, check!)
     }
     
     func test_0005_PurgeExpiredContent_NotExpired()
     {
-        let url = testUrl
+        let key = testKey
         
         let data : Data = Data(bytes: [0, 1, 2, 3, 4, 5, 6, 7, 8])
         
-        UUDataCache.shared.cacheData(data: data, url: url)
+        cacheToTest.set(data: data, for: key)
         
-        var check = UUDataCache.shared.dataForUrl(url: url)
+        var check = cacheToTest.data(for: key)
         XCTAssertNotNil(check)
         XCTAssertEqual(data, check!)
         
-        UUDataCache.shared.purgeExpiredContent()
+        cacheToTest.purgeExpiredData()
         
-        check = UUDataCache.shared.dataForUrl(url: url)
+        check = cacheToTest.data(for: key)
         XCTAssertNotNil(check)
         XCTAssertEqual(data, check!)
     }
     
     func test_0006_PurgeExpiredContent_Expired()
     {
-        let url = testUrl
+        let key = testKey
         
         let data : Data = Data(bytes: [0, 1, 2, 3, 4, 5, 6, 7, 8])
         
-        UUDataCache.shared.cacheData(data: data, url: url)
+        cacheToTest.set(data: data, for: key)
         
-        var check = UUDataCache.shared.dataForUrl(url: url)
+        var check = cacheToTest.data(for: key)
         XCTAssertNotNil(check)
         XCTAssertEqual(data, check!)
         
-        UUDataCache.shared.contentExpirationLength = 0
+        cacheToTest.dataExpirationInterval = 0
         
-        UUDataCache.shared.purgeExpiredContent()
+        cacheToTest.purgeExpiredData()
         
-        check = UUDataCache.shared.dataForUrl(url: url)
+        check = cacheToTest.data(for: key)
         XCTAssertNil(check)
     }
     
