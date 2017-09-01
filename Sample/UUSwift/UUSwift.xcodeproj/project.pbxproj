@@ -38,6 +38,10 @@
 		0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */; };
 		0867CDCB1F3451DE00FEAA52 /* RSQuoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */; };
 		0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */; };
+		08BB408D1F56487B006AE095 /* UURemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB408C1F56487B006AE095 /* UURemoteData.swift */; };
+		08BB408F1F565B1F006AE095 /* UURemoteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB408E1F565B1F006AE095 /* UURemoteDataTests.swift */; };
+		08BB40911F568136006AE095 /* ImageGalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40901F568136006AE095 /* ImageGalleryController.swift */; };
+		08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40921F57359B006AE095 /* UURemoteImage.swift */; };
 		08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C3A6E71F551B3000BB8095 /* UUDataCache.swift */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +102,10 @@
 		0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RSQuote+Ext.swift"; sourceTree = "<group>"; };
 		0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteService.swift; sourceTree = "<group>"; };
 		0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteController.swift; sourceTree = "<group>"; };
+		08BB408C1F56487B006AE095 /* UURemoteData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UURemoteData.swift; path = ../../swift/UURemoteData.swift; sourceTree = "<group>"; };
+		08BB408E1F565B1F006AE095 /* UURemoteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UURemoteDataTests.swift; sourceTree = "<group>"; };
+		08BB40901F568136006AE095 /* ImageGalleryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageGalleryController.swift; sourceTree = "<group>"; };
+		08BB40921F57359B006AE095 /* UURemoteImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UURemoteImage.swift; path = ../../swift/UURemoteImage.swift; sourceTree = "<group>"; };
 		08C3A6DF1F551AB500BB8095 /* UUDataCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUDataCache.h; path = ../../UUDataCache.h; sourceTree = "<group>"; };
 		08C3A6E01F551AB500BB8095 /* UUDataCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UUDataCache.m; path = ../../UUDataCache.m; sourceTree = "<group>"; };
 		08C3A6E11F551AB500BB8095 /* UUImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUImageCache.h; path = ../../UUImageCache.h; sourceTree = "<group>"; };
@@ -195,6 +203,7 @@
 			children = (
 				084508021F0B41290045C0A6 /* UUCoreDataTests.swift */,
 				0857606A1F55D0E900483FDE /* UUDataCacheTests.swift */,
+				08BB408E1F565B1F006AE095 /* UURemoteDataTests.swift */,
 				084508041F0B41290045C0A6 /* Info.plist */,
 				085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */,
 			);
@@ -229,6 +238,8 @@
 				084B69021F29A137000B5FB9 /* UUCoreData.swift */,
 				0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */,
 				08C3A6E71F551B3000BB8095 /* UUDataCache.swift */,
+				08BB408C1F56487B006AE095 /* UURemoteData.swift */,
+				08BB40921F57359B006AE095 /* UURemoteImage.swift */,
 			);
 			name = UUToolbox;
 			sourceTree = "<group>";
@@ -239,6 +250,7 @@
 				084508371F0B41B70045C0A6 /* HomeController.swift */,
 				084508391F0B477B0045C0A6 /* WeatherController.swift */,
 				0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */,
+				08BB40901F568136006AE095 /* ImageGalleryController.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -405,7 +417,10 @@
 				0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */,
 				0845082E1F0B41480045C0A6 /* UUDebugLog.swift in Sources */,
 				084508301F0B41480045C0A6 /* UUEditViewController.swift in Sources */,
+				08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */,
+				08BB408D1F56487B006AE095 /* UURemoteData.swift in Sources */,
 				0845083D1F0B4FF80045C0A6 /* WeatherService.swift in Sources */,
+				08BB40911F568136006AE095 /* ImageGalleryController.swift in Sources */,
 				084508331F0B41480045C0A6 /* UUString.swift in Sources */,
 				0845083A1F0B477B0045C0A6 /* WeatherController.swift in Sources */,
 				084508341F0B41480045C0A6 /* UUTextField.swift in Sources */,
@@ -423,6 +438,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				085C76CA1F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld in Sources */,
+				08BB408F1F565B1F006AE095 /* UURemoteDataTests.swift in Sources */,
 				0857606B1F55D0E900483FDE /* UUDataCacheTests.swift in Sources */,
 				084508031F0B41290045C0A6 /* UUCoreDataTests.swift in Sources */,
 			);

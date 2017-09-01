@@ -35,6 +35,7 @@ class HomeController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         tableData.append(HomeTableRow("UUWeather", loadWeather))
         tableData.append(HomeTableRow("Ron Swanson Quotes", loadRSQuotes))
+        tableData.append(HomeTableRow("Image Gallery", loadImageGallery))
         
         tableView.tableFooterView = UIView()
     }
@@ -68,8 +69,10 @@ class HomeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         performSegue(withIdentifier: "showRSQuotes", sender: nil)
     }
     
-    
-
+    private func loadImageGallery()
+    {
+        performSegue(withIdentifier: "showImageGallery", sender: nil)
+    }
 }
 
 class HomeTableCell : UITableViewCell
@@ -79,9 +82,7 @@ class HomeTableCell : UITableViewCell
     func update(_ cellData: HomeTableRow)
     {
         label.text = cellData.label
-        
     }
-    
 }
 
 
