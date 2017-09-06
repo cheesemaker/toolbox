@@ -406,8 +406,12 @@ private class UUDataCacheDb : NSObject
     
     public func clearAllMetaData()
     {
-        UUCoreData.destroyStore(at: storeUrl)
-        coreDataStack = UUCoreData(url: storeUrl, model: storeModel)
+        let ctx = coreDataStack.mainThreadContext!
+        ctx.performAndWait
+        {
+            ctx.uuDeleteAllObjects()
+            _ = ctx.uuSubmitChanges()
+        }
     }
     
     private func underlyingMetaData(for key: String) -> UUDataCacheMetaData
