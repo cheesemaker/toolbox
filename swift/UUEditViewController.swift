@@ -24,7 +24,9 @@ class UUEditViewController : UIViewController
     {
         super.viewDidLoad()
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap)))
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap))
+        gesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(gesture)
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -101,7 +103,8 @@ extension UUEditViewController : UITextFieldDelegate
 {
     func textFieldDidBeginEditing(_ textField: UITextField)
     {
-        currentEditFieldFrame = referenceViewForEditField(textField).frame
+        let refView = referenceViewForEditField(textField)
+        currentEditFieldFrame = refView.convert(refView.frame, to: view)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField)
