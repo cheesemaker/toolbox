@@ -42,7 +42,7 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
     ////////////////////////////////////////////////////////////////////////////
     // Constants
     ////////////////////////////////////////////////////////////////////////////
-    private struct Constants
+    public struct Constants
     {
         public static let defaultContentExpirationLength : TimeInterval = (60 * 60 * 24 * 30) // 30 days
     }
@@ -205,7 +205,7 @@ public class UUDataCache : NSObject, UUDataCacheProtocol
     ////////////////////////////////////////////////////////////////////////////
     // Private Implementation
     ////////////////////////////////////////////////////////////////////////////
-    private static func defaultCacheFolder() -> String
+    public static func defaultCacheFolder() -> String
     {
         let cachePath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).last!
         let path = (cachePath as NSString).appendingPathComponent("UUDataCache")
@@ -437,7 +437,6 @@ private class UUDataCacheDb : NSObject
     }
 }
 
-@objc(UUDataCacheMetaData)
 public class UUDataCacheMetaData : NSManagedObject
 {
     @NSManaged var name : String?

@@ -46,11 +46,16 @@ extension UIColor
     // Calculates the midpoint value of each color component between two colors
     public static func uuCalculateMidColor(startColor: UIColor, endColor: UIColor) -> UIColor
     {
-        var startColors : [CGFloat] = [0, 0, 0, 0]
-        startColor.getRed(&startColors[0], green: &startColors[1], blue: &startColors[2], alpha: &startColors[3])
+        var r : CGFloat = 0
+        var g : CGFloat = 0
+        var b : CGFloat = 0
+        var a : CGFloat = 0
+        startColor.getRed(&r, green: &g, blue: &b, alpha: &a)
         
-        var endColors : [CGFloat] = [0, 0, 0, 0]
-        endColor.getRed(&endColors[0], green: &endColors[1], blue: &endColors[2], alpha: &endColors[3])
+        var startColors : [CGFloat] = [r, g, b, a]
+        
+        endColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        var endColors : [CGFloat] = [r, g, b, a]
         
         var midColors : [CGFloat] = [0, 0, 0, 0]
         
