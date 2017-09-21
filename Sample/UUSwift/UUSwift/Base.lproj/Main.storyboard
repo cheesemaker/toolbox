@@ -251,7 +251,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tCP-cq-86R">
-                                <rect key="frame" x="36" y="316" width="303" height="36"/>
+                                <rect key="frame" x="152" y="316" width="71" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -269,9 +269,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="tCP-cq-86R" firstAttribute="leading" secondItem="cDv-0H-3tr" secondAttribute="leadingMargin" constant="20" id="2Yf-sM-1oS"/>
+                            <constraint firstItem="tCP-cq-86R" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cDv-0H-3tr" secondAttribute="leadingMargin" constant="20" id="2Yf-sM-1oS"/>
                             <constraint firstItem="U9n-fu-zJ2" firstAttribute="centerX" secondItem="cDv-0H-3tr" secondAttribute="centerX" id="6AB-yQ-MVJ"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="tCP-cq-86R" secondAttribute="trailing" constant="20" id="7F4-D1-xWZ"/>
+                            <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="tCP-cq-86R" secondAttribute="trailing" constant="20" id="7F4-D1-xWZ"/>
                             <constraint firstItem="TAj-rx-pdE" firstAttribute="top" secondItem="U9n-fu-zJ2" secondAttribute="bottom" constant="18" id="Ipg-qo-XYl"/>
                             <constraint firstItem="tCP-cq-86R" firstAttribute="centerX" secondItem="cDv-0H-3tr" secondAttribute="centerX" id="Vb2-jd-RUD"/>
                             <constraint firstItem="U9n-fu-zJ2" firstAttribute="top" secondItem="b0E-Xc-Dot" secondAttribute="bottom" constant="35" id="Zx2-mf-36B"/>
