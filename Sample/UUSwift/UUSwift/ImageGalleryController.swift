@@ -91,7 +91,7 @@ class ImageGalleryController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
 
-    public func handlePhotoDownloaded(notification: Notification)
+    @objc public func handlePhotoDownloaded(notification: Notification)
     {
         let remotePath = notification.uuRemoteDataPath
         UUDebugLog("Image downloaded: %@", String(describing: remotePath))

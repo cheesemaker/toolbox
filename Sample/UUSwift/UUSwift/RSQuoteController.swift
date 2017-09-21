@@ -58,7 +58,7 @@ class RSQuoteController: UIViewController
         }
     }
     
-    private func downloadQuotes(_ completion: @escaping (Void)->Void)
+    private func downloadQuotes(_ completion: @escaping ()->Void)
     {
         progressSpinner.startAnimating()
         

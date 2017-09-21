@@ -43,6 +43,7 @@
 		08BB40911F568136006AE095 /* ImageGalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40901F568136006AE095 /* ImageGalleryController.swift */; };
 		08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40921F57359B006AE095 /* UURemoteImage.swift */; };
 		08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C3A6E71F551B3000BB8095 /* UUDataCache.swift */; };
+		08D3288C1F738D5F00CA04FC /* BeaconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D3288B1F738D5F00CA04FC /* BeaconController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +116,7 @@
 		08C3A6E51F551AB500BB8095 /* UURemoteImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UURemoteImage.h; path = ../../UURemoteImage.h; sourceTree = "<group>"; };
 		08C3A6E61F551AB500BB8095 /* UURemoteImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UURemoteImage.m; path = ../../UURemoteImage.m; sourceTree = "<group>"; };
 		08C3A6E71F551B3000BB8095 /* UUDataCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDataCache.swift; path = ../../swift/UUDataCache.swift; sourceTree = "<group>"; };
+		08D3288B1F738D5F00CA04FC /* BeaconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,6 +253,7 @@
 				084508391F0B477B0045C0A6 /* WeatherController.swift */,
 				0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */,
 				08BB40901F568136006AE095 /* ImageGalleryController.swift */,
+				08D3288B1F738D5F00CA04FC /* BeaconController.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -327,24 +330,26 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Useful Utilities";
 				TargetAttributes = {
 					084507E61F0B41290045C0A6 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5LSSE6XSXJ;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					084507FD1F0B41290045C0A6 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5LSSE6XSXJ;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 084507E61F0B41290045C0A6;
 					};
 					084508081F0B41290045C0A6 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5LSSE6XSXJ;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 084507E61F0B41290045C0A6;
 					};
@@ -415,6 +420,7 @@
 				0845082C1F0B41480045C0A6 /* UUData.swift in Sources */,
 				084508381F0B41B70045C0A6 /* HomeController.swift in Sources */,
 				0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */,
+				08D3288C1F738D5F00CA04FC /* BeaconController.swift in Sources */,
 				0845082E1F0B41480045C0A6 /* UUDebugLog.swift in Sources */,
 				084508301F0B41480045C0A6 /* UUEditViewController.swift in Sources */,
 				08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */,
@@ -497,7 +503,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -505,7 +513,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -547,7 +559,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -555,7 +569,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -590,7 +608,8 @@
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -604,7 +623,8 @@
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -620,7 +640,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwiftTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UUSwift.app/UUSwift";
 			};
 			name = Debug;
@@ -636,7 +657,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwiftTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UUSwift.app/UUSwift";
 			};
 			name = Release;
@@ -650,7 +672,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwiftUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = UUSwift;
 			};
 			name = Debug;
@@ -664,7 +687,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUSwiftUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = UUSwift;
 			};
 			name = Release;

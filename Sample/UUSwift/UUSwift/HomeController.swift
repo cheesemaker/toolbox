@@ -36,6 +36,7 @@ class HomeController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableData.append(HomeTableRow("UUWeather", loadWeather))
         tableData.append(HomeTableRow("Ron Swanson Quotes", loadRSQuotes))
         tableData.append(HomeTableRow("Image Gallery", loadImageGallery))
+        tableData.append(HomeTableRow("UUBeacon", loadBeaconView))
         
         tableView.tableFooterView = UIView()
     }
@@ -72,6 +73,11 @@ class HomeController: UIViewController, UITableViewDelegate, UITableViewDataSour
     private func loadImageGallery()
     {
         performSegue(withIdentifier: "showImageGallery", sender: nil)
+    }
+    
+    private func loadBeaconView()
+    {
+        performSegue(withIdentifier: "showBeaconView", sender: nil)
     }
 }
 

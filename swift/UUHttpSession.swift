@@ -411,7 +411,7 @@ public class UUHttpSession: NSObject
             
             var userInfo : [AnyHashable : Any]  = [:]
             userInfo[NSUnderlyingErrorKey] = error
-            err = NSError.init(domain: UUHttpSessionErrorDomain, code: errCode.rawValue, userInfo: userInfo)
+            err = NSError.init(domain: UUHttpSessionErrorDomain, code: errCode.rawValue, userInfo: userInfo as! [String : Any])
         }
         else
         {
@@ -432,7 +432,7 @@ public class UUHttpSession: NSObject
                 d[UUHttpSessionHttpErrorMessageKey] = HTTPURLResponse.localizedString(forStatusCode: httpResponseCode)
                 d[UUHttpSessionAppResponseKey] = parsedResponse
                 
-                err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.httpError.rawValue, userInfo:d)
+                err = NSError.init(domain:UUHttpSessionErrorDomain, code:UUHttpSessionError.httpError.rawValue, userInfo:d as! [String : Any])
             }
         }
         

@@ -58,7 +58,7 @@ class UUEditViewController : UIViewController
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func handleBackgroundTap()
+    @objc func handleBackgroundTap()
     {
         view.endEditing(true)
     }

@@ -37,7 +37,7 @@ class UURemoteDataTests: XCTestCase
     {
         let key = UURemoteDataTests.testUrl
         
-        expectation(forNotification: UURemoteData.Notifications.DataDownloaded.rawValue, object: nil)
+        expectation(forNotification: NSNotification.Name(rawValue: UURemoteData.Notifications.DataDownloaded.rawValue), object: nil)
         { (notification: Notification) -> Bool in
             
             let md = UURemoteData.shared.metaData(for: key)
@@ -76,7 +76,7 @@ class UURemoteDataTests: XCTestCase
     
     func test_0001_FetchFromBadUrl()
     {
-        expectation(forNotification: UURemoteData.Notifications.DataDownloadFailed.rawValue, object: nil)
+        expectation(forNotification: NSNotification.Name(rawValue: UURemoteData.Notifications.DataDownloadFailed.rawValue), object: nil)
         
         let key = "http://this.is.a.fake.url/non_existent.jpg"
         

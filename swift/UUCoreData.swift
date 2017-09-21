@@ -80,7 +80,7 @@ public class UUCoreData: NSObject
         storeCoordinator = nil
     }
     
-    public func otherContextDidSave(notification: Notification)
+    @objc public func otherContextDidSave(notification: Notification)
     {
         let destContext : NSManagedObjectContext? = mainThreadContext
         
