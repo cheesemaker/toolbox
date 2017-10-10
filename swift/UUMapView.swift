@@ -77,11 +77,17 @@ public extension MKMapView
         }
     }
     
-    public func uuZoomToAnnotations(_ animated: Bool)
+    public func uuZoomToAnnotations(animated: Bool, center: CLLocationCoordinate2D? = nil)
     {
-        let region = MKMapView.uuFindBoundingBox(annotations: annotations)
+        var region = MKMapView.uuFindBoundingBox(annotations: annotations)
         if (region != nil)
         {
+            if (center != nil)
+            {
+                region!.center.latitude = center!.latitude
+                region!.center.longitude = center!.longitude
+            }
+            
             let adjustedRegion = regionThatFits(region!)
             setRegion(adjustedRegion, animated: animated)
         }
