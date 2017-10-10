@@ -41,7 +41,8 @@ extension String
         
         if (start != nil && end != nil)
         {
-            return String(self[start!..<end!])
+            let range = start! ..< end!
+            return self.substring(with: range)
         }
         
         return ""
@@ -89,5 +90,18 @@ extension String
         let f = NumberFormatter()
         f.numberStyle = .decimal
         return f.number(from: self)
+    }
+    
+    public func uuToJsonObject(_ encoding : String.Encoding = .utf8) -> Any?
+    {
+        let encodedData = data(using: encoding)
+        if (encodedData != nil)
+        {
+            return encodedData!.uuToJson()
+        }
+        else
+        {
+            return nil
+        }
     }
 }
