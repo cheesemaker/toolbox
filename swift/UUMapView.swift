@@ -82,7 +82,7 @@ public extension MKMapView
         var region = MKMapView.uuFindBoundingBox(annotations: annotations)
         if (region != nil)
         {
-            if (center != nil)
+            if (center != nil && CLLocationCoordinate2DIsValid(center!))
             {
                 region!.center.latitude = center!.latitude
                 region!.center.longitude = center!.longitude
