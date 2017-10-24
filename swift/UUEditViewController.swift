@@ -3,7 +3,7 @@
 //  Useful Utilities - Subclass of UIViewController that handles automatically
 //  some common editing tasks
 //
-//	License:
+//    License:
 //  You are free to use this code for whatever purposes you desire.
 //  The only requirement is that you smile everytime you use it.
 //
@@ -15,9 +15,10 @@
 
 import UIKit
 
-class UUEditViewController : UIViewController
+class UUEditViewController : UIViewController, UITextViewDelegate
 {
     var currentEditFieldFrame: CGRect? = nil
+    var currentKeyboardFrame: CGRect? = nil
     var spaceToKeybaord : CGFloat = 10
     
     override func viewDidLoad()
@@ -41,15 +42,19 @@ class UUEditViewController : UIViewController
         clearNotificationHandlers()
     }
     
-    func referenceViewForEditField(_ textField: UITextField) -> UIView
+    func referenceViewForEditField(_ view: UIView) -> UIView
     {
-        return textField
+        return view
     }
     
     func registerNotificationHandlers()
     {
         NotificationCenter.default.addObserver(forName: Notification.Name.UIKeyboardWillShow, object: nil, queue: nil, using: handleKeyboardWillShowNotification)
         NotificationCenter.default.addObserver(forName: Notification.Name.UIKeyboardWillHide, object: nil, queue: nil, using: handleKeyboardWillHideNotification)
+        NotificationCenter.default.addObserver(forName: Notification.Name.UITextViewTextDidBeginEditing, object: nil, queue: nil, using: handleEditingStarted)
+        NotificationCenter.default.addObserver(forName: Notification.Name.UITextFieldTextDidBeginEditing, object: nil, queue: nil, using: handleEditingStarted)
+        NotificationCenter.default.addObserver(forName: Notification.Name.UITextViewTextDidEndEditing, object: nil, queue: nil, using: handleEditingEnded)
+        NotificationCenter.default.addObserver(forName: Notification.Name.UITextFieldTextDidEndEditing, object: nil, queue: nil, using: handleEditingEnded)
     }
     
     func clearNotificationHandlers()
@@ -63,13 +68,19 @@ class UUEditViewController : UIViewController
         view.endEditing(true)
     }
     
-    func handleKeyboardWillShowNotification(_ notification: Notification)
+    @objc func handleKeyboardWillShowNotification(_ notification: Notification)
     {
-        let keyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect
-        
-        if (keyboardFrame != nil && currentEditFieldFrame != nil)
+        currentKeyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect
+        animateViewIfNeeded()
+    }
+    
+    private func animateViewIfNeeded()
+    {
+        if (currentKeyboardFrame != nil &&
+            currentEditFieldFrame != nil &&
+            view.frame.origin.y == 0)
         {
-            let keyboardTop = keyboardFrame!.origin.y
+            let keyboardTop = currentKeyboardFrame!.origin.y
             let fieldBottom = currentEditFieldFrame!.origin.y + currentEditFieldFrame!.size.height
             
             if (keyboardTop < fieldBottom)
@@ -80,15 +91,17 @@ class UUEditViewController : UIViewController
                 f.origin.y = -keyboardAdjust
                 
                 UIView.animate(withDuration: 0.5, animations:
-                    {
-                        self.view.frame = f
+                {
+                    self.view.frame = f
                 })
             }
         }
     }
     
-    func handleKeyboardWillHideNotification(_ notification: Notification)
+    @objc func handleKeyboardWillHideNotification(_ notification: Notification)
     {
+        currentKeyboardFrame = nil
+        
         var f = view.frame
         f.origin.y = 0
         
@@ -97,18 +110,22 @@ class UUEditViewController : UIViewController
             self.view.frame = f
         })
     }
-}
-
-extension UUEditViewController : UITextFieldDelegate
-{
-    func textFieldDidBeginEditing(_ textField: UITextField)
+    
+    @objc func handleEditingStarted(_ notification: Notification)
     {
-        let refView = referenceViewForEditField(textField)
-        currentEditFieldFrame = refView.convert(refView.frame, to: view)
+        if let view = notification.object as? UIView
+        {
+            let refView = referenceViewForEditField(view)
+            currentEditFieldFrame = refView.convert(refView.frame, to: view)
+            animateViewIfNeeded()
+        }
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField)
+    @objc func handleEditingEnded(_ notification: Notification)
     {
         currentEditFieldFrame = nil
     }
 }
+
+
+
