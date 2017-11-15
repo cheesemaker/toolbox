@@ -5,15 +5,23 @@
 //	Smile License:
 //  You are free to use this code for whatever purposes you desire. The only requirement is that you smile everytime you use it.
 //
-//  Contact: @cheesemaker or jon@threejacks.com
 
 #import "UUCompression.h"
+#import "UUMacros.h"
 #import <zlib.h>
 
-#define UUDebugLog(fmt, ...)
+#ifndef UUCompressionLog
+#ifdef DEBUG
+#define UUCompressionLog(fmt, ...) UUDebugLog(fmt, ##__VA_ARGS__)
+#else
+#define UUCompressionLog(fmt, ...)
+#endif
+#endif
 
-// Uncomment to emit debug logging
-//#define UUDebugLog(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+// Force UUCompressionLog to be disabled all the time. Comment these two lines to
+// enable debug logging again
+#undef UUCompressionLog
+#define UUCompressionLog(fmt, ...)
 
 #define UU_RAW_ENCODING_WINDOW_BITS         (-MAX_WBITS)
 #define UU_ZLIB_ENCODING_WINDOW_BITS        (MAX_WBITS )
@@ -23,9 +31,9 @@
 NSString* UUZlibErrorCodeToString(int errorCode);
 NSString* UUZlibFormatErrorCodeString(int errorCode);
 
-#define UULogZlibMethodCall(method, returnCode) UUDebugLog(@"%@ returned %@", method, UUZlibFormatErrorCodeString(returnCode))
+#define UULogZlibMethodCall(method, returnCode) UUCompressionLog(@"%@ returned %@", method, UUZlibFormatErrorCodeString(returnCode))
 #define UULogZlibZStream(zs) \
-    UUDebugLog(@"\n z_stream.avail_in  = %@" \
+    UUCompressionLog(@"\n z_stream.avail_in  = %@" \
                 "\n z_stream.avail_out = %@" \
                 "\n z_stream.total_in  = %@" \
                 "\n z_stream.total_out = %@", \
@@ -58,7 +66,7 @@ NSString* UUZlibFormatErrorCodeString(int errorCode);
     if (returnCode == Z_OK)
     {
         uLong compressedSize = deflateBound(&zs, self.length);
-        UUDebugLog(@"Compressed size will be: %lu", compressedSize);
+        UUCompressionLog(@"Compressed size will be: %lu", compressedSize);
         compressedResult = [NSMutableData dataWithLength:compressedSize];
         zs.next_out = (Bytef*)[compressedResult mutableBytes];
         zs.avail_out = (uInt)compressedSize;
