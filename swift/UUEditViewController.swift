@@ -15,11 +15,13 @@
 
 import UIKit
 
-class UUEditViewController : UIViewController, UITextViewDelegate
+class UUEditViewController : UIViewController
 {
     var currentEditFieldFrame: CGRect? = nil
     var currentKeyboardFrame: CGRect? = nil
     var spaceToKeybaord : CGFloat = 10
+    
+    private var frameBeforeAdjust: CGRect? = nil
     
     override func viewDidLoad()
     {
@@ -38,7 +40,7 @@ class UUEditViewController : UIViewController, UITextViewDelegate
     
     override func viewWillDisappear(_ animated: Bool)
     {
-        super.viewWillAppear(animated)
+        super.viewWillDisappear(animated)
         clearNotificationHandlers()
     }
     
@@ -78,7 +80,8 @@ class UUEditViewController : UIViewController, UITextViewDelegate
     {
         if (currentKeyboardFrame != nil &&
             currentEditFieldFrame != nil &&
-            view.frame.origin.y == 0)
+            isViewLoaded &&
+            !view.isHidden)
         {
             let keyboardTop = currentKeyboardFrame!.origin.y
             let fieldBottom = currentEditFieldFrame!.origin.y + currentEditFieldFrame!.size.height
@@ -88,6 +91,8 @@ class UUEditViewController : UIViewController, UITextViewDelegate
                 let keyboardAdjust = fieldBottom - keyboardTop + spaceToKeybaord
                 
                 var f = view.frame
+                frameBeforeAdjust = f
+                
                 f.origin.y = -keyboardAdjust
                 
                 UIView.animate(withDuration: 0.5, animations:
@@ -103,12 +108,16 @@ class UUEditViewController : UIViewController, UITextViewDelegate
         currentKeyboardFrame = nil
         
         var f = view.frame
-        f.origin.y = 0
         
-        UIView.animate(withDuration: 0.5, animations:
+        if (frameBeforeAdjust != nil && f.origin.y != frameBeforeAdjust!.origin.y)
         {
-            self.view.frame = f
-        })
+            f.origin.y = frameBeforeAdjust!.origin.y
+            
+            UIView.animate(withDuration: 0.5, animations:
+            {
+                self.view.frame = f
+            })
+        }
     }
     
     @objc func handleEditingStarted(_ notification: Notification)
