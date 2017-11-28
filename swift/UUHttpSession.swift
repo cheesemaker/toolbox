@@ -354,7 +354,7 @@ public class UUHttpSession: NSObject
             req.setValue(String.init(format: "%lu", request.body!.count), forHTTPHeaderField: UUHeader.contentLength)
             req.httpBody = request.body
             
-            if (request.bodyContentType != nil && request.bodyContentType!.characters.count > 0)
+            if (request.bodyContentType != nil && request.bodyContentType!.count > 0)
             {
                 req.addValue(request.bodyContentType!, forHTTPHeaderField: UUHeader.contentType)
             }
