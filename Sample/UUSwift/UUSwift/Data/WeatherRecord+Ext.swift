@@ -94,15 +94,15 @@ extension WeatherRecord : UUObjectFactory
             cloudPercent = cloud!["all"] as! Double
         }
         
-        timestamp = NSDate(timeIntervalSince1970: dictionary["dt"] as! Double)
+        timestamp = Date(timeIntervalSince1970: dictionary["dt"] as! Double)
         
         city = dictionary["name"] as? String
         
         let sys = dictionary["sys"] as? [AnyHashable:Any]
         if (sys != nil)
         {
-            sunriseTime = NSDate(timeIntervalSince1970: sys!["sunrise"] as! Double)
-            sunsetTime = NSDate(timeIntervalSince1970: sys!["sunset"] as! Double)
+            sunriseTime = Date(timeIntervalSince1970: sys!["sunrise"] as! Double)
+            sunsetTime = Date(timeIntervalSince1970: sys!["sunset"] as! Double)
         }
         
         print("Filled from dictionary: \(self)")

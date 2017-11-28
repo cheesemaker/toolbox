@@ -58,7 +58,7 @@ extension RSQuote : UUObjectFactory
         
         quote = dictionary["quote"] as? String
         identifier = Int64(dictionary["identifier"] as! Int)
-        downloadedAt = df.date(from: dictionary["downloadedAt"] as! String)! as NSDate
+        downloadedAt = df.date(from: dictionary["downloadedAt"] as! String)! as Date
         
         print("parsed: \(self)")
     }
