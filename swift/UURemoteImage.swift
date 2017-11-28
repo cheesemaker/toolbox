@@ -48,7 +48,7 @@ public class UURemoteImage: NSObject, UURemoteImageProtocol
             return nil
         }
         
-        let cached = UURemoteData.shared.data(for: key)
+        let cached = UUDataCache.shared.data(for: key)
         if (cached != nil)
         {
             return UIImage(data: cached!)
