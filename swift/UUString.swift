@@ -27,9 +27,9 @@ extension String
         }
         
         var adjustedLength = length
-        if (adjustedLength > self.characters.count)
+        if (adjustedLength > self.count)
         {
-            adjustedLength = self.characters.count
+            adjustedLength = self.count
         }
         
         let start = self.index(self.startIndex, offsetBy: adjustedFrom, limitedBy: self.endIndex)
@@ -57,7 +57,7 @@ extension String
     // Returns the last N characters of the string
     public func uuLastNChars(_ count: Int) -> String
     {
-        return uuSubString(characters.count - count, count)
+        return uuSubString(self.count - count, count)
     }
     
     private static let kUrlEncodingChars = "!*'();:@&=+$,/?%#[] "

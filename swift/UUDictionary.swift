@@ -18,7 +18,7 @@ extension Dictionary
         for key in keys
         {
             var prefix = "&"
-            if ((sb as String).characters.count == 0)
+            if ((sb as String).count == 0)
             {
                 prefix = "?"
             }
