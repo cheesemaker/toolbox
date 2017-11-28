@@ -43,7 +43,6 @@
 		08BB40911F568136006AE095 /* ImageGalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40901F568136006AE095 /* ImageGalleryController.swift */; };
 		08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40921F57359B006AE095 /* UURemoteImage.swift */; };
 		08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C3A6E71F551B3000BB8095 /* UUDataCache.swift */; };
-		08D3288C1F738D5F00CA04FC /* BeaconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D3288B1F738D5F00CA04FC /* BeaconController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,7 +115,6 @@
 		08C3A6E51F551AB500BB8095 /* UURemoteImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UURemoteImage.h; path = ../../UURemoteImage.h; sourceTree = "<group>"; };
 		08C3A6E61F551AB500BB8095 /* UURemoteImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UURemoteImage.m; path = ../../UURemoteImage.m; sourceTree = "<group>"; };
 		08C3A6E71F551B3000BB8095 /* UUDataCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDataCache.swift; path = ../../swift/UUDataCache.swift; sourceTree = "<group>"; };
-		08D3288B1F738D5F00CA04FC /* BeaconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,7 +251,6 @@
 				084508391F0B477B0045C0A6 /* WeatherController.swift */,
 				0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */,
 				08BB40901F568136006AE095 /* ImageGalleryController.swift */,
-				08D3288B1F738D5F00CA04FC /* BeaconController.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -425,7 +422,6 @@
 				0845082C1F0B41480045C0A6 /* UUData.swift in Sources */,
 				084508381F0B41B70045C0A6 /* HomeController.swift in Sources */,
 				0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */,
-				08D3288C1F738D5F00CA04FC /* BeaconController.swift in Sources */,
 				0845082E1F0B41480045C0A6 /* UUDebugLog.swift in Sources */,
 				084508301F0B41480045C0A6 /* UUEditViewController.swift in Sources */,
 				08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */,
