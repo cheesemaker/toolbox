@@ -9,7 +9,7 @@
 
 import UIKit
 
-extension UIColor
+public extension UIColor
 {
     // Creates a UIColor object from a hex string in the form of
     //

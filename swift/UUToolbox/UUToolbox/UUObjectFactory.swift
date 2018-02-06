@@ -9,7 +9,7 @@
 
 import UIKit
 
-protocol UUObjectFactory
+public protocol UUObjectFactory
 {
     static func uuObjectFromDictionary(dictionary : [AnyHashable:Any], context: Any?) -> Self?
 }

@@ -60,7 +60,7 @@ extension DateFormatter
     }
 }
 
-extension Date
+public extension Date
 {
     public func uuFormat(_ format : String, timeZone : TimeZone = TimeZone.current, locale : Locale = Locale.current) -> String
     {

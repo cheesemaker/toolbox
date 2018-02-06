@@ -49,28 +49,28 @@ public enum UUHttpSessionError : Int
     case invalidRequest = 0x2003
 }
 
-let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
-let UUHttpSessionHttpErrorCodeKey      = "UUHttpSessionHttpErrorCodeKey"
-let UUHttpSessionHttpErrorMessageKey   = "UUHttpSessionHttpErrorMessageKey"
-let UUHttpSessionAppResponseKey        = "UUHttpSessionAppResponseKey"
+public let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
+public let UUHttpSessionHttpErrorCodeKey      = "UUHttpSessionHttpErrorCodeKey"
+public let UUHttpSessionHttpErrorMessageKey   = "UUHttpSessionHttpErrorMessageKey"
+public let UUHttpSessionAppResponseKey        = "UUHttpSessionAppResponseKey"
 
-let kUUHttpDefaultTimeout : TimeInterval = 60.0
+public let kUUHttpDefaultTimeout : TimeInterval = 60.0
 
-struct UUContentType
+public struct UUContentType
 {
-    static let applicationJson  = "application/json"
-    static let textJson         = "text/json"
-    static let textHtml         = "text/html"
-    static let textPlain        = "text/plain"
-    static let binary           = "application/octet-stream"
-    static let imagePng         = "image/png"
-    static let imageJpeg        = "image/jpeg"
+    public static let applicationJson  = "application/json"
+    public static let textJson         = "text/json"
+    public static let textHtml         = "text/html"
+    public static let textPlain        = "text/plain"
+    public static let binary           = "application/octet-stream"
+    public static let imagePng         = "image/png"
+    public static let imageJpeg        = "image/jpeg"
 }
 
-struct UUHeader
+public struct UUHeader
 {
-    static let contentLength = "Content-Length"
-    static let contentType = "Content-Type"
+    public static let contentLength = "Content-Length"
+    public static let contentType = "Content-Type"
 }
 
 public class UUHttpRequest: NSObject
@@ -95,7 +95,7 @@ public class UUHttpRequest: NSObject
         self.url = url
     }
     
-    static func getRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
+    public static func getRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .get
@@ -103,7 +103,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func deleteRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
+    public static func deleteRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .delete
@@ -111,7 +111,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
+    public static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .put
@@ -121,7 +121,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
+    public static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .post
@@ -131,7 +131,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
+    public static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .patch
@@ -242,6 +242,7 @@ class UUImageResponseHandler : NSObject, UUHttpResponseHandler
     }
 }
 
+@objc
 public class UUHttpSession: NSObject
 {
     private var urlSession : URLSession? = nil

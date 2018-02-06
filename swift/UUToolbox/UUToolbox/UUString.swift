@@ -9,7 +9,7 @@
 
 import Foundation
 
-extension String
+public extension String
 {
     // Access a sub string based on integer start index and integer length.
     //

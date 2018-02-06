@@ -9,7 +9,7 @@
 
 import Foundation
 
-extension Data
+public extension Data
 {
     // Return hex string representation of data
     //

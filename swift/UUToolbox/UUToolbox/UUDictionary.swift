@@ -9,7 +9,7 @@
 
 import Foundation
 
-extension Dictionary
+public extension Dictionary
 {
     public func uuBuildQueryString() -> String
     {

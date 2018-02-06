@@ -15,7 +15,7 @@
 
 import UIKit
 
-class UUEditViewController : UIViewController
+open class UUEditViewController : UIViewController
 {
     var currentEditFieldFrame: CGRect? = nil
     var currentKeyboardFrame: CGRect? = nil
@@ -23,7 +23,7 @@ class UUEditViewController : UIViewController
     
     private var frameBeforeAdjust: CGRect? = nil
     
-    override func viewDidLoad()
+    override open func viewDidLoad()
     {
         super.viewDidLoad()
         
@@ -32,13 +32,13 @@ class UUEditViewController : UIViewController
         view.addGestureRecognizer(gesture)
     }
     
-    override func viewWillAppear(_ animated: Bool)
+    override open func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
         registerNotificationHandlers()
     }
     
-    override func viewWillDisappear(_ animated: Bool)
+    override open func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
         clearNotificationHandlers()

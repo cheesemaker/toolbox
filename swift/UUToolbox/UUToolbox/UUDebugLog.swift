@@ -24,7 +24,7 @@ import Foundation
 //
 // UUDebugLog("Another interesting log statement, foo: %@, bar: %@", "Foo", "Bar")
 //
-func UUDebugLog(function : NSString = #function, file : NSString = #file, line : Int = #line, _ format : String, _ args: CVarArg...)
+public func UUDebugLog(function : NSString = #function, file : NSString = #file, line : Int = #line, _ format : String, _ args: CVarArg...)
 {
 #if DEBUG
     withVaList(args,
