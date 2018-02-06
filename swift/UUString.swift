@@ -41,8 +41,7 @@ extension String
         
         if (start != nil && end != nil)
         {
-            let range = start! ..< end!
-            return self.substring(with: range)
+            return String.init(self[start! ..< end!])
         }
         
         return ""
