@@ -30,4 +30,44 @@ extension UIView
         self.superview?.viewWithTag(UIView.blurEffectViewTag)?.removeFromSuperview()
     }
 
+	@IBInspectable var uuCornerRadius: CGFloat {
+		get {
+			return layer.cornerRadius
+		}
+		set {
+			layer.cornerRadius = newValue
+			layer.masksToBounds = newValue > 0
+		}
+	}
+	
+	@IBInspectable var uuBorderWidth: CGFloat {
+		get {
+			return layer.borderWidth
+		}
+		set {
+			layer.borderWidth = newValue
+		}
+	}
+	
+	@IBInspectable var uuBorderColor: UIColor? {
+		get {
+			let color = UIColor(cgColor: layer.borderColor!)
+			return color
+		}
+		set {
+			layer.borderColor = newValue?.cgColor
+		}
+	}
+	
+	@IBInspectable var uuShadowRadius: CGFloat {
+		get {
+			return layer.shadowRadius
+		}
+		set {
+			layer.shadowColor = UIColor.black.cgColor
+			layer.shadowOffset = CGSize(width: 0, height: 2)
+			layer.shadowOpacity = 0.35
+			layer.shadowRadius = uuShadowRadius
+		}
+	}
 }
