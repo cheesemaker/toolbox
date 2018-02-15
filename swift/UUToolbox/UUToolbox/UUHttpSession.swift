@@ -88,7 +88,7 @@ public class UUHttpRequest: NSObject
     var startTime : TimeInterval = 0
     var httpRequest : URLRequest? = nil
     
-    init(_ url : String)
+    public init(_ url : String)
     {
         super.init()
         
