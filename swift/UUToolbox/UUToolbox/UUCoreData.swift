@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-public class UUCoreData: NSObject
+open class UUCoreData: NSObject
 {
     public var mainThreadContext : NSManagedObjectContext?
     public var storeCoordinator : NSPersistentStoreCoordinator?
