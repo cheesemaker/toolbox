@@ -51,4 +51,9 @@ public extension Data
         let json = uuToJson()
         return String(format: "%@", (json as? CVarArg) ?? "")
     }
+    
+    public func uuReversed() -> Data
+    {
+        return Data.init(bytes: self.reversed())
+    }
 }
