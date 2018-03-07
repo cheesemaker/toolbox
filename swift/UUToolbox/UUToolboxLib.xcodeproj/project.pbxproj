@@ -26,7 +26,7 @@
 		08174E43204FB58A00547292 /* UUString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11520298FD5003DBF56 /* UUString.swift */; };
 		08174E44204FB58A00547292 /* UUTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C10D20298FD5003DBF56 /* UUTextField.swift */; };
 		08174E45204FB58A00547292 /* UUView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11420298FD5003DBF56 /* UUView.swift */; };
-		08174E7E204FBA1E00547292 /* module.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = 08174E7D204FB9EC00547292 /* module.modulemap */; };
+		08174E7E204FBA1E00547292 /* UUToolboxLib.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = 08174E7D204FB9EC00547292 /* UUToolboxLib.modulemap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,7 +36,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				08174E7E204FBA1E00547292 /* module.modulemap in CopyFiles */,
+				08174E7E204FBA1E00547292 /* UUToolboxLib.modulemap in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,7 +44,7 @@
 
 /* Begin PBXFileReference section */
 		08174E2A204FB57500547292 /* libUUToolbox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUUToolbox.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		08174E7D204FB9EC00547292 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		08174E7D204FB9EC00547292 /* UUToolboxLib.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = UUToolboxLib.modulemap; sourceTree = "<group>"; };
 		0862C0F620298F84003DBF56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0862C10020298F84003DBF56 /* UUToolboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUToolboxTests.swift; sourceTree = "<group>"; };
 		0862C10220298F84003DBF56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -83,7 +83,7 @@
 		0862C0E820298F84003DBF56 = {
 			isa = PBXGroup;
 			children = (
-				08174E7D204FB9EC00547292 /* module.modulemap */,
+				08174E7D204FB9EC00547292 /* UUToolboxLib.modulemap */,
 				0862C0F420298F84003DBF56 /* UUToolbox */,
 				0862C0FF20298F84003DBF56 /* UUToolboxTests */,
 				0862C0F320298F84003DBF56 /* Products */,
