@@ -103,4 +103,36 @@ public extension String
             return nil
         }
     }
+    
+    public func uuToHexData() -> NSData?
+    {
+        let length:Int = self.count
+        
+        // Must greater than zero and be divisible by two
+        if (length <= 0 || (length % 2) != 0)
+        {
+            return nil;
+        }
+        
+        let data:NSMutableData = NSMutableData()
+        
+        for i in stride(from: 0, to: length, by: 2)
+        {
+            let sc:Scanner = Scanner(string: self.uuSubString(i, 2)) //Substring was deprecated, so using uu
+            
+            var hex:UInt32 = 0
+            if (sc.scanHexInt32(&hex))
+            {
+                var tmp:UInt8 = UInt8(hex)
+                data.append(&tmp, length: MemoryLayout<UInt8>.size) //sizeof deprecated
+            }
+            else
+            {
+                return nil
+            }
+        }
+        
+        return data
+    }
+    
 }
