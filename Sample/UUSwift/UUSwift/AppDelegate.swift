@@ -9,6 +9,7 @@
 
 import UIKit
 import CoreData
+import UUToolbox
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate

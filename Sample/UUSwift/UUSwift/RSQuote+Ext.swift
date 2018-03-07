@@ -9,10 +9,11 @@
 
 import UIKit
 import CoreData
+import UUToolbox
 
 extension RSQuote : UUObjectFactory
 {
-    static func uuObjectFromDictionary(dictionary : [AnyHashable:Any], context: Any?) -> Self?
+    public static func uuObjectFromDictionary(dictionary : [AnyHashable:Any], context: Any?) -> Self?
     {
         return uuObjectFromDictionaryInternal(dictionary: dictionary, context: context)
     }
