@@ -14,13 +14,18 @@ open class UUCoreData: NSObject
     public var mainThreadContext : NSManagedObjectContext?
     public var storeCoordinator : NSPersistentStoreCoordinator?
     
-    init(url: URL, modelDefinitionBundle: Bundle = Bundle.main)
+    public override init()
+    {
+        super.init()
+    }
+    
+    public init(url: URL, modelDefinitionBundle: Bundle = Bundle.main)
     {
         super.init()
         configure(url: url, modelDefinitionBundle: modelDefinitionBundle)
     }
     
-    init(url: URL, model: NSManagedObjectModel)
+    public init(url: URL, model: NSManagedObjectModel)
     {
         super.init()
         configure(url: url, model: model)
