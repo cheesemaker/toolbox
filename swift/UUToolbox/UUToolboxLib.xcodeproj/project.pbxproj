@@ -27,7 +27,20 @@
 		08174E44204FB58A00547292 /* UUTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C10D20298FD5003DBF56 /* UUTextField.swift */; };
 		08174E45204FB58A00547292 /* UUView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11420298FD5003DBF56 /* UUView.swift */; };
 		08174E7E204FBA1E00547292 /* UUToolboxLib.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = 08174E7D204FB9EC00547292 /* UUToolboxLib.modulemap */; };
+		089EB1EB20518DAC00FD55EF /* libUUToolbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08174E2A204FB57500547292 /* libUUToolbox.a */; };
+		089EB1F120518E0D00FD55EF /* UUToolboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C10020298F84003DBF56 /* UUToolboxTests.swift */; };
+		089EB1F220518E3000FD55EF /* UUTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F7D68B2051880100E575E0 /* UUTestCase.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		089EB1EC20518DAC00FD55EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0862C0E920298F84003DBF56 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 08174E29204FB57500547292;
+			remoteInfo = UUToolbox;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		08174E28204FB57500547292 /* CopyFiles */ = {
@@ -67,6 +80,8 @@
 		0862C11C20298FD6003DBF56 /* UUDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUDictionary.swift; sourceTree = "<group>"; };
 		0862C11D20298FD6003DBF56 /* UUGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUGradientView.swift; sourceTree = "<group>"; };
 		0862C11E20298FD6003DBF56 /* UUObjectFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUObjectFactory.swift; sourceTree = "<group>"; };
+		089EB1E620518DAC00FD55EF /* UUToolboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUToolboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08F7D68B2051880100E575E0 /* UUTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUTestCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +89,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		089EB1E320518DAC00FD55EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				089EB1EB20518DAC00FD55EF /* libUUToolbox.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				08174E2A204FB57500547292 /* libUUToolbox.a */,
+				089EB1E620518DAC00FD55EF /* UUToolboxTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -129,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				0862C10020298F84003DBF56 /* UUToolboxTests.swift */,
+				08F7D68B2051880100E575E0 /* UUTestCase.swift */,
 				0862C10220298F84003DBF56 /* Info.plist */,
 			);
 			path = UUToolboxTests;
@@ -154,6 +179,24 @@
 			productReference = 08174E2A204FB57500547292 /* libUUToolbox.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		089EB1E520518DAC00FD55EF /* UUToolboxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 089EB1F020518DAC00FD55EF /* Build configuration list for PBXNativeTarget "UUToolboxTests" */;
+			buildPhases = (
+				089EB1E220518DAC00FD55EF /* Sources */,
+				089EB1E320518DAC00FD55EF /* Frameworks */,
+				089EB1E420518DAC00FD55EF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				089EB1ED20518DAC00FD55EF /* PBXTargetDependency */,
+			);
+			name = UUToolboxTests;
+			productName = UUToolboxTests;
+			productReference = 089EB1E620518DAC00FD55EF /* UUToolboxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -165,6 +208,10 @@
 				ORGANIZATIONNAME = "Useful Utilities";
 				TargetAttributes = {
 					08174E29204FB57500547292 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					089EB1E520518DAC00FD55EF = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -183,9 +230,20 @@
 			projectRoot = "";
 			targets = (
 				08174E29204FB57500547292 /* UUToolbox */,
+				089EB1E520518DAC00FD55EF /* UUToolboxTests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		089EB1E420518DAC00FD55EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		08174E26204FB57500547292 /* Sources */ = {
@@ -214,7 +272,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		089EB1E220518DAC00FD55EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				089EB1F120518E0D00FD55EF /* UUToolboxTests.swift in Sources */,
+				089EB1F220518E3000FD55EF /* UUTestCase.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		089EB1ED20518DAC00FD55EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 08174E29204FB57500547292 /* UUToolbox */;
+			targetProxy = 089EB1EC20518DAC00FD55EF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		08174E31204FB57500547292 /* Debug */ = {
@@ -354,6 +429,39 @@
 			};
 			name = Release;
 		};
+		089EB1EE20518DAC00FD55EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = UUToolboxTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = (
+					"-D",
+					DEBUG,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUToolboxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		089EB1EF20518DAC00FD55EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = UUToolboxTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = uu.toolbox.UUToolboxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -371,6 +479,15 @@
 			buildConfigurations = (
 				0862C10420298F84003DBF56 /* Debug */,
 				0862C10520298F84003DBF56 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		089EB1F020518DAC00FD55EF /* Build configuration list for PBXNativeTarget "UUToolboxTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				089EB1EE20518DAC00FD55EF /* Debug */,
+				089EB1EF20518DAC00FD55EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
