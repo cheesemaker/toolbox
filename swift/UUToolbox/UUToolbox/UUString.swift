@@ -135,4 +135,21 @@ public extension String
         return data
     }
     
+    public func uuBase64UrlDecode() -> Data?
+    {
+        // Base64 URL mode swaps '-' with '+' and '_' with '/'
+        var tmp = self
+        tmp = tmp.replacingOccurrences(of: "-", with: "+")
+        tmp = tmp.replacingOccurrences(of: "_", with: "/")
+        
+        let currentLength = tmp.lengthOfBytes(using: .utf8)
+        let multipleOfFourLength = 4 * Int(ceil(Double(currentLength) / 4.0))
+        
+        // Base64 also requires padding to a multiple of four
+        tmp = tmp.padding(toLength: multipleOfFourLength, withPad: "=", startingAt: 0)
+        
+        return Data(base64Encoded: tmp, options: .ignoreUnknownCharacters)
+    }
+    
 }
+
