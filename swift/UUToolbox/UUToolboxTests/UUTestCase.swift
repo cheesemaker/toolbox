@@ -54,4 +54,49 @@ public extension XCTestCase
         UUWaitForExpectations()
         UULogEndTest()
     }
+    
+    func testRandomWords()
+    {
+        let a = randomWord(20)
+        XCTAssertNotNil(a)
+        UUDebugLog("\(a)")
+        
+        let b = randomWords(5, 10)
+        XCTAssertNotNil(b)
+        UUDebugLog("\(b)")
+    }
+    
+    func randomWord(_ length: Int) -> String
+    {
+        let sb = NSMutableString()
+        
+        while (sb.length < length)
+        {
+            let b = UURandom.randomUInt8()
+            if (b >= 65 && b <= 90) || (b >= 97 && b <= 122) // A-Z or a-z
+            {
+                let u = UnicodeScalar(b)
+                let c = Character(u)
+                sb.append(String(c))
+            }
+        }
+        
+        return sb as String
+    }
+    
+    func randomWords(_ maxNumberOfWords: Int, _ maxWordLength: Int) -> String
+    {
+        let sb = NSMutableString()
+        
+        let words = UURandom.randomUInt32(low: 0, high: UInt32(maxNumberOfWords))
+        var i = 0
+        while (i < words)
+        {
+            sb.append(randomWord(maxWordLength))
+            sb.append(" ")
+            i = i + 1
+        }
+        
+        return sb as String
+    }
 }
