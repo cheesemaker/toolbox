@@ -365,6 +365,38 @@ public extension NSManagedObject
         
         return count
     }
+    
+    public static func uuLogTable(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        offset: Int? = nil,
+        limit: Int? = nil,
+        context: NSManagedObjectContext,
+        logMessage: String = "")
+    {
+#if DEBUG
+        UUDebugLog("Log Table -- \(uuEntityName) -- \(logMessage)")
+        
+        let list = uuFetchObjects(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
+        
+        UUDebugLog("There are \(list.count) records in \(uuEntityName) table")
+        
+        var i = 0
+        for o in list
+        {
+            if let odbg = o as? CustomDebugStringConvertible
+            {
+                UUDebugLog("\(uuEntityName)-\(i): \(odbg.debugDescription)")
+            }
+            else
+            {
+                UUDebugLog("\(uuEntityName)-\(i): \(o)")
+            }
+            
+            i = i + 1
+        }
+#endif
+    }
 }
 
 
