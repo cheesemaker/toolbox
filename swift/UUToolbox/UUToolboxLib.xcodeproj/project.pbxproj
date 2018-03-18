@@ -27,6 +27,7 @@
 		08174E44204FB58A00547292 /* UUTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C10D20298FD5003DBF56 /* UUTextField.swift */; };
 		08174E45204FB58A00547292 /* UUView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11420298FD5003DBF56 /* UUView.swift */; };
 		08174E7E204FBA1E00547292 /* UUToolboxLib.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = 08174E7D204FB9EC00547292 /* UUToolboxLib.modulemap */; };
+		087AEB1F205EC386006F6B0A /* UURandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087AEB1E205EC386006F6B0A /* UURandom.swift */; };
 		089EB1EB20518DAC00FD55EF /* libUUToolbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08174E2A204FB57500547292 /* libUUToolbox.a */; };
 		089EB1F120518E0D00FD55EF /* UUToolboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C10020298F84003DBF56 /* UUToolboxTests.swift */; };
 		089EB1F220518E3000FD55EF /* UUTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F7D68B2051880100E575E0 /* UUTestCase.swift */; };
@@ -80,6 +81,7 @@
 		0862C11C20298FD6003DBF56 /* UUDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUDictionary.swift; sourceTree = "<group>"; };
 		0862C11D20298FD6003DBF56 /* UUGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUGradientView.swift; sourceTree = "<group>"; };
 		0862C11E20298FD6003DBF56 /* UUObjectFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUObjectFactory.swift; sourceTree = "<group>"; };
+		087AEB1E205EC386006F6B0A /* UURandom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UURandom.swift; sourceTree = "<group>"; };
 		089EB1E620518DAC00FD55EF /* UUToolboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUToolboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		08F7D68B2051880100E575E0 /* UUTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUTestCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -139,6 +141,7 @@
 				0862C11720298FD5003DBF56 /* UUHttpSession.swift */,
 				0862C11020298FD5003DBF56 /* UUMapView.swift */,
 				0862C11E20298FD6003DBF56 /* UUObjectFactory.swift */,
+				087AEB1E205EC386006F6B0A /* UURandom.swift */,
 				0862C11920298FD6003DBF56 /* UURemoteData.swift */,
 				0862C11320298FD5003DBF56 /* UURemoteImage.swift */,
 				0862C11520298FD5003DBF56 /* UUString.swift */,
@@ -254,6 +257,7 @@
 				08174E38204FB58A00547292 /* UUDataCache.swift in Sources */,
 				08174E3F204FB58A00547292 /* UUMapView.swift in Sources */,
 				08174E36204FB58A00547292 /* UUCoreData.swift in Sources */,
+				087AEB1F205EC386006F6B0A /* UURandom.swift in Sources */,
 				08174E3D204FB58A00547292 /* UUGradientView.swift in Sources */,
 				08174E44204FB58A00547292 /* UUTextField.swift in Sources */,
 				08174E35204FB58A00547292 /* UUColor.swift in Sources */,
