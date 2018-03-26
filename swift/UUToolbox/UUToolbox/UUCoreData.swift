@@ -245,18 +245,45 @@ public extension NSManagedObject
         context: NSManagedObjectContext) -> [Any]
     {
         let fr = uuFetchRequest(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
+        return uuExecuteFetch(fetchRequest: fr, context: context)
+    }
+    
+    public static func uuFetchDictionaries(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        propertiesToFetch: [Any]? = nil,
+        offset: Int? = nil,
+        limit: Int? = nil,
+        context: NSManagedObjectContext) -> [[AnyHashable:Any]]
+    {
+        let fr = uuFetchRequest(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
+        fr.resultType = .dictionaryResultType
+        fr.propertiesToFetch = propertiesToFetch
         
+        guard let result = uuExecuteFetch(fetchRequest: fr, context: context) as? [[AnyHashable:Any]] else
+        {
+            return []
+        }
+        
+        return result
+    }
+    
+    public static func uuExecuteFetch(
+        fetchRequest: NSFetchRequest<NSFetchRequestResult>,
+        context: NSManagedObjectContext) -> [Any]
+    {
         var results : [Any] = []
         
         context.performAndWait
         {
             do
             {
-                results = try context.fetch(fr)
+                results = try context.fetch(fetchRequest)
             }
             catch (let err)
             {
                 (err as NSError).uuLogDetailedErrors()
+                results = []
             }
         }
         
@@ -269,6 +296,24 @@ public extension NSManagedObject
         context: NSManagedObjectContext) -> Self?
     {
         return uuFetchSingleObjectInternal(predicate: predicate,  sortDescriptors: sortDescriptors, context: context)
+    }
+    
+    public class func uuFetchSingleDictionary(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        propertiesToFetch: [Any]? = nil,
+        context: NSManagedObjectContext) -> [AnyHashable:Any]?
+    {
+        let list = uuFetchDictionaries(predicate: predicate, sortDescriptors: sortDescriptors, propertiesToFetch: propertiesToFetch, offset: nil, limit: 1, context: context)
+        
+        var single : [AnyHashable:Any]? = nil
+        
+        if (list.count > 0)
+        {
+            single = list[0]
+        }
+        
+        return single
     }
     
     private class func uuFetchSingleObjectInternal<T>(
