@@ -26,19 +26,20 @@ public struct UUDate
     
     public struct Formats
     {
-        public static let rfc3339 : String = "yyyy-MM-dd'T'HH:mm:ssZZ"
-        public static let iso8601DateOnly : String = "yyyy-MM-dd"
-        public static let iso8601TimeOnly : String = "HH:mm:ss"
-        public static let iso8601DateTime : String = "yyyy-MM-dd HH:mm:ss"
-        public static let timeOfDay : String = "h:mm a"
-        public static let dayOfMonth : String = "d"
-        public static let numericMonthOfYear : String = "L"
-        public static let shortMonthOfYear : String = "LLL"
-        public static let longMonthOfYear : String = "LLLL"
-        public static let shortDayOfWeek : String = "EE"
-        public static let longDayOfWeek : String = "EEEE"
-        public static let twoDigitYear : String = "yy"
-        public static let fourDigitYear : String = "yyyy"
+        public static let rfc3339               = "yyyy-MM-dd'T'HH:mm:ssZZ"
+        public static let rfc3339Alternate      = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        public static let iso8601DateOnly       = "yyyy-MM-dd"
+        public static let iso8601TimeOnly       = "HH:mm:ss"
+        public static let iso8601DateTime       = "yyyy-MM-dd HH:mm:ss"
+        public static let timeOfDay             = "h:mm a"
+        public static let dayOfMonth            = "d"
+        public static let numericMonthOfYear    = "L"
+        public static let shortMonthOfYear      = "LLL"
+        public static let longMonthOfYear       = "LLLL"
+        public static let shortDayOfWeek        = "EE"
+        public static let longDayOfWeek         = "EEEE"
+        public static let twoDigitYear          = "yy"
+        public static let fourDigitYear         = "yyyy"
     }
 }
 
@@ -53,6 +54,8 @@ extension DateFormatter
         {
             df = DateFormatter()
             df!.dateFormat = format
+            df!.locale = Locale(identifier: "en_US_POSIX")
+            df!.calendar = Calendar(identifier: .gregorian)
             uuSharedFormatterCache[format] = df!
         }
         
@@ -62,23 +65,27 @@ extension DateFormatter
 
 public extension Date
 {
-    public func uuFormat(_ format : String, timeZone : TimeZone = TimeZone.current, locale : Locale = Locale.current) -> String
+    public func uuFormat(_ format : String, timeZone : TimeZone = TimeZone.current) -> String
     {
         let df = DateFormatter.uuCachedFormatter(format)
         df.timeZone = timeZone
-        df.locale = locale
         
         return df.string(from: self)
     }
     
-    public func uuRfc3339String(timeZone : TimeZone = TimeZone.current, locale : Locale = Locale.current) -> String
+    public func uuRfc3339String(timeZone : TimeZone = TimeZone.current) -> String
     {
-        return uuFormat(UUDate.Formats.rfc3339, timeZone: timeZone, locale: locale)
+        return uuFormat(UUDate.Formats.rfc3339, timeZone: timeZone)
     }
     
-    public func uuRfc3339StringUtc(locale : Locale = Locale.current) -> String
+    public func uuRfc3339StringUtc() -> String
     {
-        return uuFormat(UUDate.Formats.rfc3339, timeZone: TimeZone(abbreviation: "UTC")!, locale: locale)
+        return uuFormat(UUDate.Formats.rfc3339, timeZone: TimeZone(abbreviation: "UTC")!)
+    }
+    
+    public func uuRfc3339AlternateStringUtc() -> String
+    {
+        return uuFormat(UUDate.Formats.rfc3339Alternate, timeZone: TimeZone(abbreviation: "UTC")!)
     }
     
     public var uuDayOfMonth : String
