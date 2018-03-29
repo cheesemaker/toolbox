@@ -47,40 +47,4 @@ public extension Dictionary
         
         return sb as String!
     }
-    
-    
-    public func uuToJsonString() -> String
-    {
-        let jsonData : Data? = uuToJson()
-        var jsonStr : String? = nil
-        
-        if (jsonData != nil)
-        {
-            jsonStr = String.init(data: jsonData!, encoding: .utf8)
-        }
-        
-        if (jsonStr == nil)
-        {
-            jsonStr = ""
-        }
-        
-        return jsonStr!
-    }
-    
-    public func uuToJson() -> Data?
-    {
-        var data : Data? = nil
-        
-        do
-        {
-            data = try JSONSerialization.data(withJSONObject: self, options: [])
-        }
-        catch
-        {
-            data = nil
-        }
-        
-        
-        return data
-    }
 }
