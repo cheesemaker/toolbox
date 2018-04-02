@@ -180,7 +180,7 @@ class UUTextResponseHandler : NSObject, UUHttpResponseHandler
         
         if (response.textEncodingName != nil)
         {
-            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(response.textEncodingName as CFString!)
+            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(response.textEncodingName as CFString?)
             responseEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))
         }
         
