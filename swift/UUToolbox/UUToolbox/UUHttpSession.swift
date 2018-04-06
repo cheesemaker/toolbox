@@ -388,6 +388,11 @@ public class UUHttpSession: NSObject
         
         UUDebugLog("Http Response Code: %d", httpResponseCode)
         
+        if let responseHeaders = httpResponse?.allHeaderFields
+        {
+            UUDebugLog("Response Headers: %@", responseHeaders)
+        }
+        
         if (error != nil)
         {
             UUDebugLog("Got an error: %@", String(describing: error!))
