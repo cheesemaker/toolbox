@@ -120,9 +120,9 @@ public extension NSManagedObjectContext
     {
         var error: Error? = nil
         
-        if (hasChanges)
+        performAndWait
         {
-            performAndWait
+            if (hasChanges)
             {
                 do
                 {
