@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0802C4E820802D4000B0AC92 /* UUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0802C4E720802D4000B0AC92 /* UUViewController.swift */; };
 		08174E33204FB58A00547292 /* UUCircularImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11120298FD5003DBF56 /* UUCircularImageView.swift */; };
 		08174E34204FB58A00547292 /* UUCircularView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11B20298FD6003DBF56 /* UUCircularView.swift */; };
 		08174E35204FB58A00547292 /* UUColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0862C11220298FD5003DBF56 /* UUColor.swift */; };
@@ -58,6 +59,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0802C4E720802D4000B0AC92 /* UUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUViewController.swift; sourceTree = "<group>"; };
 		08174E2A204FB57500547292 /* libUUToolbox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUUToolbox.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		08174E7D204FB9EC00547292 /* UUToolboxLib.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = UUToolboxLib.modulemap; sourceTree = "<group>"; };
 		0862C0F620298F84003DBF56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				0862C11520298FD5003DBF56 /* UUString.swift */,
 				0862C10D20298FD5003DBF56 /* UUTextField.swift */,
 				0862C11420298FD5003DBF56 /* UUView.swift */,
+				0802C4E720802D4000B0AC92 /* UUViewController.swift */,
 				0862C0F620298F84003DBF56 /* Info.plist */,
 			);
 			path = UUToolbox;
@@ -258,6 +261,7 @@
 			files = (
 				0885A17E206BFA6E00FEA42D /* UUJson.swift in Sources */,
 				08174E43204FB58A00547292 /* UUString.swift in Sources */,
+				0802C4E820802D4000B0AC92 /* UUViewController.swift in Sources */,
 				08174E38204FB58A00547292 /* UUDataCache.swift in Sources */,
 				08174E3F204FB58A00547292 /* UUMapView.swift in Sources */,
 				08174E36204FB58A00547292 /* UUCoreData.swift in Sources */,
