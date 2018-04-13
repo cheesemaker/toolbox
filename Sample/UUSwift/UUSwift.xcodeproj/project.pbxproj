@@ -29,6 +29,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0802C4F0208036BF00B0AC92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 089EB1E620518DAC00FD55EF;
+			remoteInfo = UUToolboxTests;
+		};
 		08174E9B204FC7B100547292 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */;
@@ -127,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				08174E9C204FC7B100547292 /* libUUToolbox.a */,
+				0802C4F1208036BF00B0AC92 /* UUToolboxTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -300,7 +308,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Useful Utilities";
 				TargetAttributes = {
 					084507E61F0B41290045C0A6 = {
@@ -357,6 +365,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		0802C4F1208036BF00B0AC92 /* UUToolboxTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UUToolboxTests.xctest;
+			remoteRef = 0802C4F0208036BF00B0AC92 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		08174E9C204FC7B100547292 /* libUUToolbox.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -484,6 +499,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -491,6 +507,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -540,6 +557,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -547,6 +565,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
