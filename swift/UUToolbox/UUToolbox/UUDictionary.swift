@@ -108,9 +108,9 @@ public extension Dictionary
         return self[key] as? Int16
     }
     
-    public func uuSafeGetInt32(_ key: Key) -> Int8?
+    public func uuSafeGetInt32(_ key: Key) -> Int32?
     {
-        return self[key] as? Int8
+        return self[key] as? Int32
     }
     
     public func uuSafeGetInt64(_ key: Key) -> Int64?
