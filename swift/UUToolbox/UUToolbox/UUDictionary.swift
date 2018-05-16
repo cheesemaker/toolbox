@@ -127,4 +127,58 @@ public extension Dictionary
     {
         return self[key] as? Double
     }
+    
+    public func uuSafeGetDictionary(_ key: Key) -> [AnyHashable:Any]?
+    {
+        return self[key] as? [AnyHashable:Any]
+    }
+    
+    public func uuSafeGetObject<T: UUDictionaryConvertible>(type: T.Type, key: Key, context: Any? = nil) -> UUDictionaryConvertible?
+    {
+        guard let d = uuSafeGetDictionary(key) else
+        {
+            return nil
+        }
+        
+        return T.create(from: d, context: context)
+    }
+    
+    public func uuSafeGetDictionaryArray(_ key: Key) -> [[AnyHashable:Any]]?
+    {
+        return self[key] as? [[AnyHashable:Any]]
+    }
+    
+    public func uuSafeGetObjectArray<T: UUDictionaryConvertible>(type: T.Type, key: Key, context: Any? = nil) -> [UUDictionaryConvertible]?
+    {
+        guard let array = uuSafeGetDictionaryArray(key) else
+        {
+            return nil
+        }
+        
+        var list: [T] = []
+        for d in array
+        {
+            list.append(T.create(from: d, context: context))
+        }
+        
+        return list
+    }
+}
+
+public protocol UUDictionaryConvertible
+{
+    init()
+    
+    func fill(from dictionary: [AnyHashable:Any], context: Any?)
+    func toDictionary() -> [AnyHashable:Any]
+}
+
+public extension UUDictionaryConvertible
+{
+    public static func create(from dictionary : [AnyHashable:Any], context: Any?) -> Self
+    {
+        let obj = self.init()
+        obj.fill(from: dictionary, context: context)
+        return obj
+    }
 }
