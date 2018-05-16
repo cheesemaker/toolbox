@@ -184,9 +184,9 @@ public extension NSManagedObjectContext
     }
 }
 
-extension NSError
+public extension NSError
 {
-    func uuLogDetailedErrors()
+    public func uuLogDetailedErrors()
     {
         UUDebugLog("ERROR: %@", localizedDescription)
         
@@ -376,7 +376,10 @@ public extension NSManagedObject
     {
         context.performAndWait
         {
-            let list = uuFetchObjects(predicate: predicate, context: context)
+            let fr = uuFetchRequest(predicate: predicate, sortDescriptors: nil, offset: nil, limit: nil, context: context)
+            fr.includesPropertyValues = false
+            
+            let list = uuExecuteFetch(fetchRequest: fr, context: context)
             
             for obj in list
             {
@@ -387,6 +390,51 @@ public extension NSManagedObject
             }
         }
     }
+    
+    /*
+    public static func uuBatchDeleteObjects(
+        predicate: NSPredicate? = nil,
+        context: NSManagedObjectContext)
+    {
+        context.performAndWait
+            {
+                if #available(iOS 9.0, *)
+                {
+                    let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: uuEntityName)
+                    fetch.predicate = predicate
+                    
+                    let request = NSBatchDeleteRequest(fetchRequest: fetch)
+                    request.resultType = NSBatchDeleteRequestResultType.resultTypeObjectIDs
+                    
+                    do
+                    {
+                        if let result = try context.execute(request) as? NSBatchDeleteResult
+                        {
+                            if let deletedObjectIds = result.result as? [NSManagedObjectID]
+                            {
+                                UUDebugLog("Deleted Object IDS: \(deletedObjectIds)")
+                            }
+                        }
+                    }
+                    catch let err
+                    {
+                        (err as NSError).uuLogDetailedErrors()
+                    }
+                }
+                else
+                {
+                    let list = uuFetchObjects(predicate: predicate, context: context)
+                    
+                    for obj in list
+                    {
+                        if (obj is NSManagedObject)
+                        {
+                            context.delete(obj as! NSManagedObject)
+                        }
+                    }
+                }
+        }
+    }*/
     
     public static func uuCountObjects(
         predicate: NSPredicate? = nil,
