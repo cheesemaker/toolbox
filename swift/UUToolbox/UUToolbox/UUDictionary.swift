@@ -65,67 +65,139 @@ public extension Dictionary
     
     public func uuSafeGetNumber(_ key: Key) -> NSNumber?
     {
-        return self[key] as? NSNumber
+        var val = self[key] as? NSNumber
+        
+        if (val == nil)
+        {
+            if let str = uuSafeGetString(key)
+            {
+                let nf = NumberFormatter()
+                nf.numberStyle = .decimal
+                val = nf.number(from: str)
+            }
+        }
+        
+        return val
     }
     
     public func uuSafeGetBool(_ key: Key) -> Bool?
     {
-        return self[key] as? Bool
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.boolValue
     }
     
     public func uuSafeGetInt(_ key: Key) -> Int?
     {
-        return self[key] as? Int
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.intValue
     }
     
     public func uuSafeGetUInt8(_ key: Key) -> UInt8?
     {
-        return self[key] as? UInt8
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.uint8Value
     }
     
     public func uuSafeGetUInt16(_ key: Key) -> UInt16?
     {
-        return self[key] as? UInt16
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.uint16Value
     }
     
     public func uuSafeGetUInt32(_ key: Key) -> UInt32?
     {
-        return self[key] as? UInt32
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.uint32Value
     }
     
     public func uuSafeGetUInt64(_ key: Key) -> UInt64?
     {
-        return self[key] as? UInt64
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.uint64Value
     }
     
     public func uuSafeGetInt8(_ key: Key) -> Int8?
     {
-        return self[key] as? Int8
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.int8Value
     }
     
     public func uuSafeGetInt16(_ key: Key) -> Int16?
     {
-        return self[key] as? Int16
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.int16Value
     }
     
     public func uuSafeGetInt32(_ key: Key) -> Int32?
     {
-        return self[key] as? Int32
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.int32Value
     }
     
     public func uuSafeGetInt64(_ key: Key) -> Int64?
     {
-        return self[key] as? Int64
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.int64Value
     }
     
     public func uuSafeGetFloat(_ key: Key) -> Float?
     {
-        return self[key] as? Float
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.floatValue
     }
     
     public func uuSafeGetDouble(_ key: Key) -> Double?
     {
-        return self[key] as? Double
+        guard let num = uuSafeGetNumber(key) else
+        {
+            return nil
+        }
+        
+        return num.doubleValue
     }
     
     public func uuSafeGetDictionary(_ key: Key) -> [AnyHashable:Any]?
