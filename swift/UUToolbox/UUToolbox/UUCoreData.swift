@@ -268,6 +268,28 @@ public extension NSManagedObject
         return result
     }
     
+    public static func uuFetchSingleColumnString(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        propertyToFetch: String,
+        offset: Int? = nil,
+        limit: Int? = nil,
+        context: NSManagedObjectContext) -> [String]
+    {
+        let fetchResults = uuFetchDictionaries(predicate: predicate, sortDescriptors: sortDescriptors, propertiesToFetch: [propertyToFetch], offset: offset, limit: limit, context: context)
+        
+        var results : [String] = []
+        for d in fetchResults
+        {
+            if let val = d[propertyToFetch] as? String
+            {
+                results.append(val)
+            }
+        }
+        
+        return results
+    }
+    
     public static func uuExecuteFetch(
         fetchRequest: NSFetchRequest<NSFetchRequestResult>,
         context: NSManagedObjectContext) -> [Any]
