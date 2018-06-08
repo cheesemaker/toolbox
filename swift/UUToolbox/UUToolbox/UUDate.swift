@@ -127,4 +127,26 @@ public extension Date
     {
         return uuFormat(UUDate.Formats.fourDigitYear)
     }
+    
+    public func uuIsDatePartEqual(_ other: Date) -> Bool
+    {
+        let cal = Calendar(identifier: .gregorian)
+        let parts: Set<Calendar.Component> = [.year, .month, .day]
+        
+        let thisDate = cal.dateComponents(parts, from: self)
+        let otherDate = cal.dateComponents(parts, from: other)
+        
+        guard   let thisYear = thisDate.year, let thisMonth = thisDate.month, let thisDay = thisDate.day,
+                let otherYear = otherDate.year, let otherMonth = otherDate.month, let otherDay = otherDate.day else
+        {
+            return false
+        }
+        
+        return (thisYear == otherYear) && (thisMonth == otherMonth) && (thisDay == otherDay)
+    }
+    
+    public func uuIsToday() -> Bool
+    {
+        return uuIsDatePartEqual(Date())
+    }
 }
