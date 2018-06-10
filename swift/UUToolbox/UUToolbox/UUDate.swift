@@ -41,6 +41,11 @@ public struct UUDate
         public static let twoDigitYear          = "yy"
         public static let fourDigitYear         = "yyyy"
     }
+    
+    public struct TimeZones
+    {
+        public static let utc : TimeZone = TimeZone(abbreviation: "UTC")!
+    }
 }
 
 extension DateFormatter
@@ -80,12 +85,17 @@ public extension Date
     
     public func uuRfc3339StringUtc() -> String
     {
-        return uuFormat(UUDate.Formats.rfc3339, timeZone: TimeZone(abbreviation: "UTC")!)
+        return uuFormat(UUDate.Formats.rfc3339, timeZone: UUDate.TimeZones.utc)
+    }
+    
+    public func uuRfc3339WithMillisString(timeZone : TimeZone = TimeZone.current) -> String
+    {
+        return uuFormat(UUDate.Formats.rfc3339WithMillis, timeZone: timeZone)
     }
     
     public func uuRfc3339WithMillisStringUtc() -> String
     {
-        return uuFormat(UUDate.Formats.rfc3339WithMillis, timeZone: TimeZone(abbreviation: "UTC")!)
+        return uuRfc3339WithMillisString(timeZone: UUDate.TimeZones.utc)
     }
     
     public var uuDayOfMonth : String

@@ -30,9 +30,10 @@ public func UUDebugLog(function : NSString = #function, file : NSString = #file,
     withVaList(args,
     { (p : CVaListPointer) -> Void in
  
+        let now = Date().uuRfc3339WithMillisString()
         let fileNameOnly : String = file.lastPathComponent
-        let s = NSString.init(format: "\(fileNameOnly) [\(function):\(line)] - \(format)", arguments: p)
-        NSLog("%@", s as String)
+        let s = NSString.init(format: "\(now) \(fileNameOnly) [\(function):\(line)] - \(format)", arguments: p) as String
+        print(s)
     })
 #endif
 }
