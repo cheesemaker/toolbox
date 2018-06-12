@@ -254,11 +254,17 @@ public extension NSManagedObject
         propertiesToFetch: [Any]? = nil,
         offset: Int? = nil,
         limit: Int? = nil,
+        distinct: Bool? = nil,
         context: NSManagedObjectContext) -> [[AnyHashable:Any]]
     {
         let fr = uuFetchRequest(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
         fr.resultType = .dictionaryResultType
         fr.propertiesToFetch = propertiesToFetch
+        
+        if let queryDistinct = distinct
+        {
+            fr.returnsDistinctResults = queryDistinct
+        }
         
         guard let result = uuExecuteFetch(fetchRequest: fr, context: context) as? [[AnyHashable:Any]] else
         {
@@ -274,9 +280,10 @@ public extension NSManagedObject
         propertyToFetch: String,
         offset: Int? = nil,
         limit: Int? = nil,
+        distinct: Bool? = nil,
         context: NSManagedObjectContext) -> [String]
     {
-        let fetchResults = uuFetchDictionaries(predicate: predicate, sortDescriptors: sortDescriptors, propertiesToFetch: [propertyToFetch], offset: offset, limit: limit, context: context)
+        let fetchResults = uuFetchDictionaries(predicate: predicate, sortDescriptors: sortDescriptors, propertiesToFetch: [propertyToFetch], offset: offset, limit: limit, distinct: distinct, context: context)
         
         var results : [String] = []
         for d in fetchResults
