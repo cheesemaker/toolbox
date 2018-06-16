@@ -84,9 +84,8 @@ public class UUHttpRequest: NSObject
     public var timeout : TimeInterval = kUUHttpDefaultTimeout
     public var credentials : URLCredential? = nil
     public var processMimeTypes : Bool = true
-    
-    var startTime : TimeInterval = 0
-    var httpRequest : URLRequest? = nil
+    public var startTime : TimeInterval = 0
+    public var httpRequest : URLRequest? = nil
     
     public init(_ url : String)
     {
