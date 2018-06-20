@@ -160,3 +160,13 @@ public extension Date
         return uuIsDatePartEqual(Date())
     }
 }
+
+public extension String
+{
+    public func uuParseDate(format: String, timeZone: TimeZone = TimeZone.current) -> Date?
+    {
+        let df = DateFormatter.uuCachedFormatter(format)
+        df.timeZone = timeZone
+        return df.date(from: self)
+    }
+}
