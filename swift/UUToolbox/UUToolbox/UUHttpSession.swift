@@ -31,6 +31,11 @@ public enum UUHttpSessionError : Int
     // NSURLErrorCannotFindHost
     case cannotFindHost = 0x1001
     
+    // Returned when URLSession returns a non-nil error and the underlying
+    // error domain is NSURLErrorDomain and the underlying error code is
+    // NSURLErrorTimedOut
+    case timedOut = 0x1002
+    
     // Returned when URLSession completion block returns a non-nil Error, and
     // that error is not specifically mapped to a more common UUHttpSessionError
     // In this case, the underlying NSError is wrapped in the user info block
@@ -408,6 +413,9 @@ public class UUHttpSession: NSObject
                     
                     case NSURLErrorNotConnectedToInternet:
                         errCode = .noInternet
+                    
+                    case NSURLErrorTimedOut:
+                        errCode = .timedOut
                     
                     default:
                         errCode = UUHttpSessionError.httpFailure
