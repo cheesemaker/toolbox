@@ -466,7 +466,18 @@ public class UUHttpSession: NSObject
             
             UUDebugLog("Parsing response,\n%@ %@", String(describing: httpRequest?.httpMethod), String(describing: httpRequest?.url))
             UUDebugLog("Response Mime: %@", String(describing: mimeType))
-            UUDebugLog("Raw Response: %@", String(describing: String.init(data: data!, encoding: .utf8)))
+            
+            if let responseData = data
+            {
+                if (responseData.count < 10000)
+                {
+                    UUDebugLog("Raw Response: %@", String(describing: String.init(data: responseData, encoding: .utf8)))
+                }
+                else
+                {
+                    UUDebugLog("Raw Response over 10k, skip logging")
+                }
+            }
             
             if (mimeType != nil)
             {
