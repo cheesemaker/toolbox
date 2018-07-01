@@ -91,6 +91,7 @@ public class UUHttpRequest: NSObject
     public var processMimeTypes : Bool = true
     public var startTime : TimeInterval = 0
     public var httpRequest : URLRequest? = nil
+    public var responseHandler : UUHttpResponseHandler? = nil
     
     public init(_ url : String)
     {
@@ -469,24 +470,31 @@ public class UUHttpSession: NSObject
             
             if let responseData = data
             {
-                if (responseData.count < 10000)
+                let logLimit = 10000
+                var responseStr : String? = nil
+                if (responseData.count > logLimit)
                 {
-                    UUDebugLog("Raw Response: %@", String(describing: String.init(data: responseData, encoding: .utf8)))
+                    responseStr = String(data: responseData.subdata(in: 0..<logLimit), encoding: .utf8)
                 }
                 else
                 {
-                    UUDebugLog("Raw Response over 10k, skip logging")
+                    responseStr = String(data: responseData, encoding: .utf8)
                 }
+                
+                UUDebugLog("Raw Response: %@", String(describing: responseStr))
             }
             
-            if (mimeType != nil)
+            var handler = request.responseHandler
+            
+            if (handler != nil && mimeType != nil)
             {
-                let handler : UUHttpResponseHandler? = responseHandlers[mimeType!]
-                if (handler != nil && data != nil && httpRequest != nil)
-                {
-                    let parsedResponse = handler!.parseResponse(data!, httpResponse!, httpRequest!)
-                    return parsedResponse
-                }
+                handler = responseHandlers[mimeType!]
+            }
+            
+            if (handler != nil && data != nil && httpRequest != nil)
+            {
+                let parsedResponse = handler!.parseResponse(data!, httpResponse!, httpRequest!)
+                return parsedResponse
             }
         }
         
