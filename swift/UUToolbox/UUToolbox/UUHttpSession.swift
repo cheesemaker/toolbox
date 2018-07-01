@@ -486,7 +486,7 @@ public class UUHttpSession: NSObject
             
             var handler = request.responseHandler
             
-            if (handler != nil && mimeType != nil)
+            if (handler == nil && mimeType != nil)
             {
                 handler = responseHandlers[mimeType!]
             }
