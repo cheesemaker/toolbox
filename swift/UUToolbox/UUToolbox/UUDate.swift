@@ -51,17 +51,23 @@ public struct UUDate
 extension DateFormatter
 {
     private static var uuSharedFormatterCache : Dictionary<String, DateFormatter> = Dictionary()
+    private static let lockingQueue: DispatchQueue = DispatchQueue(label: "UUDateFormatter_LockingQueue")
     
     public static func uuCachedFormatter(_ format : String) -> DateFormatter
     {
-        var df = uuSharedFormatterCache[format]
-        if (df == nil)
+        var df : DateFormatter!
+        
+        lockingQueue.sync
         {
-            df = DateFormatter()
-            df!.dateFormat = format
-            df!.locale = Locale(identifier: "en_US_POSIX")
-            df!.calendar = Calendar(identifier: .gregorian)
-            uuSharedFormatterCache[format] = df!
+            df = uuSharedFormatterCache[format]
+            if (df == nil)
+            {
+                df = DateFormatter()
+                df!.dateFormat = format
+                df!.locale = Locale(identifier: "en_US_POSIX")
+                df!.calendar = Calendar(identifier: .gregorian)
+                uuSharedFormatterCache[format] = df!
+            }
         }
         
         return df!
