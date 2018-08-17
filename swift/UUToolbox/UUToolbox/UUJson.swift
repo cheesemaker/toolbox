@@ -11,9 +11,9 @@ import Foundation
 
 public extension NSObject
 {
-    public func uuToJsonString() -> String
+    public func uuToJsonString(_ prettyPrinted: Bool = false) -> String
     {
-        let jsonData : Data? = uuToJson()
+        let jsonData : Data? = uuToJson(prettyPrinted)
         var jsonStr : String? = nil
         
         if (jsonData != nil)
@@ -29,13 +29,15 @@ public extension NSObject
         return jsonStr!
     }
     
-    public func uuToJson() -> Data?
+    public func uuToJson(_ prettyPrinted: Bool = false) -> Data?
     {
         var data : Data? = nil
         
         do
         {
-            data = try JSONSerialization.data(withJSONObject: self, options: [])
+            let writingOptions: JSONSerialization.WritingOptions = prettyPrinted ? [ JSONSerialization.WritingOptions.prettyPrinted ]  : []
+            
+            data = try JSONSerialization.data(withJSONObject: self, options: writingOptions)
         }
         catch
         {
@@ -49,26 +51,26 @@ public extension NSObject
 
 public extension Dictionary
 {
-    public func uuToJsonString() -> String
+    public func uuToJsonString(_ prettyPrinted: Bool = false) -> String
     {
-        return (self as NSObject).uuToJsonString()
+        return (self as NSObject).uuToJsonString(prettyPrinted)
     }
     
-    public func uuToJson() -> Data?
+    public func uuToJson(_ prettyPrinted: Bool = false) -> Data?
     {
-        return (self as NSObject).uuToJson()
+        return (self as NSObject).uuToJson(prettyPrinted)
     }
 }
 
 public extension Array
 {
-    public func uuToJsonString() -> String
+    public func uuToJsonString(_ prettyPrinted: Bool = false) -> String
     {
-        return (self as NSObject).uuToJsonString()
+        return (self as NSObject).uuToJsonString(prettyPrinted)
     }
     
-    public func uuToJson() -> Data?
+    public func uuToJson(_ prettyPrinted: Bool = false) -> Data?
     {
-        return (self as NSObject).uuToJson()
+        return (self as NSObject).uuToJson(prettyPrinted)
     }
 }
