@@ -162,6 +162,7 @@ public class UURemoteData: NSObject, UURemoteDataProtocol
         var md = UUDataCache.shared.metaData(for: key)
         md[MetaData.MimeType] = "raw"
         md[MetaData.DownloadTimestamp] = Date()
+        md[UURemoteData.NotificationKeys.RemotePath] = key
         
         UUDataCache.shared.set(metaData: md, for: key)
         
