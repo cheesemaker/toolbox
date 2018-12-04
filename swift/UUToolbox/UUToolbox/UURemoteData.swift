@@ -154,6 +154,23 @@ public class UURemoteData: NSObject, UURemoteDataProtocol
         
         UUDataCache.shared.set(metaData: md, for: key)
     }
+    
+    public func save(data: Data, key: String)
+    {
+        UUDataCache.shared.set(data: data, for: key)
+        
+        var md = UUDataCache.shared.metaData(for: key)
+        md[MetaData.MimeType] = "raw"
+        md[MetaData.DownloadTimestamp] = Date()
+        md[UURemoteData.NotificationKeys.RemotePath] = key
+        
+        UUDataCache.shared.set(metaData: md, for: key)
+        
+        DispatchQueue.main.async
+        {
+            NotificationCenter.default.post(name: Notifications.DataDownloaded, object: nil, userInfo: md)
+        }
+    }
 }
 
 public extension Notification

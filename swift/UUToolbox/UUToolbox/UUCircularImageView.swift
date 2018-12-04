@@ -9,9 +9,9 @@
 
 import UIKit
 
-class UUCircularImageView: UIImageView
+public class UUCircularImageView: UIImageView
 {
-    override func layoutSubviews()
+    public override func layoutSubviews()
     {
         super.layoutSubviews()
         layer.cornerRadius = bounds.size.width / 2

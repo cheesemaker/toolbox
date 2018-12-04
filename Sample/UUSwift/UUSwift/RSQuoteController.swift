@@ -8,6 +8,7 @@
 //
 
 import UIKit
+import UUToolbox
 
 class RSQuoteController: UIViewController
 {
@@ -39,7 +40,7 @@ class RSQuoteController: UIViewController
                 self.quoteLabel.text = quote?.quote
                 
                 quote!.displayCount = quote!.displayCount + 1
-                quote!.displayedAt = NSDate()
+                quote!.displayedAt = Date()
                 _ = context.uuSubmitChanges()
             }
             else

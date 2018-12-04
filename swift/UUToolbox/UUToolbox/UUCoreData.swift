@@ -9,18 +9,23 @@
 import UIKit
 import CoreData
 
-public class UUCoreData: NSObject
+open class UUCoreData: NSObject
 {
     public var mainThreadContext : NSManagedObjectContext?
     public var storeCoordinator : NSPersistentStoreCoordinator?
     
-    init(url: URL, modelDefinitionBundle: Bundle = Bundle.main)
+    public override init()
+    {
+        super.init()
+    }
+    
+    public init(url: URL, modelDefinitionBundle: Bundle = Bundle.main)
     {
         super.init()
         configure(url: url, modelDefinitionBundle: modelDefinitionBundle)
     }
     
-    init(url: URL, model: NSManagedObjectModel)
+    public init(url: URL, model: NSManagedObjectModel)
     {
         super.init()
         configure(url: url, model: model)
@@ -115,9 +120,9 @@ public extension NSManagedObjectContext
     {
         var error: Error? = nil
         
-        if (hasChanges)
+        performAndWait
         {
-            performAndWait
+            if (hasChanges)
             {
                 do
                 {
@@ -179,9 +184,9 @@ public extension NSManagedObjectContext
     }
 }
 
-extension NSError
+public extension NSError
 {
-    func uuLogDetailedErrors()
+    public func uuLogDetailedErrors()
     {
         UUDebugLog("ERROR: %@", localizedDescription)
         
@@ -240,18 +245,74 @@ public extension NSManagedObject
         context: NSManagedObjectContext) -> [Any]
     {
         let fr = uuFetchRequest(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
+        return uuExecuteFetch(fetchRequest: fr, context: context)
+    }
+    
+    public static func uuFetchDictionaries(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        propertiesToFetch: [Any]? = nil,
+        offset: Int? = nil,
+        limit: Int? = nil,
+        distinct: Bool? = nil,
+        context: NSManagedObjectContext) -> [[AnyHashable:Any]]
+    {
+        let fr = uuFetchRequest(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
+        fr.resultType = .dictionaryResultType
+        fr.propertiesToFetch = propertiesToFetch
         
+        if let queryDistinct = distinct
+        {
+            fr.returnsDistinctResults = queryDistinct
+        }
+        
+        guard let result = uuExecuteFetch(fetchRequest: fr, context: context) as? [[AnyHashable:Any]] else
+        {
+            return []
+        }
+        
+        return result
+    }
+    
+    public static func uuFetchSingleColumnString(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        propertyToFetch: String,
+        offset: Int? = nil,
+        limit: Int? = nil,
+        distinct: Bool? = nil,
+        context: NSManagedObjectContext) -> [String]
+    {
+        let fetchResults = uuFetchDictionaries(predicate: predicate, sortDescriptors: sortDescriptors, propertiesToFetch: [propertyToFetch], offset: offset, limit: limit, distinct: distinct, context: context)
+        
+        var results : [String] = []
+        for d in fetchResults
+        {
+            if let val = d[propertyToFetch] as? String
+            {
+                results.append(val)
+            }
+        }
+        
+        return results
+    }
+    
+    public static func uuExecuteFetch(
+        fetchRequest: NSFetchRequest<NSFetchRequestResult>,
+        context: NSManagedObjectContext) -> [Any]
+    {
         var results : [Any] = []
         
         context.performAndWait
         {
             do
             {
-                results = try context.fetch(fr)
+                results = try context.fetch(fetchRequest)
             }
             catch (let err)
             {
                 (err as NSError).uuLogDetailedErrors()
+                results = []
             }
         }
         
@@ -264,6 +325,24 @@ public extension NSManagedObject
         context: NSManagedObjectContext) -> Self?
     {
         return uuFetchSingleObjectInternal(predicate: predicate,  sortDescriptors: sortDescriptors, context: context)
+    }
+    
+    public class func uuFetchSingleDictionary(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        propertiesToFetch: [Any]? = nil,
+        context: NSManagedObjectContext) -> [AnyHashable:Any]?
+    {
+        let list = uuFetchDictionaries(predicate: predicate, sortDescriptors: sortDescriptors, propertiesToFetch: propertiesToFetch, offset: nil, limit: 1, context: context)
+        
+        var single : [AnyHashable:Any]? = nil
+        
+        if (list.count > 0)
+        {
+            single = list[0]
+        }
+        
+        return single
     }
     
     private class func uuFetchSingleObjectInternal<T>(
@@ -326,7 +405,10 @@ public extension NSManagedObject
     {
         context.performAndWait
         {
-            let list = uuFetchObjects(predicate: predicate, context: context)
+            let fr = uuFetchRequest(predicate: predicate, sortDescriptors: nil, offset: nil, limit: nil, context: context)
+            fr.includesPropertyValues = false
+            
+            let list = uuExecuteFetch(fetchRequest: fr, context: context)
             
             for obj in list
             {
@@ -337,6 +419,51 @@ public extension NSManagedObject
             }
         }
     }
+    
+    /*
+    public static func uuBatchDeleteObjects(
+        predicate: NSPredicate? = nil,
+        context: NSManagedObjectContext)
+    {
+        context.performAndWait
+            {
+                if #available(iOS 9.0, *)
+                {
+                    let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: uuEntityName)
+                    fetch.predicate = predicate
+                    
+                    let request = NSBatchDeleteRequest(fetchRequest: fetch)
+                    request.resultType = NSBatchDeleteRequestResultType.resultTypeObjectIDs
+                    
+                    do
+                    {
+                        if let result = try context.execute(request) as? NSBatchDeleteResult
+                        {
+                            if let deletedObjectIds = result.result as? [NSManagedObjectID]
+                            {
+                                UUDebugLog("Deleted Object IDS: \(deletedObjectIds)")
+                            }
+                        }
+                    }
+                    catch let err
+                    {
+                        (err as NSError).uuLogDetailedErrors()
+                    }
+                }
+                else
+                {
+                    let list = uuFetchObjects(predicate: predicate, context: context)
+                    
+                    for obj in list
+                    {
+                        if (obj is NSManagedObject)
+                        {
+                            context.delete(obj as! NSManagedObject)
+                        }
+                    }
+                }
+        }
+    }*/
     
     public static func uuCountObjects(
         predicate: NSPredicate? = nil,
@@ -359,6 +486,38 @@ public extension NSManagedObject
         }
         
         return count
+    }
+    
+    public static func uuLogTable(
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        offset: Int? = nil,
+        limit: Int? = nil,
+        context: NSManagedObjectContext,
+        logMessage: String = "")
+    {
+#if DEBUG
+        UUDebugLog("Log Table -- \(uuEntityName) -- \(logMessage)")
+        
+        let list = uuFetchObjects(predicate: predicate, sortDescriptors: sortDescriptors, offset: offset, limit: limit, context: context)
+        
+        UUDebugLog("There are \(list.count) records in \(uuEntityName) table")
+        
+        var i = 0
+        for o in list
+        {
+            if let odbg = o as? CustomDebugStringConvertible
+            {
+                UUDebugLog("\(uuEntityName)-\(i): \(odbg.debugDescription)")
+            }
+            else
+            {
+                UUDebugLog("\(uuEntityName)-\(i): \(o)")
+            }
+            
+            i = i + 1
+        }
+#endif
     }
 }
 

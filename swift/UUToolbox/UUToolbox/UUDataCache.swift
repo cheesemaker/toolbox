@@ -437,6 +437,7 @@ private class UUDataCacheDb : NSObject
     }
 }
 
+@objc(UUDataCacheMetaData)
 public class UUDataCacheMetaData : NSManagedObject
 {
     @NSManaged var name : String?

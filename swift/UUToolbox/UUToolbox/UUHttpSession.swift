@@ -31,6 +31,11 @@ public enum UUHttpSessionError : Int
     // NSURLErrorCannotFindHost
     case cannotFindHost = 0x1001
     
+    // Returned when URLSession returns a non-nil error and the underlying
+    // error domain is NSURLErrorDomain and the underlying error code is
+    // NSURLErrorTimedOut
+    case timedOut = 0x1002
+    
     // Returned when URLSession completion block returns a non-nil Error, and
     // that error is not specifically mapped to a more common UUHttpSessionError
     // In this case, the underlying NSError is wrapped in the user info block
@@ -49,28 +54,28 @@ public enum UUHttpSessionError : Int
     case invalidRequest = 0x2003
 }
 
-let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
-let UUHttpSessionHttpErrorCodeKey      = "UUHttpSessionHttpErrorCodeKey"
-let UUHttpSessionHttpErrorMessageKey   = "UUHttpSessionHttpErrorMessageKey"
-let UUHttpSessionAppResponseKey        = "UUHttpSessionAppResponseKey"
+public let UUHttpSessionErrorDomain           = "UUHttpSessionErrorDomain"
+public let UUHttpSessionHttpErrorCodeKey      = "UUHttpSessionHttpErrorCodeKey"
+public let UUHttpSessionHttpErrorMessageKey   = "UUHttpSessionHttpErrorMessageKey"
+public let UUHttpSessionAppResponseKey        = "UUHttpSessionAppResponseKey"
 
-let kUUHttpDefaultTimeout : TimeInterval = 60.0
+public let kUUHttpDefaultTimeout : TimeInterval = 60.0
 
-struct UUContentType
+public struct UUContentType
 {
-    static let applicationJson  = "application/json"
-    static let textJson         = "text/json"
-    static let textHtml         = "text/html"
-    static let textPlain        = "text/plain"
-    static let binary           = "application/octet-stream"
-    static let imagePng         = "image/png"
-    static let imageJpeg        = "image/jpeg"
+    public static let applicationJson  = "application/json"
+    public static let textJson         = "text/json"
+    public static let textHtml         = "text/html"
+    public static let textPlain        = "text/plain"
+    public static let binary           = "application/octet-stream"
+    public static let imagePng         = "image/png"
+    public static let imageJpeg        = "image/jpeg"
 }
 
-struct UUHeader
+public struct UUHeader
 {
-    static let contentLength = "Content-Length"
-    static let contentType = "Content-Type"
+    public static let contentLength = "Content-Length"
+    public static let contentType = "Content-Type"
 }
 
 public class UUHttpRequest: NSObject
@@ -84,18 +89,18 @@ public class UUHttpRequest: NSObject
     public var timeout : TimeInterval = kUUHttpDefaultTimeout
     public var credentials : URLCredential? = nil
     public var processMimeTypes : Bool = true
+    public var startTime : TimeInterval = 0
+    public var httpRequest : URLRequest? = nil
+    public var responseHandler : UUHttpResponseHandler? = nil
     
-    var startTime : TimeInterval = 0
-    var httpRequest : URLRequest? = nil
-    
-    init(_ url : String)
+    public init(_ url : String)
     {
         super.init()
         
         self.url = url
     }
     
-    static func getRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
+    public static func getRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .get
@@ -103,7 +108,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func deleteRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
+    public static func deleteRequest(_ url : String, _ queryArguments : [String:String]) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .delete
@@ -111,7 +116,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
+    public static func putRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .put
@@ -121,7 +126,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
+    public static func postRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .post
@@ -131,7 +136,7 @@ public class UUHttpRequest: NSObject
         return req
     }
     
-    static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
+    public static func patchRequest(_ url : String, _ queryArguments : [String:String], _ body : Data?, _ contentType : String?) -> UUHttpRequest
     {
         let req = UUHttpRequest.init(url)
         req.httpMethod = .patch
@@ -180,7 +185,7 @@ class UUTextResponseHandler : NSObject, UUHttpResponseHandler
         
         if (response.textEncodingName != nil)
         {
-            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(response.textEncodingName as CFString!)
+            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(response.textEncodingName as CFString?)
             responseEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))
         }
         
@@ -242,6 +247,7 @@ class UUImageResponseHandler : NSObject, UUHttpResponseHandler
     }
 }
 
+@objc
 public class UUHttpSession: NSObject
 {
     private var urlSession : URLSession? = nil
@@ -354,7 +360,7 @@ public class UUHttpSession: NSObject
             req.setValue(String.init(format: "%lu", request.body!.count), forHTTPHeaderField: UUHeader.contentLength)
             req.httpBody = request.body
             
-            if (request.bodyContentType != nil && request.bodyContentType!.characters.count > 0)
+            if (request.bodyContentType != nil && request.bodyContentType!.count > 0)
             {
                 req.addValue(request.bodyContentType!, forHTTPHeaderField: UUHeader.contentType)
             }
@@ -387,6 +393,11 @@ public class UUHttpSession: NSObject
         
         UUDebugLog("Http Response Code: %d", httpResponseCode)
         
+        if let responseHeaders = httpResponse?.allHeaderFields
+        {
+            UUDebugLog("Response Headers: %@", responseHeaders)
+        }
+        
         if (error != nil)
         {
             UUDebugLog("Got an error: %@", String(describing: error!))
@@ -403,6 +414,9 @@ public class UUHttpSession: NSObject
                     
                     case NSURLErrorNotConnectedToInternet:
                         errCode = .noInternet
+                    
+                    case NSURLErrorTimedOut:
+                        errCode = .timedOut
                     
                     default:
                         errCode = UUHttpSessionError.httpFailure
@@ -453,16 +467,34 @@ public class UUHttpSession: NSObject
             
             UUDebugLog("Parsing response,\n%@ %@", String(describing: httpRequest?.httpMethod), String(describing: httpRequest?.url))
             UUDebugLog("Response Mime: %@", String(describing: mimeType))
-            UUDebugLog("Raw Response: %@", String(describing: String.init(data: data!, encoding: .utf8)))
             
-            if (mimeType != nil)
+            if let responseData = data
             {
-                let handler : UUHttpResponseHandler? = responseHandlers[mimeType!]
-                if (handler != nil && data != nil && httpRequest != nil)
+                let logLimit = 10000
+                var responseStr : String? = nil
+                if (responseData.count > logLimit)
                 {
-                    let parsedResponse = handler!.parseResponse(data!, httpResponse!, httpRequest!)
-                    return parsedResponse
+                    responseStr = String(data: responseData.subdata(in: 0..<logLimit), encoding: .utf8)
                 }
+                else
+                {
+                    responseStr = String(data: responseData, encoding: .utf8)
+                }
+                
+                UUDebugLog("Raw Response: %@", String(describing: responseStr))
+            }
+            
+            var handler = request.responseHandler
+            
+            if (handler == nil && mimeType != nil)
+            {
+                handler = responseHandlers[mimeType!]
+            }
+            
+            if (handler != nil && data != nil && httpRequest != nil)
+            {
+                let parsedResponse = handler!.parseResponse(data!, httpResponse!, httpRequest!)
+                return parsedResponse
             }
         }
         

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08174EA0204FC7C300547292 /* libUUToolbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08174E9C204FC7B100547292 /* libUUToolbox.a */; };
 		084507EB1F0B41290045C0A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084507EA1F0B41290045C0A6 /* AppDelegate.swift */; };
 		084507F01F0B41290045C0A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 084507EE1F0B41290045C0A6 /* Main.storyboard */; };
 		084507F31F0B41290045C0A6 /* UUSwift.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 084507F11F0B41290045C0A6 /* UUSwift.xcdatamodeld */; };
@@ -14,39 +15,41 @@
 		084507F81F0B41290045C0A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 084507F61F0B41290045C0A6 /* LaunchScreen.storyboard */; };
 		084508031F0B41290045C0A6 /* UUCoreDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508021F0B41290045C0A6 /* UUCoreDataTests.swift */; };
 		0845080E1F0B41290045C0A6 /* UUSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845080D1F0B41290045C0A6 /* UUSwiftUITests.swift */; };
-		084508291F0B41480045C0A6 /* UUCircularImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845081C1F0B41480045C0A6 /* UUCircularImageView.swift */; };
-		0845082A1F0B41480045C0A6 /* UUCircularView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845081D1F0B41480045C0A6 /* UUCircularView.swift */; };
-		0845082B1F0B41480045C0A6 /* UUColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845081E1F0B41480045C0A6 /* UUColor.swift */; };
-		0845082C1F0B41480045C0A6 /* UUData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845081F1F0B41480045C0A6 /* UUData.swift */; };
-		0845082D1F0B41480045C0A6 /* UUDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508201F0B41480045C0A6 /* UUDate.swift */; };
-		0845082E1F0B41480045C0A6 /* UUDebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508211F0B41480045C0A6 /* UUDebugLog.swift */; };
-		0845082F1F0B41480045C0A6 /* UUDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508221F0B41480045C0A6 /* UUDictionary.swift */; };
-		084508301F0B41480045C0A6 /* UUEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508231F0B41480045C0A6 /* UUEditViewController.swift */; };
-		084508311F0B41480045C0A6 /* UUGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508241F0B41480045C0A6 /* UUGradientView.swift */; };
-		084508321F0B41480045C0A6 /* UUHttpSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508251F0B41480045C0A6 /* UUHttpSession.swift */; };
-		084508331F0B41480045C0A6 /* UUString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508261F0B41480045C0A6 /* UUString.swift */; };
-		084508341F0B41480045C0A6 /* UUTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508271F0B41480045C0A6 /* UUTextField.swift */; };
-		084508351F0B41480045C0A6 /* UUView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508281F0B41480045C0A6 /* UUView.swift */; };
 		084508381F0B41B70045C0A6 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508371F0B41B70045C0A6 /* HomeController.swift */; };
 		0845083A1F0B477B0045C0A6 /* WeatherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084508391F0B477B0045C0A6 /* WeatherController.swift */; };
 		0845083D1F0B4FF80045C0A6 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845083C1F0B4FF80045C0A6 /* WeatherService.swift */; };
 		0857606B1F55D0E900483FDE /* UUDataCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0857606A1F55D0E900483FDE /* UUDataCacheTests.swift */; };
 		085C76B91F2B91A100E9214D /* WeatherRecord+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */; };
 		085C76CA1F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 085C76C81F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodeld */; };
-		085C76D11F325B1200E9214D /* UUCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084B69021F29A137000B5FB9 /* UUCoreData.swift */; };
-		0867CDC31F34326700FEAA52 /* UUObjectFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */; };
 		0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */; };
 		0867CDCB1F3451DE00FEAA52 /* RSQuoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */; };
 		0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */; };
-		08BB408D1F56487B006AE095 /* UURemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB408C1F56487B006AE095 /* UURemoteData.swift */; };
 		08BB408F1F565B1F006AE095 /* UURemoteDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB408E1F565B1F006AE095 /* UURemoteDataTests.swift */; };
 		08BB40911F568136006AE095 /* ImageGalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40901F568136006AE095 /* ImageGalleryController.swift */; };
-		08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB40921F57359B006AE095 /* UURemoteImage.swift */; };
-		08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C3A6E71F551B3000BB8095 /* UUDataCache.swift */; };
-		08D3288C1F738D5F00CA04FC /* BeaconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D3288B1F738D5F00CA04FC /* BeaconController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0802C4F0208036BF00B0AC92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 089EB1E620518DAC00FD55EF;
+			remoteInfo = UUToolboxTests;
+		};
+		08174E9B204FC7B100547292 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 08174E2A204FB57500547292;
+			remoteInfo = UUToolbox;
+		};
+		08174E9D204FC7BD00547292 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 08174E29204FB57500547292;
+			remoteInfo = UUToolbox;
+		};
 		084507FF1F0B41290045C0A6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 084507DF1F0B41290045C0A6 /* Project object */;
@@ -64,6 +67,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UUToolboxLib.xcodeproj; path = ../../swift/UUToolbox/UUToolboxLib.xcodeproj; sourceTree = "<group>"; };
 		084507E71F0B41290045C0A6 /* UUSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UUSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		084507EA1F0B41290045C0A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		084507EF1F0B41290045C0A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -77,36 +81,19 @@
 		084508091F0B41290045C0A6 /* UUSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UUSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0845080D1F0B41290045C0A6 /* UUSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUSwiftUITests.swift; sourceTree = "<group>"; };
 		0845080F1F0B41290045C0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0845081C1F0B41480045C0A6 /* UUCircularImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUCircularImageView.swift; path = ../../swift/UUCircularImageView.swift; sourceTree = "<group>"; };
-		0845081D1F0B41480045C0A6 /* UUCircularView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUCircularView.swift; path = ../../swift/UUCircularView.swift; sourceTree = "<group>"; };
-		0845081E1F0B41480045C0A6 /* UUColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUColor.swift; path = ../../swift/UUColor.swift; sourceTree = "<group>"; };
-		0845081F1F0B41480045C0A6 /* UUData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUData.swift; path = ../../swift/UUData.swift; sourceTree = "<group>"; };
-		084508201F0B41480045C0A6 /* UUDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDate.swift; path = ../../swift/UUDate.swift; sourceTree = "<group>"; };
-		084508211F0B41480045C0A6 /* UUDebugLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDebugLog.swift; path = ../../swift/UUDebugLog.swift; sourceTree = "<group>"; };
-		084508221F0B41480045C0A6 /* UUDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDictionary.swift; path = ../../swift/UUDictionary.swift; sourceTree = "<group>"; };
-		084508231F0B41480045C0A6 /* UUEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUEditViewController.swift; path = ../../swift/UUEditViewController.swift; sourceTree = "<group>"; };
-		084508241F0B41480045C0A6 /* UUGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUGradientView.swift; path = ../../swift/UUGradientView.swift; sourceTree = "<group>"; };
-		084508251F0B41480045C0A6 /* UUHttpSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUHttpSession.swift; path = ../../swift/UUHttpSession.swift; sourceTree = "<group>"; };
-		084508261F0B41480045C0A6 /* UUString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUString.swift; path = ../../swift/UUString.swift; sourceTree = "<group>"; };
-		084508271F0B41480045C0A6 /* UUTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUTextField.swift; path = ../../swift/UUTextField.swift; sourceTree = "<group>"; };
-		084508281F0B41480045C0A6 /* UUView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUView.swift; path = ../../swift/UUView.swift; sourceTree = "<group>"; };
 		084508371F0B41B70045C0A6 /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		084508391F0B477B0045C0A6 /* WeatherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherController.swift; sourceTree = "<group>"; };
 		0845083C1F0B4FF80045C0A6 /* WeatherService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
-		084B69021F29A137000B5FB9 /* UUCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUCoreData.swift; path = ../../swift/UUCoreData.swift; sourceTree = "<group>"; };
 		0857606A1F55D0E900483FDE /* UUDataCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUDataCacheTests.swift; sourceTree = "<group>"; };
 		085C76B81F2B91A100E9214D /* WeatherRecord+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WeatherRecord+Ext.swift"; path = "Data/WeatherRecord+Ext.swift"; sourceTree = "<group>"; };
 		085C76C91F2FDB5E00E9214D /* UUCoreDataUnitTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UUCoreDataUnitTests.xcdatamodel; sourceTree = "<group>"; };
-		0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUObjectFactory.swift; path = ../../swift/UUObjectFactory.swift; sourceTree = "<group>"; };
 		0867CDC41F3432B200FEAA52 /* UUObjectFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUObjectFactory.h; path = ../../UUObjectFactory.h; sourceTree = "<group>"; };
 		0867CDC51F3432B200FEAA52 /* UUObjectFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UUObjectFactory.m; path = ../../UUObjectFactory.m; sourceTree = "<group>"; };
 		0867CDC81F34512600FEAA52 /* RSQuote+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RSQuote+Ext.swift"; sourceTree = "<group>"; };
 		0867CDCA1F3451DE00FEAA52 /* RSQuoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteService.swift; sourceTree = "<group>"; };
 		0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSQuoteController.swift; sourceTree = "<group>"; };
-		08BB408C1F56487B006AE095 /* UURemoteData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UURemoteData.swift; path = ../../swift/UURemoteData.swift; sourceTree = "<group>"; };
 		08BB408E1F565B1F006AE095 /* UURemoteDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UURemoteDataTests.swift; sourceTree = "<group>"; };
 		08BB40901F568136006AE095 /* ImageGalleryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageGalleryController.swift; sourceTree = "<group>"; };
-		08BB40921F57359B006AE095 /* UURemoteImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UURemoteImage.swift; path = ../../swift/UURemoteImage.swift; sourceTree = "<group>"; };
 		08C3A6DF1F551AB500BB8095 /* UUDataCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUDataCache.h; path = ../../UUDataCache.h; sourceTree = "<group>"; };
 		08C3A6E01F551AB500BB8095 /* UUDataCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UUDataCache.m; path = ../../UUDataCache.m; sourceTree = "<group>"; };
 		08C3A6E11F551AB500BB8095 /* UUImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUImageCache.h; path = ../../UUImageCache.h; sourceTree = "<group>"; };
@@ -115,8 +102,6 @@
 		08C3A6E41F551AB500BB8095 /* UURemoteData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UURemoteData.m; path = ../../UURemoteData.m; sourceTree = "<group>"; };
 		08C3A6E51F551AB500BB8095 /* UURemoteImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UURemoteImage.h; path = ../../UURemoteImage.h; sourceTree = "<group>"; };
 		08C3A6E61F551AB500BB8095 /* UURemoteImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UURemoteImage.m; path = ../../UURemoteImage.m; sourceTree = "<group>"; };
-		08C3A6E71F551B3000BB8095 /* UUDataCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UUDataCache.swift; path = ../../swift/UUDataCache.swift; sourceTree = "<group>"; };
-		08D3288B1F738D5F00CA04FC /* BeaconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08174EA0204FC7C300547292 /* libUUToolbox.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,6 +130,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		08174E98204FC7B100547292 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				08174E9C204FC7B100547292 /* libUUToolbox.a */,
+				0802C4F1208036BF00B0AC92 /* UUToolboxTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		08174E9F204FC7C300547292 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		081CC1451F2B0B1200AA7774 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +158,7 @@
 		084507DE1F0B41290045C0A6 = {
 			isa = PBXGroup;
 			children = (
+				08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */,
 				0867CDC41F3432B200FEAA52 /* UUObjectFactory.h */,
 				0867CDC51F3432B200FEAA52 /* UUObjectFactory.m */,
 				08C3A6DF1F551AB500BB8095 /* UUDataCache.h */,
@@ -166,11 +169,11 @@
 				08C3A6E41F551AB500BB8095 /* UURemoteData.m */,
 				08C3A6E51F551AB500BB8095 /* UURemoteImage.h */,
 				08C3A6E61F551AB500BB8095 /* UURemoteImage.m */,
-				0845081B1F0B41360045C0A6 /* UUToolbox */,
 				084507E91F0B41290045C0A6 /* UUSwift */,
 				084508011F0B41290045C0A6 /* UUSwiftTests */,
 				0845080C1F0B41290045C0A6 /* UUSwiftUITests */,
 				084507E81F0B41290045C0A6 /* Products */,
+				08174E9F204FC7C300547292 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -221,31 +224,6 @@
 			path = UUSwiftUITests;
 			sourceTree = "<group>";
 		};
-		0845081B1F0B41360045C0A6 /* UUToolbox */ = {
-			isa = PBXGroup;
-			children = (
-				0845081C1F0B41480045C0A6 /* UUCircularImageView.swift */,
-				0845081D1F0B41480045C0A6 /* UUCircularView.swift */,
-				0845081E1F0B41480045C0A6 /* UUColor.swift */,
-				0845081F1F0B41480045C0A6 /* UUData.swift */,
-				084508201F0B41480045C0A6 /* UUDate.swift */,
-				084508211F0B41480045C0A6 /* UUDebugLog.swift */,
-				084508221F0B41480045C0A6 /* UUDictionary.swift */,
-				084508231F0B41480045C0A6 /* UUEditViewController.swift */,
-				084508241F0B41480045C0A6 /* UUGradientView.swift */,
-				084508251F0B41480045C0A6 /* UUHttpSession.swift */,
-				084508261F0B41480045C0A6 /* UUString.swift */,
-				084508271F0B41480045C0A6 /* UUTextField.swift */,
-				084508281F0B41480045C0A6 /* UUView.swift */,
-				084B69021F29A137000B5FB9 /* UUCoreData.swift */,
-				0867CDC21F34326700FEAA52 /* UUObjectFactory.swift */,
-				08C3A6E71F551B3000BB8095 /* UUDataCache.swift */,
-				08BB408C1F56487B006AE095 /* UURemoteData.swift */,
-				08BB40921F57359B006AE095 /* UURemoteImage.swift */,
-			);
-			name = UUToolbox;
-			sourceTree = "<group>";
-		};
 		084508361F0B415F0045C0A6 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,7 +231,6 @@
 				084508391F0B477B0045C0A6 /* WeatherController.swift */,
 				0867CDCC1F345B6500FEAA52 /* RSQuoteController.swift */,
 				08BB40901F568136006AE095 /* ImageGalleryController.swift */,
-				08D3288B1F738D5F00CA04FC /* BeaconController.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -281,6 +258,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				08174E9E204FC7BD00547292 /* PBXTargetDependency */,
 			);
 			name = UUSwift;
 			productName = UUSwift;
@@ -330,7 +308,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Useful Utilities";
 				TargetAttributes = {
 					084507E61F0B41290045C0A6 = {
@@ -371,6 +349,12 @@
 			mainGroup = 084507DE1F0B41290045C0A6;
 			productRefGroup = 084507E81F0B41290045C0A6 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 08174E98204FC7B100547292 /* Products */;
+					ProjectRef = 08174E97204FC7B100547292 /* UUToolboxLib.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				084507E61F0B41290045C0A6 /* UUSwift */,
@@ -379,6 +363,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		0802C4F1208036BF00B0AC92 /* UUToolboxTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UUToolboxTests.xctest;
+			remoteRef = 0802C4F0208036BF00B0AC92 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		08174E9C204FC7B100547292 /* libUUToolbox.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUUToolbox.a;
+			remoteRef = 08174E9B204FC7B100547292 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		084507E51F0B41290045C0A6 /* Resources */ = {
@@ -414,32 +415,13 @@
 			files = (
 				084507F31F0B41290045C0A6 /* UUSwift.xcdatamodeld in Sources */,
 				0867CDC91F34512600FEAA52 /* RSQuote+Ext.swift in Sources */,
-				0845082B1F0B41480045C0A6 /* UUColor.swift in Sources */,
-				08C3A6E81F551B3000BB8095 /* UUDataCache.swift in Sources */,
-				085C76D11F325B1200E9214D /* UUCoreData.swift in Sources */,
-				084508311F0B41480045C0A6 /* UUGradientView.swift in Sources */,
-				0845082A1F0B41480045C0A6 /* UUCircularView.swift in Sources */,
-				084508291F0B41480045C0A6 /* UUCircularImageView.swift in Sources */,
-				084508321F0B41480045C0A6 /* UUHttpSession.swift in Sources */,
-				0867CDC31F34326700FEAA52 /* UUObjectFactory.swift in Sources */,
-				0845082C1F0B41480045C0A6 /* UUData.swift in Sources */,
 				084508381F0B41B70045C0A6 /* HomeController.swift in Sources */,
 				0867CDCD1F345B6500FEAA52 /* RSQuoteController.swift in Sources */,
-				08D3288C1F738D5F00CA04FC /* BeaconController.swift in Sources */,
-				0845082E1F0B41480045C0A6 /* UUDebugLog.swift in Sources */,
-				084508301F0B41480045C0A6 /* UUEditViewController.swift in Sources */,
-				08BB40931F57359B006AE095 /* UURemoteImage.swift in Sources */,
-				08BB408D1F56487B006AE095 /* UURemoteData.swift in Sources */,
 				0845083D1F0B4FF80045C0A6 /* WeatherService.swift in Sources */,
 				08BB40911F568136006AE095 /* ImageGalleryController.swift in Sources */,
-				084508331F0B41480045C0A6 /* UUString.swift in Sources */,
 				0845083A1F0B477B0045C0A6 /* WeatherController.swift in Sources */,
-				084508341F0B41480045C0A6 /* UUTextField.swift in Sources */,
-				084508351F0B41480045C0A6 /* UUView.swift in Sources */,
 				084507EB1F0B41290045C0A6 /* AppDelegate.swift in Sources */,
 				0867CDCB1F3451DE00FEAA52 /* RSQuoteService.swift in Sources */,
-				0845082D1F0B41480045C0A6 /* UUDate.swift in Sources */,
-				0845082F1F0B41480045C0A6 /* UUDictionary.swift in Sources */,
 				085C76B91F2B91A100E9214D /* WeatherRecord+Ext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -466,6 +448,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		08174E9E204FC7BD00547292 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = UUToolbox;
+			targetProxy = 08174E9D204FC7BD00547292 /* PBXContainerItemProxy */;
+		};
 		084508001F0B41290045C0A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 084507E61F0B41290045C0A6 /* UUSwift */;
@@ -512,6 +499,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -519,6 +507,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -568,6 +557,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -575,6 +565,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

@@ -9,10 +9,11 @@
 
 import UIKit
 import CoreData
+import UUToolbox
 
 extension RSQuote : UUObjectFactory
 {
-    static func uuObjectFromDictionary(dictionary : [AnyHashable:Any], context: Any?) -> Self?
+    public static func uuObjectFromDictionary(dictionary : [AnyHashable:Any], context: Any?) -> Self?
     {
         return uuObjectFromDictionaryInternal(dictionary: dictionary, context: context)
     }
@@ -58,7 +59,7 @@ extension RSQuote : UUObjectFactory
         
         quote = dictionary["quote"] as? String
         identifier = Int64(dictionary["identifier"] as! Int)
-        downloadedAt = df.date(from: dictionary["downloadedAt"] as! String)! as NSDate
+        downloadedAt = df.date(from: dictionary["downloadedAt"] as! String)! as Date
         
         print("parsed: \(self)")
     }
