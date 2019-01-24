@@ -99,6 +99,9 @@
 // Returns just the numeric portion of the day of the month, ie - 26
 - (NSString*) uuDayOfMonthShort;
 
+// Returns day name, month and day , ie = Tue Aug 29th
+- (NSString*) uuDayOfWeekDayShort;
+
 // Returns the short version of the numeric year, ie - 74
 - (NSString*) uuShortYear;
 

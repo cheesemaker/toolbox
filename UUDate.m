@@ -73,6 +73,7 @@ NSString * const kUUDayOfWeekDateFormatter				= @"EEEE";
 NSString * const kUUDayOfWeekShortDateFormatter			= @"EE";
 NSString * const kUULongYearFormatter					= @"yyyy";
 NSString * const kUUShortYearFormatter					= @"yy";
+NSString * const kUUShortDayMonthFormatter              = @"EE LLL dd";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +142,15 @@ static NSTimeZone* theDefaultTimeZone = nil;
 - (NSString*) uuDayOfWeekShort
 {
 	return [self uuStringFromDate:kUUDayOfWeekShortDateFormatter timeZone:nil];
+}
+
+- (NSString*) uuDayOfWeekDayShort
+{
+    NSString* str = [self uuStringFromDate:kUUDayOfMonthDateFormatter timeZone:nil];
+    int dayValue = [str intValue];
+    NSString* day = [str stringByAppendingString:[NSDate uuDayOfMonthSuffix:dayValue]];
+
+    return [NSString stringWithFormat:@"%@ %@ %@", [self uuDayOfWeekShort], [self uuShortMonthOfYear], day];
 }
 
 - (NSString*) uuDayOfWeek
