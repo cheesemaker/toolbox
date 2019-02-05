@@ -11,7 +11,7 @@
 #import <objc/runtime.h>
 
 @interface UIAlertController(UUToolbox)
-	@property (nonatomic, strong) UIWindow* displayWindow;
+@property (nonatomic, strong) UIWindow* displayWindow;
 @end
 
 @implementation UIAlertController(UUToolbox)
@@ -19,22 +19,29 @@
 
 - (void)setDisplayWindow:(UIWindow *)displayWindow
 {
-    objc_setAssociatedObject(self, @selector(displayWindow), displayWindow, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	objc_setAssociatedObject(self, @selector(displayWindow), displayWindow, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (UIWindow*) displayWindow
 {
-    return objc_getAssociatedObject(self, @selector(displayWindow));
+	return objc_getAssociatedObject(self, @selector(displayWindow));
 }
 
 @end
 
 @implementation UUAlertViewController
 
+UIViewController* activeViewController = nil;
+
++ (void) setActiveViewController:(UIViewController*)viewController
+{
+	activeViewController = viewController;
+}
+
 + (UIAlertController*) initWithTitle:(NSString *)alertTitle
-                       message:(NSString *)alertMessage
-             completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
-                  buttonTitles:(NSString *)defaultButtonTitle, ...
+							 message:(NSString *)alertMessage
+				   completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+						buttonTitles:(NSString *)defaultButtonTitle, ...
 {
 	NSMutableArray* argumentArray = [[NSMutableArray alloc] init];
 	va_list argList;
@@ -42,6 +49,8 @@
 	NSString* otherButtonTitle = va_arg(argList, NSString*);
 	if (otherButtonTitle)
 	{
+		[argumentArray addObject:[NSString stringWithString:otherButtonTitle]];
+		
 		NSString* buttonMessage = va_arg(argList, NSString*);
 		while (buttonMessage)
 		{
@@ -50,28 +59,44 @@
 		}
 	}
 	va_end(argList);
-
+	
 	UIAlertController* alertController = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
-	UIAlertAction* alertAction = [UIAlertAction actionWithTitle:defaultButtonTitle style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action)
-	{
-		if (completionHandler)
-		{
-			completionHandler(0);
-		}
-	}];
+	
+	UIAlertActionStyle alertStyle = UIAlertActionStyleDefault;
+	if ([defaultButtonTitle isEqualToString:@"Cancel"]) {
+		alertStyle = UIAlertActionStyleCancel;
+	}
+	
+	UIAlertAction* alertAction = [UIAlertAction actionWithTitle:defaultButtonTitle style:alertStyle handler:^(UIAlertAction * _Nonnull action)
+								  {
+									  if (completionHandler)
+									  {
+										  completionHandler(0);
+									  }
+									  
+									  alertController.displayWindow.hidden = YES;
+									  alertController.displayWindow = nil;
+								  }];
 	[alertController addAction:alertAction];
-
+	
 	for (NSInteger i = 0; i < argumentArray.count; i++)
 	{
 		NSString* buttonTitle = [argumentArray objectAtIndex:i];
-
-		UIAlertAction* alertAction = [UIAlertAction actionWithTitle:buttonTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
-		{
-			if (completionHandler)
-			{
-				completionHandler(i + 1);
-			}
-		}];
+		UIAlertActionStyle alertStyle = UIAlertActionStyleDefault;
+		if ([buttonTitle isEqualToString:@"Delete"]) {
+			alertStyle = UIAlertActionStyleDestructive;
+		}
+		
+		UIAlertAction* alertAction = [UIAlertAction actionWithTitle:buttonTitle style:alertStyle handler:^(UIAlertAction * _Nonnull action)
+									  {
+										  if (completionHandler)
+										  {
+											  completionHandler(i + 1);
+										  }
+										  
+										  alertController.displayWindow.hidden = YES;
+										  alertController.displayWindow = nil;
+									  }];
 		
 		[alertController addAction:alertAction];
 	}
@@ -82,7 +107,7 @@
 //Convenience functions
 + (UIAlertController*) uuOKCancelAlert:(NSString *)title message:(NSString *)message completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
-	UIAlertController* controller = [UUAlertViewController initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"Ok", nil];
+	UIAlertController* controller = [UUAlertViewController initWithTitle:title message:message completionHandler:completionHandler buttonTitles:@"Cancel", @"OK", nil];
 	return controller;
 }
 
@@ -99,9 +124,9 @@
 }
 
 + (void) uuShowAlertWithTitle:(NSString*)alertTitle
-                      message:(NSString*)alertMessage
-                  buttonTitle:(NSString*)buttonTitle
-            completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
+					  message:(NSString*)alertMessage
+				  buttonTitle:(NSString*)buttonTitle
+			completionHandler:(void (^)(NSInteger buttonIndex))completionHandler
 {
 	UIAlertController* alertController = [UUAlertViewController initWithTitle:alertTitle message:alertMessage completionHandler:completionHandler buttonTitles:buttonTitle, nil];
 	[UUAlertViewController displayAlertController:alertController];
@@ -127,16 +152,23 @@
 
 + (void) displayAlertController:(UIAlertController*)alertController
 {
-    UIWindow *topWindow = [UIApplication sharedApplication].windows.lastObject;
-
-	alertController.displayWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	alertController.displayWindow.rootViewController = [UIViewController new];
-	alertController.displayWindow.tintColor = [UIApplication sharedApplication].keyWindow.tintColor;
-	
-
-	alertController.displayWindow.windowLevel = topWindow.windowLevel + 1;
-	[alertController.displayWindow makeKeyAndVisible];
-	[alertController.displayWindow.rootViewController presentViewController:alertController animated:NO completion:nil];
+	if (activeViewController)
+	{
+		[activeViewController presentViewController:alertController animated:NO completion:nil];
+	}
+	else
+	{
+		UIWindow* displayWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+		alertController.displayWindow = displayWindow;
+		
+		displayWindow.rootViewController = [UIViewController new];
+		displayWindow.tintColor = [UIColor colorWithWhite:0.25 alpha:0.8];
+		//alertController.displayWindow.tintColor = [UIApplication sharedApplication].keyWindow.tintColor;
+		
+		displayWindow.windowLevel = UIWindowLevelAlert;
+		[displayWindow makeKeyAndVisible];
+		[displayWindow.rootViewController presentViewController:alertController animated:NO completion:nil];
+	}
 }
 
 
